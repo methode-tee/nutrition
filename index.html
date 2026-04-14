@@ -1424,31 +1424,26 @@ s.style.display = “flex”;
 INIT
 ══════════════════════════════════════════════ */
 (async function init() {
+// Cacher le loading EN PREMIER quoi qu’il arrive
+hideLoading();
+
 const settings = loadSettings();
 document.getElementById(“sb-url”).value = settings.url || “”;
 document.getElementById(“sb-key”).value = settings.key || “”;
 
+const slug = new URLSearchParams(window.location.search).get(“client”);
+
+if (!slug) {
+// Mode admin : render immediat
+renderClientView(“toi”, emptyProgramme());
 if (settings.url && settings.key) {
 try { sb = getFactory()(settings.url, settings.key); } catch(e) {}
 }
-
-const slug = new URLSearchParams(window.location.search).get(“client”);
-if (slug) {
-await loadClientFromURL();
 } else {
-// Mode admin : on cache le loading IMMÉDIATEMENT, sans attendre Supabase
-hideLoading();
-renderClientView(“toi”, emptyProgramme());
+// Mode client : montrer loading, init Supabase, charger fiche
+document.getElementById(“loading-screen”).style.display = “flex”;
+if (settings.url && settings.key) {
+try { sb = getFactory()(settings.url, settings.key); } catch(e) {}
 }
-
-lucide.createIcons();
-
-// ── PWA Service Worker ──
-if (‘serviceWorker’ in navigator) {
-try { navigator.serviceWorker.register(’/nutrition/service-worker.js’); } catch(e) {}
+await loadClientFromURL();
 }
-})();
-</script>
-
-</body>
-</html>
