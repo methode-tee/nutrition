@@ -61,33 +61,40 @@
 
     /* ── Scrollable main ── */
     .main-scroll {
-      flex: 1; overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-    }
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding-bottom: calc(10px + env(safe-area-inset-bottom));
+}
     .main-scroll::-webkit-scrollbar { display: none; }
 
     /* ── Tabs ── */
-    .tab-section { display: none; padding: 0 20px 120px; animation: fadeUp .25s ease; }
+    .tab-section {
+  display: none;
+  padding: 0 20px calc(120px + env(safe-area-inset-bottom));
+  animation: fadeUp .25s ease;
+}
     .tab-section.active { display: block; }
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(8px); }
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    /* ── Bottom .bottom-nav {
-  position: absolute;
-  bottom: 0;
+    /* ── Bottom 
+    .bottom-nav {
+  position: fixed;
   left: 0;
   right: 0;
+  bottom: 0;
   background: white;
   border-top: 1px solid rgba(0,0,0,0.06);
-  padding: 10px 8px calc(22px + env(safe-area-inset-bottom));
+  padding: 10px 8px calc(18px + env(safe-area-inset-bottom));
   display: flex;
   justify-content: space-around;
   align-items: flex-end;
-  z-index: 30;
-  min-height: 92px;
+  z-index: 999;
+  min-height: 86px;
 }
    .nav-btn {
   display: flex;
@@ -95,7 +102,7 @@
   align-items: center;
   justify-content: flex-end;
   gap: 4px;
-  padding: 6px 10px 2px;
+  padding: 6px 10px 0;
   border: none;
   background: none;
   cursor: pointer;
@@ -103,7 +110,9 @@
   transition: color .2s;
   min-width: 58px;
 }
-    .nav-btn.active { color: var(--brand); }
+   .nav-btn.active {
+  color: var(--brand);
+}
     .nav-btn span {
   font-size: 9px;
   font-weight: 700;
@@ -341,12 +350,7 @@
     box-shadow: none;
   }
 }
-    @media (display-mode: standalone) {
-  .bottom-nav {
-    padding-bottom: calc(26px + env(safe-area-inset-bottom));
-    min-height: 98px;
-  }
-}
+   
   </style>
 </head>
 <body>
