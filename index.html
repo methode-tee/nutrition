@@ -743,6 +743,7 @@
           <div><label class="field-label">Durée / conseil</label><input id="f-protocole-duree" class="admin-input" placeholder="Ex : 7 jours / 21 jours" /></div>
         </div>
       </div>
+     
 
 <!-- Méthode -->
       <div class="admin-section">
@@ -760,6 +761,29 @@
         <p id="selection-admin-date" style="font-size:11px;color:var(--muted);margin:0 0 12px"></p>
         <button onclick="marquerSelectionTraitee()" class="btn btn-brand" style="width:100%">Marquer comme traité</button>
       </div>
+
+            <!-- Notes privées coach -->
+      <div class="admin-section">
+        <h3 class="serif" style="font-size:20px;color:var(--ink);margin:0 0 6px">Notes privées</h3>
+        <p style="font-size:11px;color:var(--muted);margin:0 0 14px">Visible uniquement dans l'admin — jamais affiché au client.</p>
+        <textarea id="f-notes-priv" class="admin-textarea" placeholder="Sensible au gluten, stress élevé semaine 2, progression rapide..."></textarea>
+      </div>
+
+            <!-- Bibliothèque protocoles -->
+      <div class="admin-section">
+        <h3 class="serif" style="font-size:20px;color:var(--ink);margin:0 0 6px">Bibliothèque de protocoles</h3>
+        <p style="font-size:11px;color:var(--muted);margin:0 0 14px">Applique un protocole type en un clic.</p>
+        <div style="display:flex;flex-wrap:wrap;gap:8px">
+          <button class="chip" onclick="appliquerProtocole('digestion')">🌿 Digestion</button>
+          <button class="chip" onclick="appliquerProtocole('energie')">⚡ Énergie</button>
+          <button class="chip" onclick="appliquerProtocole('recomposition')">💪 Recomposition</button>
+          <button class="chip" onclick="appliquerProtocole('inflammation')">🔥 Inflammation</button>
+          <button class="chip" onclick="appliquerProtocole('detox')">🌱 Détox</button>
+          <button class="chip" onclick="appliquerProtocole('sommeil')">🌙 Sommeil</button>
+        </div>
+        <p id="protocole-applied" style="font-size:12px;color:var(--brand);margin:10px 0 0;display:none">✅ Protocole appliqué — pense à sauvegarder le client.</p>
+      </div>
+
 
       <!-- Actions -->
       <div class="admin-section">
@@ -810,7 +834,7 @@ function emptyProgramme() {
     rituel: { matin: "", midi: "", soir: "", note: "" },
     terrain: { dominant: "", axes: [], note: "" },
     protocole: { matin: "", midi: "", soir: "", duree: "" },
-    methode: [], offre: ""
+    methode: [], offre: "", notes_priv: ""
 
   };
 }
@@ -1377,6 +1401,7 @@ function fillAdmin(prenom, prog) {
   document.getElementById("f-protocole-duree").value = prog.protocole?.duree || "";
   document.getElementById("f-method").value = JSON.stringify(prog.methode || [], null, 2);
   document.getElementById("f-offre").value = prog.offre || "";
+  document.getElementById("f-notes-priv").value = prog.notes_priv || "";
 
   renderAdminDaysNav(prog.days || {});
   renderProductEditors(prog.products || []);
@@ -1540,6 +1565,7 @@ async function saveClient() {
 
   programme.semaine = document.getElementById("f-semaine").value.trim();
   programme.offre = document.getElementById("f-offre").value;
+  programme.notes_priv = document.getElementById("f-notes-priv").value.trim();
   programme.objectif = document.getElementById("f-objectif").value.trim();
   programme.coach = document.getElementById("f-coach").value.trim();
   programme.goals = lines(document.getElementById("f-goals").value);
@@ -1631,6 +1657,54 @@ async function marquerSelectionTraitee() {
   document.getElementById("selection-statut").style.background = "#d1fae5";
   document.getElementById("selection-statut").style.color = "#065f46";
   log("✅ Sélection marquée comme traitée.");
+}
+function appliquerProtocole(type) {
+  var protocoles = {
+    digestion: {
+      matin: "Eau chaude + citron à jeun. Infusion fenouil ou menthe poivrée.",
+      midi: "Tisane digestive après repas (romarin, thym).",
+      soir: "Infusion camomille ou mélisse. Éviter de manger après 21h.",
+      duree: "21 jours"
+    },
+    energie: {
+      matin: "Maté vert ou matcha. Petit-déjeuner protéiné.",
+      midi: "Infusion gingembre + citron. Éviter les sucres rapides.",
+      soir: "Infusion adaptogène (ashwagandha). Coucher avant minuit.",
+      duree: "14 jours"
+    },
+    recomposition: {
+      matin: "Protéines au réveil. Eau + citron. Infusion thé vert.",
+      midi: "Repas équilibré. Infusion brûle-graisses (thé vert, cannelle).",
+      soir: "Dîner léger avant 20h. Infusion detox.",
+      duree: "30 jours"
+    },
+    inflammation: {
+      matin: "Eau chaude + curcuma + poivre noir. Infusion gingembre.",
+      midi: "Éviter gluten et sucres raffinés. Infusion curcuma.",
+      soir: "Infusion anti-inflammatoire (curcuma, gingembre, cannelle).",
+      duree: "21 jours"
+    },
+    detox: {
+      matin: "Eau chaude + citron + chlorophylle. Infusion ortie.",
+      midi: "Infusion romarin + pissenlit après repas.",
+      soir: "Infusion drainante (queues de cerise, pissenlit, bouleau).",
+      duree: "7 jours"
+    },
+    sommeil: {
+      matin: "Éviter café après 15h. Infusion énergisante douce le matin.",
+      midi: "Magnésium marin au déjeuner.",
+      soir: "Infusion Nirvana ou valériane + passiflore 1h avant coucher.",
+      duree: "14 jours"
+    }
+  };
+  var p = protocoles[type];
+  if (!p) return;
+  document.getElementById("f-protocole-matin").value = p.matin;
+  document.getElementById("f-protocole-midi").value = p.midi;
+  document.getElementById("f-protocole-soir").value = p.soir;
+  document.getElementById("f-protocole-duree").value = p.duree;
+  var msg = document.getElementById("protocole-applied");
+  if (msg) { msg.style.display = "block"; setTimeout(function(){ msg.style.display = "none"; }, 3000); }
 }
 
   function openAdmin() {
