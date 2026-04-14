@@ -1375,6 +1375,23 @@ function fillAdmin(prenom, prog) {
 
   renderAdminDaysNav(prog.days || {});
   renderProductEditors(prog.products || []);
+  var selBlock = document.getElementById("selection-admin-block");
+  var selList = document.getElementById("selection-admin-list");
+  var selDate = document.getElementById("selection-admin-date");
+  var selStatut = document.getElementById("selection-statut");
+  if (prog.selection && prog.selection.produits && prog.selection.produits.length > 0) {
+    selBlock.style.display = "block";
+    selList.innerHTML = prog.selection.produits.map(function(p) {
+      return '<div style="font-size:13px;color:var(--ink);padding:8px 12px;background:#f8f4ee;border-radius:10px">' + p + '</div>';
+    }).join("");
+    selDate.textContent = "Envoyée le " + (prog.selection.date || "");
+    selStatut.textContent = prog.selection.statut === "traite" ? "Traité" : "En attente";
+    selStatut.style.background = prog.selection.statut === "traite" ? "#d1fae5" : "#fef3c7";
+    selStatut.style.color = prog.selection.statut === "traite" ? "#065f46" : "#92400e";
+  } else {
+    selBlock.style.display = "none";
+  }
+
 }
 
 /* ══════════════════════════════════════════════
@@ -1598,7 +1615,20 @@ function copyLink() {
 /* ══════════════════════════════════════════════
    ADMIN : OUVERTURE / FERMETURE
 ══════════════════════════════════════════════ */
-function openAdmin() {
+async function marquerSelectionTraitee() {
+  if (!sb || !currentSlug) return;
+  var { data, error } = await sb.from("mt_clients").select("programme").eq("slug", currentSlug).single();
+  if (error || !data) return;
+  var prog = data.programme || {};
+  if (prog.selection) prog.selection.statut = "traite";
+  await sb.from("mt_clients").update({ programme: prog }).eq("slug", currentSlug);
+  document.getElementById("selection-statut").textContent = "Traité";
+  document.getElementById("selection-statut").style.background = "#d1fae5";
+  document.getElementById("selection-statut").style.color = "#065f46";
+  log("✅ Sélection marquée comme traitée.");
+}
+
+  function openAdmin() {
   document.getElementById("admin-overlay").classList.add("open");
   lucide.createIcons();
 }
