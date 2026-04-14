@@ -1040,6 +1040,29 @@ function renderClientsList(list) {
   ).join("");
 }
 
+  function handleClientRouting() {
+  const params = new URLSearchParams(window.location.search);
+  const clientFromUrl = params.get("client");
+  const savedClient = localStorage.getItem("mt_client_slug");
+
+  if (clientFromUrl) {
+    localStorage.setItem("mt_client_slug", clientFromUrl);
+    return clientFromUrl;
+  }
+
+  if (!clientFromUrl && savedClient) {
+    const newUrl =
+      window.location.origin +
+      window.location.pathname +
+      "?client=" +
+      encodeURIComponent(savedClient);
+
+    window.location.replace(newUrl);
+    return null;
+  }
+
+  return null;
+}
 async function selectClient(slug) {
   if (!sb) { log("❌ Connecte Supabase d'abord."); return; }
   const { data, error } = await sb.from(SB_TABLE).select("*").eq("slug", slug).single();
