@@ -1761,12 +1761,23 @@ function showError(msg) {
   const slug = new URLSearchParams(window.location.search).get("client");
   if (slug) {
     await loadClientFromURL();
-  } else {
-    // Mode admin : afficher l'app avec données vides par défaut
+    } else {
     hideLoading();
-    // Preview avec programme vide pour que l'app soit visible
-    renderClientView("toi", emptyProgramme());
+    var pwd = localStorage.getItem("mt_admin_auth");
+    if (pwd !== "OUTITA") {
+      var saisie = prompt("Mot de passe admin :");
+      if (saisie === "OUTITA") {
+        localStorage.setItem("mt_admin_auth", "OUTITA");
+        renderClientView("toi", emptyProgramme());
+      } else {
+        document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:sans-serif;color:#888">Accès refusé</div>';
+        return;
+      }
+    } else {
+      renderClientView("toi", emptyProgramme());
+    }
   }
+
 
   lucide.createIcons();
 })();
