@@ -1,11 +1,22 @@
 <!DOCTYPE html>
+
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>Méthode Tee</title>
 
+  <!-- PWA -->
+
+  <link rel="manifest" href="/nutrition/manifest.webmanifest" />
+  <meta name="theme-color" content="#53644A" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Méthode Tee" />
+  <link rel="apple-touch-icon" href="/nutrition/icon-512.PNG" />
+
   <script src="https://cdn.tailwindcss.com"></script>
+
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
@@ -300,17 +311,20 @@
 
     .hidden { display: none !important; }
   </style>
+
 </head>
 <body>
 <div class="app-shell" id="app">
 
   <!-- Loading -->
+
   <div id="loading-screen">
     <div class="spinner"></div>
     <p style="font-size:13px;color:var(--muted);font-weight:600;">Chargement…</p>
   </div>
 
   <!-- Error -->
+
   <div id="error-screen">
     <div style="font-size:48px">🌿</div>
     <h2 class="serif" style="color:var(--ink);font-size:22px">Fiche introuvable</h2>
@@ -318,6 +332,7 @@
   </div>
 
   <!-- ── HEADER ── -->
+
   <header style="background:rgba(253,251,247,.92);backdrop-filter:blur(12px);padding:18px 20px 14px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:20;border-bottom:1px solid rgba(0,0,0,0.04);">
     <div>
       <p style="font-size:9px;text-transform:uppercase;letter-spacing:.18em;color:#b5aca3;font-weight:800;margin-bottom:3px">Espace Client</p>
@@ -327,129 +342,142 @@
   </header>
 
   <!-- ── MAIN SCROLL ── -->
+
   <div class="main-scroll">
 
-    <!-- ACCUEIL -->
-    <section id="tab-accueil" class="tab-section active" style="padding-top:24px">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:24px">
-        <div>
-          <h2 class="serif" style="font-size:34px;font-weight:700;color:var(--ink);margin:0 0 6px;line-height:1.15">Bonjour <span id="display-prenom">toi</span>,</h2>
-          <p style="font-size:12px;color:var(--muted)">Ton espace nutrition &amp; routines premium.</p>
-        </div>
-        <span class="badge" style="background:var(--brand);color:white;margin-top:4px;flex-shrink:0">
-          <i data-lucide="sparkles" style="width:11px;height:11px"></i>
-          Privé
-        </span>
-      </div>
+```
+<!-- ACCUEIL -->
+<section id="tab-accueil" class="tab-section active" style="padding-top:24px">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:8px">
+    <div>
+      <p id="today-date" style="font-size:11px;color:var(--muted);font-weight:600;margin:0 0 4px;text-transform:capitalize"></p>
+      <h2 class="serif" style="font-size:34px;font-weight:700;color:var(--ink);margin:0 0 4px;line-height:1.15">Bonjour <span id="display-prenom">toi</span>,</h2>
+      <p style="font-size:12px;color:var(--muted)">Ton espace nutrition &amp; routines premium.</p>
+    </div>
+    <span class="badge" style="background:var(--brand);color:white;margin-top:16px;flex-shrink:0">
+      <i data-lucide="sparkles" style="width:11px;height:11px"></i>
+      Privé
+    </span>
+  </div>
 
-      <!-- Objectif -->
-      <div class="goal-card" style="margin-bottom:20px">
-        <p style="font-size:9px;text-transform:uppercase;letter-spacing:.18em;font-weight:800;opacity:.75;margin-bottom:8px">Ton objectif principal</p>
-        <h3 id="goal-title" class="serif" style="font-size:20px;font-style:italic;font-weight:700;margin:0 0 16px;line-height:1.3;position:relative;z-index:1"></h3>
-        <ul id="goal-list" style="list-style:none;margin:0;padding:0;space-y:6px;position:relative;z-index:1"></ul>
-      </div>
+  <!-- Banniere Maison Yanna -->
+  <div id="my-banner" style="display:none;margin:12px 0 20px;border-radius:18px;padding:15px 18px;background:linear-gradient(135deg,#2D241E 0%,#53644A 100%);color:white;position:relative;overflow:hidden">
+    <div style="position:absolute;right:-20px;top:-20px;width:90px;height:90px;border-radius:50%;background:rgba(255,255,255,.06)"></div>
+    <p style="font-size:9px;text-transform:uppercase;letter-spacing:.16em;font-weight:800;opacity:.7;margin:0 0 5px">Maison Yanna — Ton avantage</p>
+    <p id="my-banner-text" class="serif" style="font-size:13px;font-weight:600;margin:0 0 10px;line-height:1.5;font-style:italic"></p>
+    <a id="my-banner-btn" href="https://maisonyanna.com" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);color:white;font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:7px 14px;border-radius:999px;text-decoration:none">Voir la boutique</a>
+  </div>
 
-      <!-- Mot du coach -->
-      <div class="card" style="padding:22px;margin-bottom:20px;position:relative">
-        <div style="position:absolute;top:-14px;right:14px;width:46px;height:46px;background:white;border-radius:50%;box-shadow:0 4px 14px rgba(0,0,0,0.09);display:flex;align-items:center;justify-content:center;font-size:20px">✍️</div>
-        <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin-bottom:10px">Le mot du coach</p>
-        <p id="coach-msg" class="serif" style="font-size:14px;color:var(--ink);line-height:1.7;font-style:italic;margin:0"></p>
-      </div>
+  <!-- Objectif -->
+  <div class="goal-card" style="margin-bottom:20px">
+    <p style="font-size:9px;text-transform:uppercase;letter-spacing:.18em;font-weight:800;opacity:.75;margin-bottom:8px">Ton objectif principal</p>
+    <h3 id="goal-title" class="serif" style="font-size:20px;font-style:italic;font-weight:700;margin:0 0 16px;line-height:1.3;position:relative;z-index:1"></h3>
+    <ul id="goal-list" style="list-style:none;margin:0;padding:0;space-y:6px;position:relative;z-index:1"></ul>
+  </div>
 
-      <!-- Priorités -->
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-        <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:#b5aca3;margin:0">Tes priorités du jour</p>
-        <span style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:700;color:var(--brand)">Checklist</span>
-      </div>
-      <div id="tasks-list" style="display:flex;flex-direction:column;gap:10px"></div>
+  <!-- Mot du coach -->
+  <div class="card" style="padding:22px;margin-bottom:20px;position:relative">
+    <div style="position:absolute;top:-14px;right:14px;width:46px;height:46px;background:white;border-radius:50%;box-shadow:0 4px 14px rgba(0,0,0,0.09);display:flex;align-items:center;justify-content:center;font-size:20px">✍️</div>
+    <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin-bottom:10px">Le mot du coach</p>
+    <p id="coach-msg" class="serif" style="font-size:14px;color:var(--ink);line-height:1.7;font-style:italic;margin:0"></p>
+  </div>
 
-      <div class="card" style="padding:22px;margin-top:18px">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px">
-          <div>
-            <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 6px">Rituel du jour</p>
-            <h3 class="serif" style="font-size:20px;margin:0;color:var(--ink)">Ton rythme Méthode Tee</h3>
-          </div>
-          <div style="width:42px;height:42px;border-radius:50%;background:var(--paper);display:flex;align-items:center;justify-content:center;font-size:20px">🌿</div>
-        </div>
-        <div id="rituel-card" style="display:flex;flex-direction:column;gap:10px"></div>
-      </div>
+  <!-- Priorités -->
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+    <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:#b5aca3;margin:0">Tes priorités du jour</p>
+    <span style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:700;color:var(--brand)">Checklist</span>
+  </div>
+  <div id="tasks-list" style="display:flex;flex-direction:column;gap:10px"></div>
 
-      <div class="card" style="padding:22px;margin-top:18px">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px">
-          <div>
-            <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 6px">Analyse du terrain</p>
-            <h3 class="serif" style="font-size:20px;margin:0;color:var(--ink)">Ce que nous travaillons</h3>
-          </div>
-          <div style="width:42px;height:42px;border-radius:50%;background:var(--paper);display:flex;align-items:center;justify-content:center;font-size:20px">🌱</div>
-        </div>
-        <div id="terrain-card"></div>
+  <div class="card" style="padding:22px;margin-top:18px">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px">
+      <div>
+        <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 6px">Rituel du jour</p>
+        <h3 class="serif" style="font-size:20px;margin:0;color:var(--ink)">Ton rythme Méthode Tee</h3>
       </div>
-    </section>
+      <div style="width:42px;height:42px;border-radius:50%;background:var(--paper);display:flex;align-items:center;justify-content:center;font-size:20px">🌿</div>
+    </div>
+    <div id="rituel-card" style="display:flex;flex-direction:column;gap:10px"></div>
+  </div>
 
-    <!-- REPAS -->
-    <section id="tab-repas" class="tab-section" style="padding-top:24px">
-      <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:20px">
-        <div>
-          <h2 class="serif" style="font-size:30px;font-weight:700;color:var(--ink);margin:0 0 4px">Ton Menu</h2>
-          <p style="font-size:12px;color:var(--muted)">Programme alimentaire personnalisé</p>
-        </div>
-        <span id="week-badge" style="font-size:11px;color:var(--accent);font-weight:700;background:rgba(140,117,97,.1);padding:5px 12px;border-radius:999px"></span>
+  <div class="card" style="padding:22px;margin-top:18px">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px">
+      <div>
+        <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 6px">Analyse du terrain</p>
+        <h3 class="serif" style="font-size:20px;margin:0;color:var(--ink)">Ce que nous travaillons</h3>
       </div>
-      <div id="days-nav" style="display:flex;overflow-x:auto;gap:10px;margin:0 -20px;padding:0 20px 16px;scrollbar-width:none"></div>
-      <div style="display:flex;flex-direction:column;gap:14px">
-        <div class="card" style="padding:18px">
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="font-size:22px">🌅</span><p style="font-size:11px;text-transform:uppercase;letter-spacing:.12em;font-weight:800;color:var(--brand);margin:0">Éveil &amp; Matin</p></div>
-          <p id="meal-morning" style="font-size:13px;color:#4a3f38;line-height:1.7;margin:0;padding-left:14px;border-left:2px solid #e8e4de"></p>
-        </div>
-        <div class="card" style="padding:18px">
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="font-size:22px">🥗</span><p style="font-size:11px;text-transform:uppercase;letter-spacing:.12em;font-weight:800;color:var(--brand);margin:0">Déjeuner</p></div>
-          <p id="meal-lunch" style="font-size:13px;color:#4a3f38;line-height:1.7;margin:0;padding-left:14px;border-left:2px solid var(--brand)"></p>
-        </div>
-        <div class="card" style="padding:18px">
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="font-size:22px">⚡</span><p style="font-size:11px;text-transform:uppercase;letter-spacing:.12em;font-weight:800;color:var(--brand);margin:0">Collation</p></div>
-          <p id="meal-snack" style="font-size:13px;color:#4a3f38;line-height:1.7;margin:0;padding-left:14px;border-left:2px solid #e8e4de"></p>
-        </div>
-        <div class="card" style="padding:18px">
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="font-size:22px">🌙</span><p style="font-size:11px;text-transform:uppercase;letter-spacing:.12em;font-weight:800;color:var(--ink);margin:0">Dîner &amp; Soir</p></div>
-          <p id="meal-dinner" style="font-size:13px;color:#4a3f38;line-height:1.7;margin:0;padding-left:14px;border-left:2px solid #e8e4de"></p>
-        </div>
+      <div style="width:42px;height:42px;border-radius:50%;background:var(--paper);display:flex;align-items:center;justify-content:center;font-size:20px">🌱</div>
+    </div>
+    <div id="terrain-card"></div>
+  </div>
+</section>
+
+<!-- REPAS -->
+<section id="tab-repas" class="tab-section" style="padding-top:24px">
+  <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:20px">
+    <div>
+      <h2 class="serif" style="font-size:30px;font-weight:700;color:var(--ink);margin:0 0 4px">Ton Menu</h2>
+      <p style="font-size:12px;color:var(--muted)">Programme alimentaire personnalisé</p>
+    </div>
+    <span id="week-badge" style="font-size:11px;color:var(--accent);font-weight:700;background:rgba(140,117,97,.1);padding:5px 12px;border-radius:999px"></span>
+  </div>
+  <div id="days-nav" style="display:flex;overflow-x:auto;gap:10px;margin:0 -20px;padding:0 20px 16px;scrollbar-width:none"></div>
+  <div style="display:flex;flex-direction:column;gap:14px">
+    <div class="card" style="padding:18px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="font-size:22px">🌅</span><p style="font-size:11px;text-transform:uppercase;letter-spacing:.12em;font-weight:800;color:var(--brand);margin:0">Éveil &amp; Matin</p></div>
+      <p id="meal-morning" style="font-size:13px;color:#4a3f38;line-height:1.7;margin:0;padding-left:14px;border-left:2px solid #e8e4de"></p>
+    </div>
+    <div class="card" style="padding:18px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="font-size:22px">🥗</span><p style="font-size:11px;text-transform:uppercase;letter-spacing:.12em;font-weight:800;color:var(--brand);margin:0">Déjeuner</p></div>
+      <p id="meal-lunch" style="font-size:13px;color:#4a3f38;line-height:1.7;margin:0;padding-left:14px;border-left:2px solid var(--brand)"></p>
+    </div>
+    <div class="card" style="padding:18px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="font-size:22px">⚡</span><p style="font-size:11px;text-transform:uppercase;letter-spacing:.12em;font-weight:800;color:var(--brand);margin:0">Collation</p></div>
+      <p id="meal-snack" style="font-size:13px;color:#4a3f38;line-height:1.7;margin:0;padding-left:14px;border-left:2px solid #e8e4de"></p>
+    </div>
+    <div class="card" style="padding:18px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="font-size:22px">🌙</span><p style="font-size:11px;text-transform:uppercase;letter-spacing:.12em;font-weight:800;color:var(--ink);margin:0">Dîner &amp; Soir</p></div>
+      <p id="meal-dinner" style="font-size:13px;color:#4a3f38;line-height:1.7;margin:0;padding-left:14px;border-left:2px solid #e8e4de"></p>
+    </div>
+  </div>
+</section>
+
+<!-- SOINS -->
+<section id="tab-soins" class="tab-section" style="padding-top:24px">
+  <h2 class="serif" style="font-size:30px;font-weight:700;color:var(--ink);margin:0 0 4px">Soins</h2>
+  <p style="font-size:12px;color:var(--muted);margin:0 0 24px">Tes alliés naturels sélectionnés pour ton profil.</p>
+  <div class="card" style="padding:22px;margin-bottom:18px">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px">
+      <div>
+        <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 6px">Protocole végétal</p>
+        <h3 class="serif" style="font-size:20px;margin:0;color:var(--ink)">Rythme plantes & infusions</h3>
       </div>
-    </section>
+      <div style="width:42px;height:42px;border-radius:50%;background:var(--paper);display:flex;align-items:center;justify-content:center;font-size:20px">🍵</div>
+    </div>
+    <div id="protocole-card" style="display:flex;flex-direction:column;gap:10px"></div>
+  </div>
+  <div id="products-grid" class="products-grid"></div>
+</section>
 
-    <!-- SOINS -->
-    <section id="tab-soins" class="tab-section" style="padding-top:24px">
-      <h2 class="serif" style="font-size:30px;font-weight:700;color:var(--ink);margin:0 0 4px">Soins</h2>
-      <p style="font-size:12px;color:var(--muted);margin:0 0 24px">Tes alliés naturels sélectionnés pour ton profil.</p>
-      <div class="card" style="padding:22px;margin-bottom:18px">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px">
-          <div>
-            <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 6px">Protocole végétal</p>
-            <h3 class="serif" style="font-size:20px;margin:0;color:var(--ink)">Rythme plantes & infusions</h3>
-          </div>
-          <div style="width:42px;height:42px;border-radius:50%;background:var(--paper);display:flex;align-items:center;justify-content:center;font-size:20px">🍵</div>
-        </div>
-        <div id="protocole-card" style="display:flex;flex-direction:column;gap:10px"></div>
-      </div>
-      <div id="products-grid" class="products-grid"></div>
-    </section>
+<!-- SIGNATURE -->
+<section id="tab-signature" class="tab-section" style="padding-top:24px">
+  <h2 class="serif" style="font-size:30px;font-weight:700;color:var(--ink);margin:0 0 4px">Signature Healthy</h2>
+  <p style="font-size:12px;color:var(--muted);margin:0 0 24px">Ton plat signature personnalisé.</p>
+  <div id="signature-card" class="card" style="padding:24px"></div>
+</section>
 
-    <!-- SIGNATURE -->
-    <section id="tab-signature" class="tab-section" style="padding-top:24px">
-      <h2 class="serif" style="font-size:30px;font-weight:700;color:var(--ink);margin:0 0 4px">Signature Healthy</h2>
-      <p style="font-size:12px;color:var(--muted);margin:0 0 24px">Ton plat signature personnalisé.</p>
-      <div id="signature-card" class="card" style="padding:24px"></div>
-    </section>
-
-    <!-- MÉTHODE -->
-    <section id="tab-methode" class="tab-section" style="padding-top:24px">
-      <h2 class="serif" style="font-size:30px;font-weight:700;color:var(--ink);margin:0 0 4px">Méthode Tee</h2>
-      <p style="font-size:12px;color:var(--muted);margin:0 0 24px">Tes conseils personnalisés pour réussir.</p>
-      <div id="method-rules" style="display:flex;flex-direction:column;gap:14px"></div>
-    </section>
+<!-- MÉTHODE -->
+<section id="tab-methode" class="tab-section" style="padding-top:24px">
+  <h2 class="serif" style="font-size:30px;font-weight:700;color:var(--ink);margin:0 0 4px">Méthode Tee</h2>
+  <p style="font-size:12px;color:var(--muted);margin:0 0 24px">Tes conseils personnalisés pour réussir.</p>
+  <div id="method-rules" style="display:flex;flex-direction:column;gap:14px"></div>
+</section>
+```
 
   </div><!-- /main-scroll -->
 
   <!-- ── BOTTOM NAV ── -->
+
   <nav class="bottom-nav">
     <button class="nav-btn active" onclick="switchTab('accueil',this)" id="nav-accueil">
       <i data-lucide="layout-dashboard" style="width:20px;height:20px"></i>
@@ -474,6 +502,7 @@
   </nav>
 
   <!-- ── FAB ADMIN (masqué côté client) ── -->
+
   <button class="fab" id="fab-admin" onclick="openAdmin()" type="button" aria-label="Admin">
     <i data-lucide="sliders-horizontal" style="width:20px;height:20px"></i>
   </button>
@@ -481,182 +510,194 @@
   <!-- ══════════════════════════════════════
        ADMIN OVERLAY
   ═══════════════════════════════════════ -->
+
   <div id="admin-overlay" class="admin-overlay" onclick="if(event.target===this)closeAdmin()">
     <div class="admin-panel">
 
-      <!-- Header admin -->
-      <div style="background:var(--ink);padding:28px 20px 22px;position:sticky;top:0;z-index:10">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start">
-          <div>
-            <p style="font-size:9px;text-transform:uppercase;letter-spacing:.18em;color:rgba(255,255,255,.45);font-weight:800;margin-bottom:4px">Admin</p>
-            <h2 class="serif" style="font-size:28px;color:white;font-style:italic;font-weight:700;margin:0">Méthode Tee</h2>
-          </div>
-          <button onclick="closeAdmin()" style="width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.12);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:white">
-            <i data-lucide="x" style="width:18px;height:18px"></i>
-          </button>
-        </div>
+```
+  <!-- Header admin -->
+  <div style="background:var(--ink);padding:28px 20px 22px;position:sticky;top:0;z-index:10">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start">
+      <div>
+        <p style="font-size:9px;text-transform:uppercase;letter-spacing:.18em;color:rgba(255,255,255,.45);font-weight:800;margin-bottom:4px">Admin</p>
+        <h2 class="serif" style="font-size:28px;color:white;font-style:italic;font-weight:700;margin:0">Méthode Tee</h2>
       </div>
+      <button onclick="closeAdmin()" style="width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.12);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:white">
+        <i data-lucide="x" style="width:18px;height:18px"></i>
+      </button>
+    </div>
+  </div>
 
-      <!-- Supabase config -->
-      <div class="admin-section">
-        <h3 class="serif" style="font-size:20px;color:var(--ink);margin:0 0 14px">Connexion Supabase</h3>
-        <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px">
-          <div>
-            <label class="field-label">URL Supabase</label>
-            <input id="sb-url" class="admin-input" placeholder="https://xxxx.supabase.co" />
-          </div>
-          <div>
-            <label class="field-label">Clé API (anon / publishable)</label>
-            <input id="sb-key" class="admin-input" placeholder="sb_publishable_..." />
-          </div>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-          <button class="btn btn-brand" onclick="connectSupabase()">Connecter</button>
-          <button class="btn btn-ghost" onclick="testSupabase()">Tester la table</button>
-        </div>
-        <div id="sb-log" class="log-box" style="margin-top:12px">En attente de configuration…</div>
+  <!-- Supabase config -->
+  <div class="admin-section">
+    <h3 class="serif" style="font-size:20px;color:var(--ink);margin:0 0 14px">Connexion Supabase</h3>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px">
+      <div>
+        <label class="field-label">URL Supabase</label>
+        <input id="sb-url" class="admin-input" placeholder="https://xxxx.supabase.co" />
       </div>
-
-      <!-- Liste clients -->
-      <div class="admin-section">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-          <h3 class="serif" style="font-size:20px;color:var(--ink);margin:0">Clients</h3>
-          <div style="display:flex;gap:8px">
-            <button class="chip" onclick="loadAllClients()">↻ Actualiser</button>
-            <button class="chip" onclick="createClient()">+ Nouveau</button>
-          </div>
-        </div>
-        <div id="clients-list" style="display:flex;flex-direction:column;gap:8px">
-          <p style="font-size:12px;color:var(--muted)">Connecte Supabase pour voir les clients.</p>
-        </div>
+      <div>
+        <label class="field-label">Clé API (anon / publishable)</label>
+        <input id="sb-key" class="admin-input" placeholder="sb_publishable_..." />
       </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <button class="btn btn-brand" onclick="connectSupabase()">Connecter</button>
+      <button class="btn btn-ghost" onclick="testSupabase()">Tester la table</button>
+    </div>
+    <div id="sb-log" class="log-box" style="margin-top:12px">En attente de configuration…</div>
+  </div>
 
-      <!-- Profil client -->
-      <div class="admin-section">
-        <h3 class="serif" style="font-size:20px;color:var(--ink);margin:0 0 16px">Profil client</h3>
-        <div style="display:flex;flex-direction:column;gap:12px">
-          <div>
-            <label class="field-label">Slug (dans l'URL) <span style="font-weight:400;text-transform:none;letter-spacing:0">ex: rams → ?client=rams</span></label>
-            <input id="f-slug" class="admin-input" placeholder="rams" />
-          </div>
-          <div>
-            <label class="field-label">Prénom affiché après Bonjour</label>
-            <input id="f-prenom" class="admin-input" placeholder="Rams" />
-          </div>
-          <div>
-            <label class="field-label">Semaine</label>
-            <input id="f-semaine" class="admin-input" placeholder="Semaine 2" />
-          </div>
-          <div>
-            <label class="field-label">Objectif principal</label>
-            <input id="f-objectif" class="admin-input" placeholder="Recomposition corporelle…" />
-          </div>
-          <div>
-            <label class="field-label">Mot du coach</label>
-            <textarea id="f-coach" class="admin-textarea" placeholder="Message personnalisé…"></textarea>
-          </div>
-          <div>
-            <label class="field-label">Objectifs (une ligne = un point)</label>
-            <textarea id="f-goals" class="admin-textarea" placeholder="S'affiner sans perdre d'explosivité&#10;Améliorer la récupération&#10;Optimiser la digestion"></textarea>
-          </div>
-          <div>
-            <label class="field-label">Priorités du jour / checklist (une ligne = une tâche)</label>
-            <textarea id="f-tasks" class="admin-textarea" placeholder="Hydratation 2L min&#10;Collation post-entraînement&#10;Infusion soir"></textarea>
-          </div>
-        </div>
+  <!-- Liste clients -->
+  <div class="admin-section">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <h3 class="serif" style="font-size:20px;color:var(--ink);margin:0">Clients</h3>
+      <div style="display:flex;gap:8px">
+        <button class="chip" onclick="loadAllClients()">↻ Actualiser</button>
+        <button class="chip" onclick="createClient()">+ Nouveau</button>
       </div>
+    </div>
+    <div id="clients-list" style="display:flex;flex-direction:column;gap:8px">
+      <p style="font-size:12px;color:var(--muted)">Connecte Supabase pour voir les clients.</p>
+    </div>
+  </div>
 
-      <!-- Repas -->
-      <div class="admin-section">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
-          <h3 class="serif" style="font-size:20px;color:var(--ink);margin:0">Repas</h3>
-          <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <button class="chip" onclick="addDay()">+ Jour</button>
-            <button class="chip" onclick="saveDay()">✓ Sauver jour</button>
-            <button class="chip" onclick="deleteDay()" style="color:#dc2626;border-color:rgba(220,38,38,.2)">✕ Suppr.</button>
-          </div>
-        </div>
-        <div id="admin-days-nav" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px"></div>
-        <div style="display:flex;flex-direction:column;gap:10px">
-          <div><label class="field-label">Nom du jour</label><input id="f-day-name" class="admin-input" placeholder="Lundi" /></div>
-          <div><label class="field-label">Matin</label><textarea id="f-morning" class="admin-textarea"></textarea></div>
-          <div><label class="field-label">Déjeuner</label><textarea id="f-lunch" class="admin-textarea"></textarea></div>
-          <div><label class="field-label">Collation</label><textarea id="f-snack" class="admin-textarea"></textarea></div>
-          <div><label class="field-label">Dîner</label><textarea id="f-dinner" class="admin-textarea"></textarea></div>
-        </div>
+  <!-- Profil client -->
+  <div class="admin-section">
+    <h3 class="serif" style="font-size:20px;color:var(--ink);margin:0 0 16px">Profil client</h3>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div>
+        <label class="field-label">Slug (dans l'URL) <span style="font-weight:400;text-transform:none;letter-spacing:0">ex: rams → ?client=rams</span></label>
+        <input id="f-slug" class="admin-input" placeholder="rams" />
       </div>
-
-      <!-- Produits / Soins -->
-      <div class="admin-section">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-          <h3 class="serif" style="font-size:20px;color:var(--ink);margin:0">Soins / Produits</h3>
-          <button class="chip" onclick="addProduct()">+ Produit</button>
-        </div>
-        <div id="product-editors"></div>
+      <div>
+        <label class="field-label">Prénom affiché après Bonjour</label>
+        <input id="f-prenom" class="admin-input" placeholder="Rams" />
       </div>
-
-      <!-- Signature -->
-      <div class="admin-section">
-        <h3 class="serif" style="font-size:20px;color:var(--ink);margin:0 0 14px">Plat Signature Healthy</h3>
-        <div style="display:flex;flex-direction:column;gap:10px">
-          <div><label class="field-label">Titre du plat</label><input id="f-sig-title" class="admin-input" placeholder="Bowl Athlète" /></div>
-          <div><label class="field-label">Ingrédients (une ligne = un ingrédient)</label><textarea id="f-sig-ingredients" class="admin-textarea"></textarea></div>
-          <div><label class="field-label">Description / conseil</label><textarea id="f-sig-desc" class="admin-textarea"></textarea></div>
-        </div>
+      <div>
+        <label class="field-label">Semaine</label>
+        <input id="f-semaine" class="admin-input" placeholder="Semaine 2" />
       </div>
-
-      
-      <!-- Rituel du jour -->
-      <div class="admin-section">
-        <h3 class="serif" style="font-size:20px;color:var(--ink);margin:0 0 14px">Rituel du jour</h3>
-        <div style="display:flex;flex-direction:column;gap:10px">
-          <div><label class="field-label">Matin</label><textarea id="f-rituel-matin" class="admin-textarea" placeholder="Eau chaude citron, infusion..."></textarea></div>
-          <div><label class="field-label">Midi</label><textarea id="f-rituel-midi" class="admin-textarea" placeholder="Repère ou rituel du midi"></textarea></div>
-          <div><label class="field-label">Soir</label><textarea id="f-rituel-soir" class="admin-textarea" placeholder="Infusion, routine du soir..."></textarea></div>
-          <div><label class="field-label">Note / intention</label><textarea id="f-rituel-note" class="admin-textarea" placeholder="Aujourd'hui on travaille..."></textarea></div>
-        </div>
+      <div>
+        <label class="field-label">Offre client <span style="font-weight:400;text-transform:none;letter-spacing:0">signature / privilege / elite</span></label>
+        <select id="f-offre" class="admin-input" style="cursor:pointer">
+          <option value="">— Aucune offre —</option>
+          <option value="signature">Signature — 120 euros/mois (-15% boutique)</option>
+          <option value="privilege">Privilege — 240 euros/mois (5 produits offerts)</option>
+          <option value="elite">Elite Performance — 400 euros/mois (10 produits offerts)</option>
+        </select>
       </div>
-
-      <!-- Terrain naturel -->
-      <div class="admin-section">
-        <h3 class="serif" style="font-size:20px;color:var(--ink);margin:0 0 14px">Analyse du terrain</h3>
-        <div style="display:flex;flex-direction:column;gap:10px">
-          <div><label class="field-label">Terrain dominant</label><input id="f-terrain-dominant" class="admin-input" placeholder="Digestif / Nerveux / Énergie..." /></div>
-          <div><label class="field-label">Axes travaillés (une ligne = un axe)</label><textarea id="f-terrain-axes" class="admin-textarea" placeholder="Digestion&#10;Sommeil&#10;Vitalité"></textarea></div>
-          <div><label class="field-label">Note explicative</label><textarea id="f-terrain-note" class="admin-textarea" placeholder="Texte d'explication du terrain"></textarea></div>
-        </div>
+      <div>
+        <label class="field-label">Objectif principal</label>
+        <input id="f-objectif" class="admin-input" placeholder="Recomposition corporelle…" />
       </div>
-
-      <!-- Protocole végétal -->
-      <div class="admin-section">
-        <h3 class="serif" style="font-size:20px;color:var(--ink);margin:0 0 14px">Protocole végétal</h3>
-        <div style="display:flex;flex-direction:column;gap:10px">
-          <div><label class="field-label">Matin</label><textarea id="f-protocole-matin" class="admin-textarea" placeholder="Plantes / infusions du matin"></textarea></div>
-          <div><label class="field-label">Midi</label><textarea id="f-protocole-midi" class="admin-textarea" placeholder="Plantes / infusions du midi"></textarea></div>
-          <div><label class="field-label">Soir</label><textarea id="f-protocole-soir" class="admin-textarea" placeholder="Plantes / infusions du soir"></textarea></div>
-          <div><label class="field-label">Durée / conseil</label><input id="f-protocole-duree" class="admin-input" placeholder="Ex : 7 jours / 21 jours" /></div>
-        </div>
+      <div>
+        <label class="field-label">Mot du coach</label>
+        <textarea id="f-coach" class="admin-textarea" placeholder="Message personnalisé…"></textarea>
       </div>
-
-<!-- Méthode -->
-      <div class="admin-section">
-        <h3 class="serif" style="font-size:20px;color:var(--ink);margin:0 0 8px">Méthode Tee</h3>
-        <p style="font-size:11px;color:var(--muted);margin:0 0 14px;line-height:1.5">Format JSON. Chaque règle : <code style="background:#f0ece6;padding:1px 5px;border-radius:4px">{"titre":"...","items":["...","..."],"accent":"brand"}</code></p>
-        <textarea id="f-method" class="admin-textarea" style="min-height:140px;font-family:monospace;font-size:12px"></textarea>
+      <div>
+        <label class="field-label">Objectifs (une ligne = un point)</label>
+        <textarea id="f-goals" class="admin-textarea" placeholder="S'affiner sans perdre d'explosivité&#10;Améliorer la récupération&#10;Optimiser la digestion"></textarea>
       </div>
-
-      <!-- Actions -->
-      <div class="admin-section">
-        <h3 class="serif" style="font-size:20px;color:var(--ink);margin:0 0 14px">Actions</h3>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-          <button class="btn btn-ink" onclick="saveClient()" style="grid-column:1/-1">💾 Sauvegarder le client</button>
-          <button class="btn btn-brand" onclick="copyLink()">🔗 Copier le lien</button>
-          <button class="btn btn-ghost" onclick="duplicateClient()">⎘ Dupliquer</button>
-          <button class="btn btn-danger" onclick="deleteClient()" style="grid-column:1/-1">🗑️ Supprimer ce client</button>
-        </div>
+      <div>
+        <label class="field-label">Priorités du jour / checklist (une ligne = une tâche)</label>
+        <textarea id="f-tasks" class="admin-textarea" placeholder="Hydratation 2L min&#10;Collation post-entraînement&#10;Infusion soir"></textarea>
       </div>
+    </div>
+  </div>
 
-    </div><!-- /admin-panel -->
+  <!-- Repas -->
+  <div class="admin-section">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+      <h3 class="serif" style="font-size:20px;color:var(--ink);margin:0">Repas</h3>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="chip" onclick="addDay()">+ Jour</button>
+        <button class="chip" onclick="saveDay()">✓ Sauver jour</button>
+        <button class="chip" onclick="deleteDay()" style="color:#dc2626;border-color:rgba(220,38,38,.2)">✕ Suppr.</button>
+      </div>
+    </div>
+    <div id="admin-days-nav" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px"></div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div><label class="field-label">Nom du jour</label><input id="f-day-name" class="admin-input" placeholder="Lundi" /></div>
+      <div><label class="field-label">Matin</label><textarea id="f-morning" class="admin-textarea"></textarea></div>
+      <div><label class="field-label">Déjeuner</label><textarea id="f-lunch" class="admin-textarea"></textarea></div>
+      <div><label class="field-label">Collation</label><textarea id="f-snack" class="admin-textarea"></textarea></div>
+      <div><label class="field-label">Dîner</label><textarea id="f-dinner" class="admin-textarea"></textarea></div>
+    </div>
+  </div>
+
+  <!-- Produits / Soins -->
+  <div class="admin-section">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <h3 class="serif" style="font-size:20px;color:var(--ink);margin:0">Soins / Produits</h3>
+      <button class="chip" onclick="addProduct()">+ Produit</button>
+    </div>
+    <div id="product-editors"></div>
+  </div>
+
+  <!-- Signature -->
+  <div class="admin-section">
+    <h3 class="serif" style="font-size:20px;color:var(--ink);margin:0 0 14px">Plat Signature Healthy</h3>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div><label class="field-label">Titre du plat</label><input id="f-sig-title" class="admin-input" placeholder="Bowl Athlète" /></div>
+      <div><label class="field-label">Ingrédients (une ligne = un ingrédient)</label><textarea id="f-sig-ingredients" class="admin-textarea"></textarea></div>
+      <div><label class="field-label">Description / conseil</label><textarea id="f-sig-desc" class="admin-textarea"></textarea></div>
+    </div>
+  </div>
+
+  <!-- Rituel du jour -->
+  <div class="admin-section">
+    <h3 class="serif" style="font-size:20px;color:var(--ink);margin:0 0 14px">Rituel du jour</h3>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div><label class="field-label">Matin</label><textarea id="f-rituel-matin" class="admin-textarea" placeholder="Eau chaude citron, infusion..."></textarea></div>
+      <div><label class="field-label">Midi</label><textarea id="f-rituel-midi" class="admin-textarea" placeholder="Repère ou rituel du midi"></textarea></div>
+      <div><label class="field-label">Soir</label><textarea id="f-rituel-soir" class="admin-textarea" placeholder="Infusion, routine du soir..."></textarea></div>
+      <div><label class="field-label">Note / intention</label><textarea id="f-rituel-note" class="admin-textarea" placeholder="Aujourd'hui on travaille..."></textarea></div>
+    </div>
+  </div>
+
+  <!-- Terrain naturel -->
+  <div class="admin-section">
+    <h3 class="serif" style="font-size:20px;color:var(--ink);margin:0 0 14px">Analyse du terrain</h3>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div><label class="field-label">Terrain dominant</label><input id="f-terrain-dominant" class="admin-input" placeholder="Digestif / Nerveux / Énergie..." /></div>
+      <div><label class="field-label">Axes travaillés (une ligne = un axe)</label><textarea id="f-terrain-axes" class="admin-textarea" placeholder="Digestion&#10;Sommeil&#10;Vitalité"></textarea></div>
+      <div><label class="field-label">Note explicative</label><textarea id="f-terrain-note" class="admin-textarea" placeholder="Texte d'explication du terrain"></textarea></div>
+    </div>
+  </div>
+
+  <!-- Protocole végétal -->
+  <div class="admin-section">
+    <h3 class="serif" style="font-size:20px;color:var(--ink);margin:0 0 14px">Protocole végétal</h3>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div><label class="field-label">Matin</label><textarea id="f-protocole-matin" class="admin-textarea" placeholder="Plantes / infusions du matin"></textarea></div>
+      <div><label class="field-label">Midi</label><textarea id="f-protocole-midi" class="admin-textarea" placeholder="Plantes / infusions du midi"></textarea></div>
+      <div><label class="field-label">Soir</label><textarea id="f-protocole-soir" class="admin-textarea" placeholder="Plantes / infusions du soir"></textarea></div>
+      <div><label class="field-label">Durée / conseil</label><input id="f-protocole-duree" class="admin-input" placeholder="Ex : 7 jours / 21 jours" /></div>
+    </div>
+  </div>
+
+  <!-- Méthode -->
+  <div class="admin-section">
+    <h3 class="serif" style="font-size:20px;color:var(--ink);margin:0 0 8px">Méthode Tee</h3>
+    <p style="font-size:11px;color:var(--muted);margin:0 0 14px;line-height:1.5">Format JSON. Chaque règle : <code style="background:#f0ece6;padding:1px 5px;border-radius:4px">{"titre":"...","items":["...","..."],"accent":"brand"}</code></p>
+    <textarea id="f-method" class="admin-textarea" style="min-height:140px;font-family:monospace;font-size:12px"></textarea>
+  </div>
+
+  <!-- Actions -->
+  <div class="admin-section">
+    <h3 class="serif" style="font-size:20px;color:var(--ink);margin:0 0 14px">Actions</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <button class="btn btn-ink" onclick="saveClient()" style="grid-column:1/-1">💾 Sauvegarder le client</button>
+      <button class="btn btn-brand" onclick="copyLink()">🔗 Copier le lien</button>
+      <button class="btn btn-ghost" onclick="duplicateClient()">⎘ Dupliquer</button>
+      <button class="btn btn-danger" onclick="deleteClient()" style="grid-column:1/-1">🗑️ Supprimer ce client</button>
+    </div>
+  </div>
+
+</div><!-- /admin-panel -->
+```
+
   </div><!-- /admin-overlay -->
 
 </div><!-- /app-shell -->
@@ -665,7 +706,6 @@
 /* ══════════════════════════════════════════════
    CONFIGURATION
 ══════════════════════════════════════════════ */
-// ▼ Colle tes credentials ici pour ne pas les retaper dans l'admin à chaque fois
 const DEFAULT_SB_URL = "https://tskwtxstajenhyzvrece.supabase.co";
 const DEFAULT_SB_KEY = "sb_publishable_YldvpG7h1_3TUha6Q2-ZBw_8PLuPCo0";
 const SB_TABLE = "mt_clients";
@@ -674,13 +714,12 @@ const SETTINGS_KEY = "mt_sb_settings";
 /* ══════════════════════════════════════════════
    ÉTAT GLOBAL
 ══════════════════════════════════════════════ */
-let sb = null;          // client Supabase
-let currentSlug = null; // slug admin en cours d'édition
-let currentDay = null;  // jour actif dans l'onglet repas
-let adminDay = null;    // jour actif dans l'admin repas
-let isClientMode = false; // true = accès via ?client=, cacher admin
+let sb = null;
+let currentSlug = null;
+let currentDay = null;
+let adminDay = null;
+let isClientMode = false;
 
-// Programme en cours d'édition (côté admin)
 function emptyProgramme() {
   return {
     semaine: "",
@@ -694,7 +733,8 @@ function emptyProgramme() {
     rituel: { matin: "", midi: "", soir: "", note: "" },
     terrain: { dominant: "", axes: [], note: "" },
     protocole: { matin: "", midi: "", soir: "", duree: "" },
-    methode: []
+    methode: [],
+    offre: ""
   };
 }
 
@@ -792,13 +832,11 @@ async function loadClientFromURL() {
 ══════════════════════════════════════════════ */
 function renderClientView(prenom, prog) {
   _currentProg = prog || {};
-  // Prénom
   const p = (prenom || "toi").trim();
   document.getElementById("display-prenom").textContent = p;
   document.getElementById("avatar").textContent = p.charAt(0).toUpperCase();
   document.title = "Méthode Tee — " + p;
 
-  // Objectif
   document.getElementById("goal-title").textContent = prog.objectif || "";
   document.getElementById("goal-list").innerHTML = (prog.goals || []).map(g =>
     `<li style="display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:6px">
@@ -806,13 +844,9 @@ function renderClientView(prenom, prog) {
     </li>`
   ).join("");
 
-  // Coach
   document.getElementById("coach-msg").textContent = prog.coach ? `"${prog.coach}"` : "";
-
-  // Semaine badge
   document.getElementById("week-badge").textContent = prog.semaine || "";
 
-  // Tâches
   document.getElementById("tasks-list").innerHTML = (prog.tasks || []).map((t, i) =>
     `<div class="task-item" id="task-${i}" onclick="toggleTask(${i})">
       <div class="task-check" id="check-${i}">
@@ -822,27 +856,44 @@ function renderClientView(prenom, prog) {
     </div>`
   ).join("");
 
-  // Repas / jours
   const days = Object.keys(prog.days || {});
   currentDay = days[0] || null;
   renderDaysNav(prog.days || {});
   renderMeals(prog.days || {});
-
-  // Accueil enrichi
   renderRituel(prog.rituel || {});
   renderTerrain(prog.terrain || {});
-
-  // Soins enrichi
   renderProtocole(prog.protocole || {});
   renderProducts(prog.products || []);
-
-  // Signature
   renderSignature(prog.signature || {});
-
-  // Méthode
   renderMethodRules(prog.methode || []);
 
-  // Icônes Lucide
+  // Date du jour
+  var dateEl = document.getElementById("today-date");
+  if (dateEl) {
+    var nowD = new Date();
+    dateEl.textContent = nowD.toLocaleDateString("fr-FR", {weekday:"long", day:"numeric", month:"long"});
+  }
+
+  // Banniere Maison Yanna selon offre
+  var offreVal = prog.offre || "";
+  var bannerDiv = document.getElementById("my-banner");
+  var bannerTxt = document.getElementById("my-banner-text");
+  var offresMap = {
+    "signature": "Offre Signature : -15% sur toute la boutique Maison Yanna",
+    "privilege": "Offre Privilege : Selectionne 5 produits offerts et envoie ta selection par message",
+    "elite": "Offre Elite Performance : 10 produits offerts a la quantite souhaitee, envoie ta selection par message"
+  };
+  if (bannerDiv && bannerTxt && offresMap[offreVal]) {
+    bannerTxt.textContent = offresMap[offreVal];
+    bannerDiv.style.display = "block";
+  } else if (bannerDiv) {
+    bannerDiv.style.display = "none";
+  }
+
+  // Restaurer checklist du jour
+  var slugRestore = new URLSearchParams(window.location.search).get("client");
+  setTimeout(function() { restoreTasks(slugRestore); }, 80);
+
   lucide.createIcons();
 }
 
@@ -854,6 +905,34 @@ function toggleTask(i) {
   check.style.background = done ? "var(--brand)" : "white";
   check.style.borderColor = done ? "var(--brand)" : "#ddd8d0";
   icon.style.display = done ? "block" : "none";
+  const slug = new URLSearchParams(window.location.search).get("client") || "admin";
+  const today = new Date().toISOString().slice(0,10);
+  const key = "mt_tasks_" + slug + "_" + today;
+  try {
+    const saved = JSON.parse(localStorage.getItem(key) || "{}");
+    saved[i] = done;
+    localStorage.setItem(key, JSON.stringify(saved));
+  } catch(e) {}
+}
+
+function restoreTasks(slug) {
+  const today = new Date().toISOString().slice(0,10);
+  const key = "mt_tasks_" + (slug || "admin") + "_" + today;
+  try {
+    const saved = JSON.parse(localStorage.getItem(key) || "{}");
+    Object.entries(saved).forEach(function(entry) {
+      const idx = entry[0]; const done = entry[1];
+      const el = document.getElementById("task-"+idx);
+      const check = document.getElementById("check-"+idx);
+      const icon = document.getElementById("checkicon-"+idx);
+      if (!el) return;
+      if (done) {
+        el.classList.add("done");
+        if (check) { check.style.background = "var(--brand)"; check.style.borderColor = "var(--brand)"; }
+        if (icon) icon.style.display = "block";
+      }
+    });
+  } catch(e) {}
 }
 
 function renderDaysNav(days) {
@@ -868,12 +947,11 @@ function selectDay(day, btn) {
   currentDay = day;
   document.querySelectorAll(".day-pill").forEach(b => b.classList.remove("active"));
   btn.classList.add("active");
-  // récupère programme actuel (mode client : depuis prog global)
   const prog = _currentProg;
   if (prog) renderMeals(prog.days || {});
 }
 
-let _currentProg = null; // référence pour selectDay en mode client
+let _currentProg = null;
 
 function renderMeals(days) {
   const d = days[currentDay] || {};
@@ -929,7 +1007,6 @@ function renderMethodRules(rules) {
     </div>`
   ).join("");
 }
-
 
 function renderRituel(rituel) {
   const el = document.getElementById("rituel-card");
@@ -1085,6 +1162,7 @@ function fillAdmin(prenom, prog) {
   document.getElementById("f-protocole-soir").value = prog.protocole?.soir || "";
   document.getElementById("f-protocole-duree").value = prog.protocole?.duree || "";
   document.getElementById("f-method").value = JSON.stringify(prog.methode || [], null, 2);
+  document.getElementById("f-offre").value = prog.offre || "";
   renderAdminDaysNav(prog.days || {});
   renderProductEditors(prog.products || []);
 }
@@ -1164,212 +1242,213 @@ function renderProductEditors(products) {
         <input class="admin-input p-emoji" data-i="${i}" placeholder="Emoji ex: 🌿" value="${p.emoji||''}">
         <input class="admin-input p-titre" data-i="${i}" placeholder="Nom du produit" value="${p.titre||''}">
         <textarea class="admin-textarea p-texte" data-i="${i}" placeholder="Description">${p.texte||''}</textarea>
-        <input class="admin-input p-lien" data-i="${i}" placeholder="Lien https://..." value="${p.lien||''}">
-        <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer">
-          <input type="checkbox" class="p-featured" data-i="${i}" ${p.featured?'checked':''} style="accent-color:var(--brand);width:16px;height:16px">
-          Produit mis en avant
-        </label>
-      </div>
-    </div>`
-  ).join("");
+
+```
+    <input class="admin-input p-lien" data-i="${i}" placeholder="Lien https://..." value="${p.lien||''}">
+    <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer">
+      <input type="checkbox" class="p-featured" data-i="${i}" ${p.featured?'checked':''} style="accent-color:var(--brand);width:16px;height:16px">
+      Produit mis en avant
+    </label>
+  </div>
+</div>`
+```
+
+).join(””);
 }
 
 function syncProducts() {
-  programme.products = [];
-  document.querySelectorAll("[class*='p-emoji']").forEach(el => {
-    const i = +el.dataset.i;
-    if (!programme.products[i]) programme.products[i] = {};
-    programme.products[i].emoji = el.value.trim();
-  });
-  document.querySelectorAll(".p-titre").forEach(el => { programme.products[+el.dataset.i].titre = el.value.trim(); });
-  document.querySelectorAll(".p-texte").forEach(el => { programme.products[+el.dataset.i].texte = el.value.trim(); });
-  document.querySelectorAll(".p-lien").forEach(el => {
-    let v = el.value.trim();
-    if (v && !/^https?:\/\//i.test(v)) v = "https://" + v;
-    programme.products[+el.dataset.i].lien = v;
-  });
-  document.querySelectorAll(".p-featured").forEach(el => { programme.products[+el.dataset.i].featured = el.checked; });
+programme.products = [];
+document.querySelectorAll(”[class*=‘p-emoji’]”).forEach(el => {
+const i = +el.dataset.i;
+if (!programme.products[i]) programme.products[i] = {};
+programme.products[i].emoji = el.value.trim();
+});
+document.querySelectorAll(”.p-titre”).forEach(el => { programme.products[+el.dataset.i].titre = el.value.trim(); });
+document.querySelectorAll(”.p-texte”).forEach(el => { programme.products[+el.dataset.i].texte = el.value.trim(); });
+document.querySelectorAll(”.p-lien”).forEach(el => {
+let v = el.value.trim();
+if (v && !/^https?:///i.test(v)) v = “https://” + v;
+programme.products[+el.dataset.i].lien = v;
+});
+document.querySelectorAll(”.p-featured”).forEach(el => { programme.products[+el.dataset.i].featured = el.checked; });
 }
 
 function addProduct() {
-  syncProducts();
-  programme.products.push({ emoji: "🌿", titre: "Nouveau produit", texte: "", lien: "", featured: false });
-  renderProductEditors(programme.products);
+syncProducts();
+programme.products.push({ emoji: “🌿”, titre: “Nouveau produit”, texte: “”, lien: “”, featured: false });
+renderProductEditors(programme.products);
 }
 
 function removeProduct(i) {
-  syncProducts();
-  programme.products.splice(i, 1);
-  renderProductEditors(programme.products);
+syncProducts();
+programme.products.splice(i, 1);
+renderProductEditors(programme.products);
 }
 
 /* ══════════════════════════════════════════════
-   ADMIN : SAUVEGARDER
+ADMIN : SAUVEGARDER
 ══════════════════════════════════════════════ */
 async function saveClient() {
-  if (!sb) { log("❌ Connecte Supabase d'abord."); return; }
+if (!sb) { log(“❌ Connecte Supabase d’abord.”); return; }
 
-  const slug = document.getElementById("f-slug").value.trim().toLowerCase().replace(/[^a-z0-9-]/g, "-").replace(/^-+|-+$/g, "") || "client";
-  const prenom = document.getElementById("f-prenom").value.trim() || "Client";
+const slug = document.getElementById(“f-slug”).value.trim().toLowerCase().replace(/[^a-z0-9-]/g, “-”).replace(/^-+|-+$/g, “”) || “client”;
+const prenom = document.getElementById(“f-prenom”).value.trim() || “Client”;
 
-  // Synchronise tout avant sauvegarde
-  syncProducts();
-  // Sauvegarde le jour actif si modifié
-  if (adminDay) {
-    programme.days[document.getElementById("f-day-name").value.trim() || adminDay] = {
-      morning: textToHtml(document.getElementById("f-morning").value),
-      lunch:   textToHtml(document.getElementById("f-lunch").value),
-      snack:   textToHtml(document.getElementById("f-snack").value),
-      dinner:  textToHtml(document.getElementById("f-dinner").value)
-    };
-    if (document.getElementById("f-day-name").value.trim() !== adminDay) {
-      delete programme.days[adminDay];
-      adminDay = document.getElementById("f-day-name").value.trim();
-    }
-  }
+syncProducts();
+if (adminDay) {
+programme.days[document.getElementById(“f-day-name”).value.trim() || adminDay] = {
+morning: textToHtml(document.getElementById(“f-morning”).value),
+lunch:   textToHtml(document.getElementById(“f-lunch”).value),
+snack:   textToHtml(document.getElementById(“f-snack”).value),
+dinner:  textToHtml(document.getElementById(“f-dinner”).value)
+};
+if (document.getElementById(“f-day-name”).value.trim() !== adminDay) {
+delete programme.days[adminDay];
+adminDay = document.getElementById(“f-day-name”).value.trim();
+}
+}
 
-  programme.semaine = document.getElementById("f-semaine").value.trim();
-  programme.objectif = document.getElementById("f-objectif").value.trim();
-  programme.coach = document.getElementById("f-coach").value.trim();
-  programme.goals = lines(document.getElementById("f-goals").value);
-  programme.tasks = lines(document.getElementById("f-tasks").value);
-  programme.signature = {
-    titre: document.getElementById("f-sig-title").value.trim(),
-    ingredients: lines(document.getElementById("f-sig-ingredients").value),
-    description: document.getElementById("f-sig-desc").value.trim()
-  };
-  programme.rituel = {
-    matin: document.getElementById("f-rituel-matin").value.trim(),
-    midi: document.getElementById("f-rituel-midi").value.trim(),
-    soir: document.getElementById("f-rituel-soir").value.trim(),
-    note: document.getElementById("f-rituel-note").value.trim()
-  };
-  programme.terrain = {
-    dominant: document.getElementById("f-terrain-dominant").value.trim(),
-    axes: lines(document.getElementById("f-terrain-axes").value),
-    note: document.getElementById("f-terrain-note").value.trim()
-  };
-  programme.protocole = {
-    matin: document.getElementById("f-protocole-matin").value.trim(),
-    midi: document.getElementById("f-protocole-midi").value.trim(),
-    soir: document.getElementById("f-protocole-soir").value.trim(),
-    duree: document.getElementById("f-protocole-duree").value.trim()
-  };
+programme.semaine = document.getElementById(“f-semaine”).value.trim();
+programme.offre = document.getElementById(“f-offre”).value;
+programme.objectif = document.getElementById(“f-objectif”).value.trim();
+programme.coach = document.getElementById(“f-coach”).value.trim();
+programme.goals = lines(document.getElementById(“f-goals”).value);
+programme.tasks = lines(document.getElementById(“f-tasks”).value);
+programme.signature = {
+titre: document.getElementById(“f-sig-title”).value.trim(),
+ingredients: lines(document.getElementById(“f-sig-ingredients”).value),
+description: document.getElementById(“f-sig-desc”).value.trim()
+};
+programme.rituel = {
+matin: document.getElementById(“f-rituel-matin”).value.trim(),
+midi: document.getElementById(“f-rituel-midi”).value.trim(),
+soir: document.getElementById(“f-rituel-soir”).value.trim(),
+note: document.getElementById(“f-rituel-note”).value.trim()
+};
+programme.terrain = {
+dominant: document.getElementById(“f-terrain-dominant”).value.trim(),
+axes: lines(document.getElementById(“f-terrain-axes”).value),
+note: document.getElementById(“f-terrain-note”).value.trim()
+};
+programme.protocole = {
+matin: document.getElementById(“f-protocole-matin”).value.trim(),
+midi: document.getElementById(“f-protocole-midi”).value.trim(),
+soir: document.getElementById(“f-protocole-soir”).value.trim(),
+duree: document.getElementById(“f-protocole-duree”).value.trim()
+};
 
-  try {
-    programme.methode = JSON.parse(document.getElementById("f-method").value || "[]");
-  } catch(e) {
-    log("❌ JSON Méthode invalide — corrige avant de sauvegarder."); return;
-  }
+try {
+programme.methode = JSON.parse(document.getElementById(“f-method”).value || “[]”);
+} catch(e) {
+log(“❌ JSON Méthode invalide — corrige avant de sauvegarder.”); return;
+}
 
-  log("⏳ Sauvegarde en cours…");
+log(“⏳ Sauvegarde en cours…”);
 
-  // Upsert sur la vraie table (slug, prenom, programme)
-  const { error } = await sb.from(SB_TABLE).upsert(
-    { slug, prenom, programme },
-    { onConflict: "slug" }
-  );
+const { error } = await sb.from(SB_TABLE).upsert(
+{ slug, prenom, programme },
+{ onConflict: “slug” }
+);
 
-  if (error) {
-    log("❌ Erreur Supabase : " + error.message +
-      "\n\nVérifie que :\n1. La table a les colonnes slug, prenom, programme\n2. RLS est désactivé\n3. La clé a les droits INSERT/UPDATE");
-    return;
-  }
+if (error) {
+log(“❌ Erreur Supabase : “ + error.message +
+“\n\nVérifie que :\n1. La table a les colonnes slug, prenom, programme\n2. RLS est désactivé\n3. La clé a les droits INSERT/UPDATE”);
+return;
+}
 
-  currentSlug = slug;
-  document.getElementById("f-slug").value = slug;
-  log("✅ Client « " + prenom + " » (slug: " + slug + ") sauvegardé !\n\nLien client :\n" + buildLink(slug));
+currentSlug = slug;
+document.getElementById(“f-slug”).value = slug;
+log(“✅ Client « “ + prenom + “ » (slug: “ + slug + “) sauvegardé !\n\nLien client :\n” + buildLink(slug));
 
-  // Rafraîchir la liste
-  loadAllClients();
-
-  // Prévisualiser en direct
-  _currentProg = programme;
-  renderClientView(prenom, programme);
+loadAllClients();
+_currentProg = programme;
+renderClientView(prenom, programme);
 }
 
 /* ══════════════════════════════════════════════
-   ADMIN : COPIER LIEN
+ADMIN : COPIER LIEN
 ══════════════════════════════════════════════ */
 function buildLink(slug) {
-  return window.location.origin + window.location.pathname + "?client=" + encodeURIComponent(slug);
+return window.location.origin + window.location.pathname + “?client=” + encodeURIComponent(slug);
 }
 
 function copyLink() {
-  const slug = currentSlug || document.getElementById("f-slug").value.trim();
-  if (!slug) { log("❌ Sauvegarde le client d'abord."); return; }
-  const link = buildLink(slug);
-  if (navigator.clipboard && window.isSecureContext) {
-    navigator.clipboard.writeText(link).then(() => log("✅ Lien copié !\n" + link));
-  } else {
-    prompt("Copie ce lien :", link);
-  }
+const slug = currentSlug || document.getElementById(“f-slug”).value.trim();
+if (!slug) { log(“❌ Sauvegarde le client d’abord.”); return; }
+const link = buildLink(slug);
+if (navigator.clipboard && window.isSecureContext) {
+navigator.clipboard.writeText(link).then(() => log(“✅ Lien copié !\n” + link));
+} else {
+prompt(“Copie ce lien :”, link);
+}
 }
 
 /* ══════════════════════════════════════════════
-   ADMIN : OUVERTURE / FERMETURE
+ADMIN : OUVERTURE / FERMETURE
 ══════════════════════════════════════════════ */
 function openAdmin() {
-  document.getElementById("admin-overlay").classList.add("open");
-  lucide.createIcons();
+document.getElementById(“admin-overlay”).classList.add(“open”);
+lucide.createIcons();
 }
 
 function closeAdmin() {
-  document.getElementById("admin-overlay").classList.remove("open");
+document.getElementById(“admin-overlay”).classList.remove(“open”);
 }
 
 /* ══════════════════════════════════════════════
-   UTILITAIRES
+UTILITAIRES
 ══════════════════════════════════════════════ */
 function lines(text) {
-  return String(text || "").split("\n").map(s => s.trim()).filter(Boolean);
+return String(text || “”).split(”\n”).map(s => s.trim()).filter(Boolean);
 }
 function textToHtml(text) {
-  return String(text || "").trim().replace(/\n/g, "<br>");
+return String(text || “”).trim().replace(/\n/g, “<br>”);
 }
 function htmlToText(html) {
-  return String(html || "").replace(/<br\s*\/?>/gi, "\n").replace(/<[^>]+>/g, "");
+return String(html || “”).replace(/<br\s*/?>/gi, “\n”).replace(/<[^>]+>/g, “”);
 }
 function log(msg) {
-  document.getElementById("sb-log").textContent = msg;
+document.getElementById(“sb-log”).textContent = msg;
 }
 function hideLoading() {
-  document.getElementById("loading-screen").style.display = "none";
+document.getElementById(“loading-screen”).style.display = “none”;
 }
 function showError(msg) {
-  hideLoading();
-  const s = document.getElementById("error-screen");
-  document.getElementById("error-msg").textContent = msg;
-  s.style.display = "flex";
+hideLoading();
+const s = document.getElementById(“error-screen”);
+document.getElementById(“error-msg”).textContent = msg;
+s.style.display = “flex”;
 }
 
 /* ══════════════════════════════════════════════
-   INIT
+INIT
 ══════════════════════════════════════════════ */
 (async function init() {
-  // Charger settings Supabase dans les champs admin
-  const settings = loadSettings();
-  document.getElementById("sb-url").value = settings.url || "";
-  document.getElementById("sb-key").value = settings.key || "";
+const settings = loadSettings();
+document.getElementById(“sb-url”).value = settings.url || “”;
+document.getElementById(“sb-key”).value = settings.key || “”;
 
-  // Si credentials disponibles, initialiser Supabase silencieusement
-  if (settings.url && settings.key) {
-    try { sb = getFactory()(settings.url, settings.key); } catch(e) {}
-  }
+if (settings.url && settings.key) {
+try { sb = getFactory()(settings.url, settings.key); } catch(e) {}
+}
 
-  // Mode client (via ?client=slug) : charger depuis Supabase SANS localStorage
-  const slug = new URLSearchParams(window.location.search).get("client");
-  if (slug) {
-    await loadClientFromURL();
-  } else {
-    // Mode admin : afficher l'app avec données vides par défaut
-    hideLoading();
-    // Preview avec programme vide pour que l'app soit visible
-    renderClientView("toi", emptyProgramme());
-  }
+const slug = new URLSearchParams(window.location.search).get(“client”);
+if (slug) {
+await loadClientFromURL();
+} else {
+// Mode admin : on cache le loading IMMÉDIATEMENT, sans attendre Supabase
+hideLoading();
+renderClientView(“toi”, emptyProgramme());
+}
 
-  lucide.createIcons();
+lucide.createIcons();
+
+// ── PWA Service Worker ──
+if (‘serviceWorker’ in navigator) {
+try { navigator.serviceWorker.register(’/nutrition/service-worker.js’); } catch(e) {}
+}
 })();
 </script>
+
 </body>
 </html>
