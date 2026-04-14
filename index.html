@@ -449,6 +449,77 @@
       <p style="font-size:12px;color:var(--muted);margin:0 0 24px">Ton plat signature personnalisé.</p>
       <div id="signature-card" class="card" style="padding:24px"></div>
     </section>
+    <!-- SUIVI -->
+    <section id="tab-suivi" class="tab-section" style="padding-top:24px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:20px">
+        <div>
+          <h2 class="serif" style="font-size:30px;font-weight:700;color:var(--ink);margin:0 0 4px">Mon Suivi</h2>
+          <p id="suivi-date" style="font-size:12px;color:var(--muted)"></p>
+        </div>
+        <div id="score-badge" style="font-size:11px;color:white;font-weight:700;background:var(--brand);padding:5px 12px;border-radius:999px;display:none"></div>
+      </div>
+
+      <!-- Score semaine -->
+      <div class="card" style="padding:20px;margin-bottom:18px">
+        <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 8px">Score de la semaine</p>
+        <div id="score-bar-wrap" style="background:#f0ece6;border-radius:999px;height:10px;overflow:hidden;margin-bottom:8px">
+          <div id="score-bar" style="height:100%;background:var(--brand);border-radius:999px;transition:width .5s;width:0%"></div>
+        </div>
+        <p id="score-text" style="font-size:13px;color:var(--ink);font-weight:600;margin:0"></p>
+      </div>
+
+      <!-- Checks du jour -->
+      <div class="card" style="padding:20px;margin-bottom:18px">
+        <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 14px">Checks du jour</p>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer">
+            <span style="font-size:13px;color:var(--ink)">💧 Eau suffisante</span>
+            <input type="checkbox" id="check-eau" onchange="saveSuivi()" style="width:20px;height:20px;accent-color:var(--brand)">
+          </label>
+          <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer">
+            <span style="font-size:13px;color:var(--ink)">🥗 Repas respectés</span>
+            <input type="checkbox" id="check-repas" onchange="saveSuivi()" style="width:20px;height:20px;accent-color:var(--brand)">
+          </label>
+          <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer">
+            <span style="font-size:13px;color:var(--ink)">🍵 Infusion / protocole</span>
+            <input type="checkbox" id="check-infusion" onchange="saveSuivi()" style="width:20px;height:20px;accent-color:var(--brand)">
+          </label>
+          <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer">
+            <span style="font-size:13px;color:var(--ink)">🏃 Sport / marche</span>
+            <input type="checkbox" id="check-sport" onchange="saveSuivi()" style="width:20px;height:20px;accent-color:var(--brand)">
+          </label>
+        </div>
+      </div>
+
+      <!-- Mesures du jour -->
+      <div class="card" style="padding:20px;margin-bottom:18px">
+        <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 14px">Mesures du jour</p>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div>
+            <label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:6px">Poids (kg)</label>
+            <input id="suivi-poids" type="number" step="0.1" placeholder="ex: 74.5" oninput="saveSuivi()" style="width:100%;border:1.5px solid #e8e4de;border-radius:14px;padding:11px 14px;font-size:14px;outline:none;font-family:inherit">
+          </div>
+          <div>
+            <label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:8px">Energie <span id="val-energie" style="color:var(--brand)">3/5</span></label>
+            <input type="range" id="suivi-energie" min="1" max="5" value="3" oninput="document.getElementById('val-energie').textContent=this.value+'/5';saveSuivi()" style="width:100%;accent-color:var(--brand)">
+          </div>
+          <div>
+            <label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:8px">Sommeil <span id="val-sommeil" style="color:var(--brand)">3/5</span></label>
+            <input type="range" id="suivi-sommeil" min="1" max="5" value="3" oninput="document.getElementById('val-sommeil').textContent=this.value+'/5';saveSuivi()" style="width:100%;accent-color:var(--brand)">
+          </div>
+          <div>
+            <label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:8px">Digestion <span id="val-digestion" style="color:var(--brand)">3/5</span></label>
+            <input type="range" id="suivi-digestion" min="1" max="5" value="3" oninput="document.getElementById('val-digestion').textContent=this.value+'/5';saveSuivi()" style="width:100%;accent-color:var(--brand)">
+          </div>
+        </div>
+      </div>
+
+      <!-- Note libre -->
+      <div class="card" style="padding:20px;margin-bottom:18px">
+        <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 10px">Note du jour</p>
+        <textarea id="suivi-note" placeholder="Comment tu te sens aujourd'hui ?" oninput="saveSuivi()" style="width:100%;border:1.5px solid #e8e4de;border-radius:14px;padding:12px 14px;font-size:13px;font-family:inherit;min-height:90px;resize:none;outline:none;color:var(--ink)"></textarea>
+      </div>
+    </section>
 
     <!-- MÉTHODE -->
     <section id="tab-methode" class="tab-section" style="padding-top:24px">
@@ -476,6 +547,10 @@
     <button class="nav-btn" onclick="switchTab('signature',this)" id="nav-signature">
       <i data-lucide="salad" style="width:20px;height:20px"></i>
       <span>Signature</span>
+    </button>
+        <button class="nav-btn" onclick="switchTab('suivi',this)" id="nav-suivi">
+      <i data-lucide="bar-chart-2" style="width:20px;height:20px"></i>
+      <span>Suivi</span>
     </button>
     <button class="nav-btn" onclick="switchTab('methode',this)" id="nav-methode">
       <i data-lucide="book-open" style="width:20px;height:20px"></i>
@@ -868,6 +943,7 @@ function renderClientView(prenom, prog) {
   if (d) d.textContent = new Date().toLocaleDateString("fr-FR", {weekday:"long", day:"numeric", month:"long"});
   var slugR = new URLSearchParams(window.location.search).get("client");
   setTimeout(function() { restoreTasks(slugR); }, 80);
+    setTimeout(function() { initSuivi(); }, 100);
   var offreVal = prog.offre || "";
   var bannerDiv = document.getElementById("my-banner");
   var bannerTxt = document.getElementById("my-banner-text");
@@ -1015,6 +1091,67 @@ function renderTerrain(terrain) {
     ${terrain.note ? `<p style="font-size:13px;line-height:1.75;color:var(--muted);margin:0">${terrain.note}</p>` : ""}
     ${!terrain.dominant && !(terrain.axes||[]).length && !terrain.note ? `<p style="font-size:12px;color:var(--muted);margin:0">Aucune analyse ajoutée.</p>` : ""}
   `;
+}
+/* ══════════════════════════════════════════════
+   SUIVI QUOTIDIEN
+══════════════════════════════════════════════ */
+function initSuivi() {
+  var slug = new URLSearchParams(window.location.search).get("client") || "admin";
+  var today = new Date().toISOString().slice(0,10);
+  var now = new Date();
+  var dateStr = now.toLocaleDateString("fr-FR", {weekday:"long", day:"numeric", month:"long"});
+  var el = document.getElementById("suivi-date");
+  if (el) el.textContent = dateStr;
+  var key = "mt_suivi_" + slug + "_" + today;
+  try {
+    var saved = JSON.parse(localStorage.getItem(key) || "{}");
+    if (saved.eau) document.getElementById("check-eau").checked = true;
+    if (saved.repas) document.getElementById("check-repas").checked = true;
+    if (saved.infusion) document.getElementById("check-infusion").checked = true;
+    if (saved.sport) document.getElementById("check-sport").checked = true;
+    if (saved.poids) document.getElementById("suivi-poids").value = saved.poids;
+    if (saved.energie) { document.getElementById("suivi-energie").value = saved.energie; document.getElementById("val-energie").textContent = saved.energie+"/5"; }
+    if (saved.sommeil) { document.getElementById("suivi-sommeil").value = saved.sommeil; document.getElementById("val-sommeil").textContent = saved.sommeil+"/5"; }
+    if (saved.digestion) { document.getElementById("suivi-digestion").value = saved.digestion; document.getElementById("val-digestion").textContent = saved.digestion+"/5"; }
+    if (saved.note) document.getElementById("suivi-note").value = saved.note;
+  } catch(e) {}
+  updateScore(slug);
+}
+
+function saveSuivi() {
+  var slug = new URLSearchParams(window.location.search).get("client") || "admin";
+  var today = new Date().toISOString().slice(0,10);
+  var key = "mt_suivi_" + slug + "_" + today;
+  var data = {
+    eau: document.getElementById("check-eau").checked,
+    repas: document.getElementById("check-repas").checked,
+    infusion: document.getElementById("check-infusion").checked,
+    sport: document.getElementById("check-sport").checked,
+    poids: document.getElementById("suivi-poids").value,
+    energie: document.getElementById("suivi-energie").value,
+    sommeil: document.getElementById("suivi-sommeil").value,
+    digestion: document.getElementById("suivi-digestion").value,
+    note: document.getElementById("suivi-note").value,
+    filled: true
+  };
+  try { localStorage.setItem(key, JSON.stringify(data)); } catch(e) {}
+  updateScore(slug);
+}
+
+function updateScore(slug) {
+  var total = 0; var filled = 0;
+  for (var i = 6; i >= 0; i--) {
+    var d = new Date(); d.setDate(d.getDate() - i);
+    var day = d.toISOString().slice(0,10);
+    var key = "mt_suivi_" + (slug || "admin") + "_" + day;
+    total++;
+    try { var s = JSON.parse(localStorage.getItem(key) || "{}"); if (s.filled) filled++; } catch(e) {}
+  }
+  var pct = Math.round((filled / total) * 100);
+  var bar = document.getElementById("score-bar");
+  var txt = document.getElementById("score-text");
+  if (bar) bar.style.width = pct + "%";
+  if (txt) txt.textContent = "Tu as rempli " + filled + " jour" + (filled > 1 ? "s" : "") + " sur 7 — Score : " + pct + "%";
 }
 
 function renderProtocole(protocole) {
