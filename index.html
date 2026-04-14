@@ -75,22 +75,43 @@
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    /* ── Bottom nav ── */
-    .bottom-nav {
-      position: absolute; bottom: 0; left: 0; right: 0;
-      background: white;
-      border-top: 1px solid rgba(0,0,0,0.06);
-      padding: 10px 8px calc(10px + env(safe-area-inset-bottom));
-      display: flex; justify-content: space-around;
-      z-index: 30;
-    }
-    .nav-btn {
-      display: flex; flex-direction: column; align-items: center;
-      gap: 3px; padding: 4px 10px; border: none; background: none;
-      cursor: pointer; color: #b5aca3; transition: color .2s;
-    }
+    /* ── Bottom .bottom-nav {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  border-top: 1px solid rgba(0,0,0,0.06);
+  padding: 10px 8px calc(22px + env(safe-area-inset-bottom));
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-end;
+  z-index: 30;
+  min-height: 92px;
+}
+   .nav-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  padding: 6px 10px 2px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: #b5aca3;
+  transition: color .2s;
+  min-width: 58px;
+}
     .nav-btn.active { color: var(--brand); }
-    .nav-btn span { font-size: 9px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; }
+    .nav-btn span {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  line-height: 1.1;
+  display: block;
+}
 
     /* ── Cards ── */
     .card {
