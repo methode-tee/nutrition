@@ -1360,6 +1360,7 @@ const slug = new URLSearchParams(window.location.search).get(“client”);
 if (slug) {
 await loadClientFromURL();
 } else {
+// Mode admin : on cache le loading IMMÉDIATEMENT, sans attendre Supabase
 hideLoading();
 renderClientView(“toi”, emptyProgramme());
 }
@@ -1368,7 +1369,7 @@ lucide.createIcons();
 
 // ── PWA Service Worker ──
 if (‘serviceWorker’ in navigator) {
-navigator.serviceWorker.register(’/nutrition/service-worker.js’);
+try { navigator.serviceWorker.register(’/nutrition/service-worker.js’); } catch(e) {}
 }
 })();
 </script>
