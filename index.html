@@ -1393,6 +1393,9 @@ function showError(msg) {
 (async function init() {
   // Charger settings Supabase dans les champs admin
   const settings = loadSettings();
+
+  handleClientRouting();
+  
   document.getElementById("sb-url").value = settings.url || "";
   document.getElementById("sb-key").value = settings.key || "";
 
