@@ -343,6 +343,14 @@
           Privé
         </span>
       </div>
+      
+      <!-- Banniere Maison Yanna -->
+      <div id="my-banner" style="display:none;margin:0 0 20px;border-radius:18px;padding:15px 18px;background:linear-gradient(135deg,#2D241E 0%,#53644A 100%);color:white;position:relative;overflow:hidden">
+        <div style="position:absolute;right:-20px;top:-20px;width:90px;height:90px;border-radius:50%;background:rgba(255,255,255,.06)"></div>
+        <p style="font-size:9px;text-transform:uppercase;letter-spacing:.16em;font-weight:800;opacity:.7;margin:0 0 5px">Maison Yanna — Ton avantage</p>
+        <p id="my-banner-text" class="serif" style="font-size:13px;font-weight:600;margin:0 0 10px;line-height:1.5;font-style:italic"></p>
+        <a href="https://maisonyanna.com" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);color:white;font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:7px 14px;border-radius:999px;text-decoration:none">Voir la boutique</a>
+      </div>
 
       <!-- Objectif -->
       <div class="goal-card" style="margin-bottom:20px">
@@ -549,6 +557,16 @@
             <label class="field-label">Semaine</label>
             <input id="f-semaine" class="admin-input" placeholder="Semaine 2" />
           </div>
+                    <div>
+            <label class="field-label">Offre client</label>
+            <select id="f-offre" class="admin-input" style="cursor:pointer">
+              <option value="">— Aucune offre —</option>
+              <option value="signature">Signature — 120€/mois</option>
+              <option value="privilege">Privilege — 240€/mois</option>
+              <option value="elite">Elite — 400€/mois</option>
+            </select>
+          </div>
+
           <div>
             <label class="field-label">Objectif principal</label>
             <input id="f-objectif" class="admin-input" placeholder="Recomposition corporelle…" />
@@ -696,7 +714,8 @@ function emptyProgramme() {
     rituel: { matin: "", midi: "", soir: "", note: "" },
     terrain: { dominant: "", axes: [], note: "" },
     protocole: { matin: "", midi: "", soir: "", duree: "" },
-    methode: []
+    methode: [], offre: ""
+
   };
 }
 
@@ -849,6 +868,11 @@ function renderClientView(prenom, prog) {
   if (d) d.textContent = new Date().toLocaleDateString("fr-FR", {weekday:"long", day:"numeric", month:"long"});
   var slugR = new URLSearchParams(window.location.search).get("client");
   setTimeout(function() { restoreTasks(slugR); }, 80);
+  var offreVal = prog.offre || "";
+  var bannerDiv = document.getElementById("my-banner");
+  var bannerTxt = document.getElementById("my-banner-text");
+  var offresMap = {"signature":"Offre Signature : -15% sur toute la boutique Maison Yanna","privilege":"Offre Privilege : Selectionne 5 produits offerts et envoie ta selection par message","elite":"Offre Elite : 10 produits offerts a la quantite souhaitee, envoie ta selection par message"};
+  if (bannerDiv && bannerTxt && offresMap[offreVal]) { bannerTxt.textContent = offresMap[offreVal]; bannerDiv.style.display = "block"; } else if (bannerDiv) { bannerDiv.style.display = "none"; }
 
   lucide.createIcons();
 }
@@ -1119,6 +1143,8 @@ function fillAdmin(prenom, prog) {
   document.getElementById("f-protocole-soir").value = prog.protocole?.soir || "";
   document.getElementById("f-protocole-duree").value = prog.protocole?.duree || "";
   document.getElementById("f-method").value = JSON.stringify(prog.methode || [], null, 2);
+  document.getElementById("f-offre").value = prog.offre || "";
+
   renderAdminDaysNav(prog.days || {});
   renderProductEditors(prog.products || []);
 }
@@ -1263,6 +1289,7 @@ async function saveClient() {
   }
 
   programme.semaine = document.getElementById("f-semaine").value.trim();
+  programme.offre = document.getElementById("f-offre").value;
   programme.objectif = document.getElementById("f-objectif").value.trim();
   programme.coach = document.getElementById("f-coach").value.trim();
   programme.goals = lines(document.getElementById("f-goals").value);
