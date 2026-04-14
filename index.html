@@ -2,6 +2,12 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
+  
+  <!-- PWA -->
+<link rel="manifest" href="/nutrition/manifest.webmanifest" />
+<meta name="theme-color" content="#53644A" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>Méthode Tee</title>
 
@@ -1371,5 +1377,11 @@ function showError(msg) {
   lucide.createIcons();
 })();
 </script>
+ <script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/nutrition/service-worker.js');
+  }
+</script>
+ 
 </body>
 </html>
