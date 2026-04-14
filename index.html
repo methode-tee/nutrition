@@ -1165,12 +1165,16 @@ function updateSelectionUI() {
   } else {
     panel.style.display = "block";
     list.innerHTML = _selection.map(function(s) {
-      return '<div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink)">' +
-        '<span>' + s.emoji + '</span><span>' + s.titre + '</span>' +
-        '<span onclick="toggleSelection(' + s.idx + ',\'' + s.titre.replace(/'/g,"\\'") + '\',\'' + s.emoji + '\')" style="margin-left:auto;color:#dc2626;font-size:16px;cursor:pointer">×</span>' +
-        '</div>';
+      return '<div style="display:flex;flex-direction:column;gap:4px;padding:8px 0;border-bottom:1px solid #f0ece6">' +
+  '<div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink)">' +
+  '<span>' + s.emoji + '</span><span style="flex:1">' + s.titre + '</span>' +
+  '<span onclick="toggleSelection(' + s.idx + ',\'' + s.titre.replace(/'/g,"\\'") + '\',\'' + s.emoji + '\')" style="color:#dc2626;font-size:16px;cursor:pointer">×</span>' +
+  '</div>' +
+  '<input placeholder="Format souhaité (ex: 100g, 10 sachets...)" value="' + (s.format||'') + '" onchange="_selection[' + _selection.indexOf(s) + '].format=this.value" style="width:100%;border:1px solid #e8e4de;border-radius:10px;padding:7px 12px;font-size:12px;font-family:inherit;outline:none;color:var(--ink)">' +
+  '</div>';
     }).join("");
   }
+
   document.querySelectorAll("[id^='selbtn-']").forEach(function(btn) {
     var i = parseInt(btn.id.replace("selbtn-",""));
     var selected = _selection.some(function(s) { return s.idx === i; });
@@ -1195,7 +1199,8 @@ async function envoyerSelection() {
   var slug = new URLSearchParams(window.location.search).get("client");
   if (!slug || !sb) { alert("Impossible d'envoyer — contacte ton coach directement."); return; }
   var selectionData = {
-    produits: _selection.map(function(s) { return s.emoji + " " + s.titre; }),
+    produits: _selection.map(function(s) { return s.emoji + " " + s.titre + (s.format ? " — " + s.format : ""); }),
+
     date: new Date().toLocaleDateString("fr-FR"),
     statut: "en_attente"
   };
