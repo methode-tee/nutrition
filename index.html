@@ -341,6 +341,12 @@
     box-shadow: none;
   }
 }
+    @media (display-mode: standalone) {
+  .bottom-nav {
+    padding-bottom: calc(26px + env(safe-area-inset-bottom));
+    min-height: 98px;
+  }
+}
   </style>
 </head>
 <body>
