@@ -440,7 +440,18 @@
         </div>
         <div id="protocole-card" style="display:flex;flex-direction:column;gap:10px"></div>
       </div>
-      <div id="products-grid" class="products-grid"></div>
+            <div id="products-grid" class="products-grid"></div>
+
+      <!-- Panier selection -->
+      <div id="selection-panel" style="display:none;margin-top:18px">
+        <div class="card" style="padding:20px">
+          <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 10px">Ma sélection</p>
+          <div id="selection-list" style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px"></div>
+          <button onclick="envoyerSelection()" style="width:100%;padding:13px;border-radius:999px;border:none;background:var(--ink);color:white;font-family:inherit;font-size:12px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;cursor:pointer">Envoyer ma sélection au coach</button>
+          <button onclick="viderSelection()" style="width:100%;padding:10px;border-radius:999px;border:none;background:#f0ece6;color:var(--muted);font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;margin-top:8px">Vider la sélection</button>
+        </div>
+      </div>
+
     </section>
 
     <!-- SIGNATURE -->
@@ -739,6 +750,16 @@
         <p style="font-size:11px;color:var(--muted);margin:0 0 14px;line-height:1.5">Format JSON. Chaque règle : <code style="background:#f0ece6;padding:1px 5px;border-radius:4px">{"titre":"...","items":["...","..."],"accent":"brand"}</code></p>
         <textarea id="f-method" class="admin-textarea" style="min-height:140px;font-family:monospace;font-size:12px"></textarea>
       </div>
+      <!-- Selection client -->
+      <div class="admin-section" id="selection-admin-block" style="display:none">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <h3 class="serif" style="font-size:20px;color:var(--ink);margin:0">Sélection Maison Yanna</h3>
+          <span id="selection-statut" style="font-size:10px;font-weight:800;text-transform:uppercase;padding:4px 10px;border-radius:999px;background:#fef3c7;color:#92400e"></span>
+        </div>
+        <div id="selection-admin-list" style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px"></div>
+        <p id="selection-admin-date" style="font-size:11px;color:var(--muted);margin:0 0 12px"></p>
+        <button onclick="marquerSelectionTraitee()" class="btn btn-brand" style="width:100%">Marquer comme traité</button>
+      </div>
 
       <!-- Actions -->
       <div class="admin-section">
@@ -1018,20 +1039,23 @@ function renderMeals(days) {
 }
 
 function renderProducts(products) {
-  document.getElementById("products-grid").innerHTML = products.map(p =>
-    `<div class="product-card ${p.featured ? 'featured' : ''}">
+  document.getElementById("products-grid").innerHTML = products.map((p, idx) =>
+    `<div class="product-card ${p.featured ? 'featured' : ''}" id="pcard-${idx}">
       <div class="product-emoji-wrap" style="background:${p.featured ? 'var(--ink)' : 'var(--paper)'}">
         ${p.emoji || "🌿"}
       </div>
       <h4 style="font-size:12px;font-weight:700;text-align:center;color:var(--ink);margin:0 0 6px;line-height:1.3">${p.titre || ""}</h4>
-      <p style="font-size:11px;color:var(--muted);text-align:center;line-height:1.5;flex-grow:1;margin:0 0 12px">${p.texte || ""}</p>
+      <p style="font-size:11px;color:var(--muted);text-align:center;line-height:1.5;flex-grow:1;margin:0 0 8px">${p.texte || ""}</p>
       ${p.lien
-        ? `<a href="${p.lien}" target="_blank" rel="noopener" class="product-btn" style="background:${p.featured ? 'var(--brand)' : '#f0ece6'};color:${p.featured ? 'white' : 'var(--ink)'}">Commander</a>`
-        : `<button class="product-btn" style="background:${p.featured ? 'var(--brand)' : '#f0ece6'};color:${p.featured ? 'white' : 'var(--ink)'}" type="button">Commander</button>`
+        ? `<a href="${p.lien}" target="_blank" rel="noopener" class="product-btn" style="background:${p.featured ? 'var(--brand)' : '#f0ece6'};color:${p.featured ? 'white' : 'var(--ink)'};margin-bottom:6px">Voir le produit</a>`
+        : ""
       }
+      <button onclick="toggleSelection(${idx},'${(p.titre||"").replace(/'/g,"\\'")}','${(p.emoji||"🌿")}')" id="selbtn-${idx}" class="product-btn" style="background:#f0ece6;color:var(--ink);border:1.5px solid #e2ddd7" type="button">+ Sélectionner</button>
     </div>`
   ).join("");
+  restoreSelection();
 }
+
 
 function renderSignature(sig) {
   document.getElementById("signature-card").innerHTML = `
@@ -1116,6 +1140,73 @@ function initSuivi() {
     if (saved.note) document.getElementById("suivi-note").value = saved.note;
   } catch(e) {}
   updateScore(slug);
+}
+/* ══════════════════════════════════════════════
+   SELECTION PRODUITS
+══════════════════════════════════════════════ */
+var _selection = [];
+
+function toggleSelection(idx, titre, emoji) {
+  var pos = _selection.findIndex(function(s) { return s.idx === idx; });
+  if (pos > -1) {
+    _selection.splice(pos, 1);
+  } else {
+    _selection.push({idx: idx, titre: titre, emoji: emoji});
+  }
+  updateSelectionUI();
+}
+
+function updateSelectionUI() {
+  var panel = document.getElementById("selection-panel");
+  var list = document.getElementById("selection-list");
+  if (!panel || !list) return;
+  if (_selection.length === 0) {
+    panel.style.display = "none";
+  } else {
+    panel.style.display = "block";
+    list.innerHTML = _selection.map(function(s) {
+      return '<div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink)">' +
+        '<span>' + s.emoji + '</span><span>' + s.titre + '</span>' +
+        '<span onclick="toggleSelection(' + s.idx + ',\'' + s.titre.replace(/'/g,"\\'") + '\',\'' + s.emoji + '\')" style="margin-left:auto;color:#dc2626;font-size:16px;cursor:pointer">×</span>' +
+        '</div>';
+    }).join("");
+  }
+  document.querySelectorAll("[id^='selbtn-']").forEach(function(btn) {
+    var i = parseInt(btn.id.replace("selbtn-",""));
+    var selected = _selection.some(function(s) { return s.idx === i; });
+    btn.style.background = selected ? "var(--brand)" : "#f0ece6";
+    btn.style.color = selected ? "white" : "var(--ink)";
+    btn.textContent = selected ? "✓ Sélectionné" : "+ Sélectionner";
+  });
+}
+
+function restoreSelection() {
+  _selection = [];
+  updateSelectionUI();
+}
+
+function viderSelection() {
+  _selection = [];
+  updateSelectionUI();
+}
+
+async function envoyerSelection() {
+  if (_selection.length === 0) return;
+  var slug = new URLSearchParams(window.location.search).get("client");
+  if (!slug || !sb) { alert("Impossible d'envoyer — contacte ton coach directement."); return; }
+  var selectionData = {
+    produits: _selection.map(function(s) { return s.emoji + " " + s.titre; }),
+    date: new Date().toLocaleDateString("fr-FR"),
+    statut: "en_attente"
+  };
+  var { data, error } = await sb.from("mt_clients").select("programme").eq("slug", slug).single();
+  if (error || !data) { alert("Erreur — réessaie."); return; }
+  var prog = data.programme || {};
+  prog.selection = selectionData;
+  var { error: err2 } = await sb.from("mt_clients").update({ programme: prog }).eq("slug", slug);
+  if (err2) { alert("Erreur — réessaie."); return; }
+  alert("Sélection envoyée ! Ton coach la recevra très vite.");
+  viderSelection();
 }
 
 function saveSuivi() {
