@@ -3,14 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-<link rel="apple-touch-icon" href="/nutrition/icon-512.PNG">
   <title>Méthode Tee</title>
-
-
-<meta name="theme-color" content="#53644A" />
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="default" />
-<meta name="apple-mobile-web-app-title" content="Méthode Tee" />
 
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
@@ -61,60 +54,36 @@
 
     /* ── Scrollable main ── */
     .main-scroll {
-  flex: 1;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-  padding-bottom: calc(10px + env(safe-area-inset-bottom));
-}
+      flex: 1; overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
     .main-scroll::-webkit-scrollbar { display: none; }
 
     /* ── Tabs ── */
-    .tab-section {
-  display: none;
-  padding: 0 20px calc(120px + env(safe-area-inset-bottom));
-  animation: fadeUp .25s ease;
-}
+    .tab-section { display: none; padding: 0 20px 120px; animation: fadeUp .25s ease; }
     .tab-section.active { display: block; }
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(8px); }
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    /* ── Bottom 
-   .bottom-nav {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: white;
-  border-top: 1px solid rgba(0,0,0,0.06);
-  padding: 10px 8px calc(10px + env(safe-area-inset-bottom));
-  display: flex;
-  justify-content: space-around;
-  z-index: 30;
-}
-  .nav-btn {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 3px;
-  padding: 4px 10px;
-  border: none;
-  background: none;
-  cursor: pointer;
-  color: #b5aca3;
-  transition: color .2s;
-}
-   .nav-btn.active {
-  color: var(--brand);
-}
-    .nav-btn span {
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: .07em;
-  text-transform: uppercase;
-}
+    /* ── Bottom nav ── */
+    .bottom-nav {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      background: white;
+      border-top: 1px solid rgba(0,0,0,0.06);
+      padding: 10px 8px calc(10px + env(safe-area-inset-bottom));
+      display: flex; justify-content: space-around;
+      z-index: 30;
+    }
+    .nav-btn {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 3px; padding: 4px 10px; border: none; background: none;
+      cursor: pointer; color: #b5aca3; transition: color .2s;
+    }
+    .nav-btn.active { color: var(--brand); }
+    .nav-btn span { font-size: 9px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; }
 
     /* ── Cards ── */
     .card {
@@ -330,21 +299,6 @@
     }
 
     .hidden { display: none !important; }
-    @media (display-mode: standalone) {
-  body {
-    background: var(--bg);
-  }
-
-  .app-shell {
-    max-width: 100%;
-    width: 100%;
-    height: 100dvh;
-    border-radius: 0;
-    border: none;
-    box-shadow: none;
-  }
-}
-   
   </style>
 </head>
 <body>
@@ -1065,29 +1019,6 @@ function renderClientsList(list) {
   ).join("");
 }
 
-  function handleClientRouting() {
-  const params = new URLSearchParams(window.location.search);
-  const clientFromUrl = params.get("client");
-  const savedClient = localStorage.getItem("mt_client_slug");
-
-  if (clientFromUrl) {
-    localStorage.setItem("mt_client_slug", clientFromUrl);
-    return clientFromUrl;
-  }
-
-  if (!clientFromUrl && savedClient) {
-    const newUrl =
-      window.location.origin +
-      window.location.pathname +
-      "?client=" +
-      encodeURIComponent(savedClient);
-
-    window.location.replace(newUrl);
-    return null;
-  }
-
-  return null;
-}
 async function selectClient(slug) {
   if (!sb) { log("❌ Connecte Supabase d'abord."); return; }
   const { data, error } = await sb.from(SB_TABLE).select("*").eq("slug", slug).single();
@@ -1418,9 +1349,6 @@ function showError(msg) {
 (async function init() {
   // Charger settings Supabase dans les champs admin
   const settings = loadSettings();
-
-  handleClientRouting();
-  
   document.getElementById("sb-url").value = settings.url || "";
   document.getElementById("sb-key").value = settings.key || "";
 
@@ -1442,18 +1370,6 @@ function showError(msg) {
 
   lucide.createIcons();
 })();
-  if ("serviceWorker" in navigator) {
-  window.addEventListener("load", async () => {
-    try {
-      await navigator.serviceWorker.register("/nutrition/service-worker.js", {
-        scope: "/nutrition/"
-      });
-      console.log("Service Worker enregistré");
-    } catch (err) {
-      console.error("Erreur Service Worker :", err);
-    }
-  });
-}
 </script>
 </body>
 </html>
