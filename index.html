@@ -847,6 +847,8 @@ function renderClientView(prenom, prog) {
   // Icônes Lucide
     var d = document.getElementById("today-date");
   if (d) d.textContent = new Date().toLocaleDateString("fr-FR", {weekday:"long", day:"numeric", month:"long"});
+  var slugR = new URLSearchParams(window.location.search).get("client");
+  setTimeout(function() { restoreTasks(slugR); }, 80);
 
   lucide.createIcons();
 }
@@ -859,7 +861,34 @@ function toggleTask(i) {
   check.style.background = done ? "var(--brand)" : "white";
   check.style.borderColor = done ? "var(--brand)" : "#ddd8d0";
   icon.style.display = done ? "block" : "none";
+  const slug = new URLSearchParams(window.location.search).get("client") || "admin";
+  const today = new Date().toISOString().slice(0,10);
+  const key = "mt_tasks_" + slug + "_" + today;
+  try {
+    const saved = JSON.parse(localStorage.getItem(key) || "{}");
+    saved[i] = done;
+    localStorage.setItem(key, JSON.stringify(saved));
+  } catch(e) {}
 }
+
+function restoreTasks(slug) {
+  const today = new Date().toISOString().slice(0,10);
+  const key = "mt_tasks_" + (slug || "admin") + "_" + today;
+  try {
+    const saved = JSON.parse(localStorage.getItem(key) || "{}");
+    Object.entries(saved).forEach(function(entry) {
+      const idx = entry[0]; const done = entry[1];
+      const el = document.getElementById("task-"+idx);
+      const check = document.getElementById("check-"+idx);
+      const icon = document.getElementById("checkicon-"+idx);
+      if (!el || !done) return;
+      el.classList.add("done");
+      if (check) { check.style.background = "var(--brand)"; check.style.borderColor = "var(--brand)"; }
+      if (icon) icon.style.display = "block";
+    });
+  } catch(e) {}
+}
+
 
 function renderDaysNav(days) {
   const keys = Object.keys(days);
