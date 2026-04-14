@@ -525,6 +525,21 @@
           </div>
         </div>
       </div>
+      
+      <!-- Assistant phyto -->
+      <div class="card" style="padding:20px;margin-bottom:18px">
+        <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 10px">Comment tu te sens ?</p>
+        <input id="phyto-input" type="text" placeholder="Fatigué, mal au dos... / Tired, back pain..." oninput="analyserSymptome(this.value)" style="width:100%;border:1.5px solid #e8e4de;border-radius:14px;padding:12px 14px;font-size:13px;font-family:inherit;outline:none;color:var(--ink)">
+        <div id="phyto-result" style="display:none;margin-top:14px">
+          <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 10px">Suggestions Maison Yanna</p>
+          <div id="phyto-suggestions" style="display:flex;flex-direction:column;gap:10px"></div>
+          <div style="margin-top:14px">
+            <p style="font-size:11px;color:var(--muted);margin:0 0 8px">Tu as déjà ces produits ?</p>
+            <div id="phyto-checklist" style="display:flex;flex-direction:column;gap:8px"></div>
+          </div>
+          <button onclick="envoyerPhyto()" style="width:100%;padding:13px;border-radius:999px;border:none;background:var(--ink);color:white;font-family:inherit;font-size:12px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;cursor:pointer;margin-top:14px">Envoyer à Tee</button>
+        </div>
+      </div>
 
       <!-- Note libre -->
       <div class="card" style="padding:20px;margin-bottom:18px">
@@ -761,6 +776,19 @@
         <div id="selection-admin-list" style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px"></div>
         <p id="selection-admin-date" style="font-size:11px;color:var(--muted);margin:0 0 12px"></p>
         <button onclick="marquerSelectionTraitee()" class="btn btn-brand" style="width:100%">Marquer comme traité</button>
+      </div>
+
+            <!-- Demande phyto client -->
+      <div class="admin-section" id="phyto-admin-block" style="display:none">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <h3 class="serif" style="font-size:20px;color:var(--ink);margin:0">Demande phyto</h3>
+          <span id="phyto-admin-statut" style="font-size:10px;font-weight:800;text-transform:uppercase;padding:4px 10px;border-radius:999px;background:#fef3c7;color:#92400e"></span>
+        </div>
+        <p id="phyto-admin-symptome" style="font-size:13px;color:var(--ink);margin:0 0 10px;font-weight:600"></p>
+        <div id="phyto-admin-list" style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px"></div>
+        <p id="phyto-admin-possession" style="font-size:12px;color:var(--muted);margin:0 0 10px"></p>
+        <p id="phyto-admin-date" style="font-size:11px;color:var(--muted);margin:0 0 12px"></p>
+        <button onclick="marquerPhytoTraite()" class="btn btn-brand" style="width:100%">Marquer comme traité</button>
       </div>
 
             <!-- Notes privées coach -->
@@ -1239,6 +1267,110 @@ async function envoyerSelection() {
   viderSelection();
 }
 
+  /* ══════════════════════════════════════════════
+   ASSISTANT PHYTO
+══════════════════════════════════════════════ */
+var _phytoSymptome = "";
+var _phytoProduits = [];
+
+var PHYTO_DB = {
+  fatigue: {
+    mots: ["fatig","tired","épuis","exhaust","sans énergie","no energy","mou","sluggish","weak","faible","crevé"],
+    suggestions: [
+      {emoji:"🧉", nom:"Maté Boost", conseil:"Énergie naturelle durable grâce à la caféine du maté. À prendre le matin."},
+      {emoji:"🌿", nom:"Ashwagandha – racine poudre", conseil:"Plante adaptogène qui combat la fatigue chronique et le stress."},
+      {emoji:"💚", nom:"Spiruline – Poudre", conseil:"Superaliment riche en protéines et fer pour recharger l'organisme."}
+    ]
+  },
+  sommeil: {
+    mots: ["insomni","sleep","dormir","dors pas","can't sleep","réveil","wake up","nuit","night","sommeil","repos","rest"],
+    suggestions: [
+      {emoji:"🌙", nom:"Plaisir du Coucher", conseil:"Valériane, mélisse et lavande. La tisane sommeil de référence. 1h avant le coucher."},
+      {emoji:"✨", nom:"Golden Ashwa Latte", conseil:"Ashwagandha sans caféine. Apaise le système nerveux pour un sommeil réparateur."},
+      {emoji:"🌿", nom:"Nirvana", conseil:"Sans théine. Menthe, hibiscus, fenouil. Détente et digestion du soir."}
+    ]
+  },
+  digestion: {
+    mots: ["digest","ventre","bloat","gonfle","ballonne","constip","diarrhé","estomac","stomach","bowel","gut","intestin","lourd","heavy"],
+    suggestions: [
+      {emoji:"🌿", nom:"Bye Bye Tox", conseil:"Ortie, fenouil, anis. Drainante et digestive. Après les repas."},
+      {emoji:"🌿", nom:"Nirvana", conseil:"Fenouil, gingembre, menthe, réglisse. Anti-ballonnements naturel."},
+      {emoji:"☀️", nom:"Sunclove", conseil:"Fenouil, réglisse, clou de girofle. Confort digestif et réconfort."}
+    ]
+  },
+  douleur: {
+    mots: ["mal au dos","back pain","courbature","sore","muscle","douleur","pain","ache","blessure","injury","genou","knee","cheville","ankle","articul","joint"],
+    suggestions: [
+      {emoji:"✨", nom:"Golden Ashwa Latte", conseil:"Curcuma + poivre noir = puissant anti-inflammatoire naturel."},
+      {emoji:"🌿", nom:"Ashwagandha – racine poudre", conseil:"Réduit l'inflammation et soutient la récupération musculaire."},
+      {emoji:"🌿", nom:"Passion en Provence", conseil:"Romarin et thym — réconfort articulaire et musculaire."}
+    ]
+  },
+  stress: {
+    mots: ["stress","anxieux","anxiet","anxi","nervous","tendu","tension","overwhelm","débord","pressuré","pressure","pression","worry"],
+    suggestions: [
+      {emoji:"✨", nom:"Golden Ashwa Latte", conseil:"L'ashwagandha baisse le cortisol, l'hormone du stress. Sans caféine."},
+      {emoji:"🌙", nom:"Plaisir du Coucher", conseil:"Mélisse, valériane, lavande. Calme profond et rapide."},
+      {emoji:"🌿", nom:"Ashwagandha – racine poudre", conseil:"Plante adaptogène de référence contre le stress chronique."}
+    ]
+  },
+  toux: {
+    mots: ["toux","cough","gorge","throat","rhume","cold","enrhumé","congestion","nez","nose","respiratory","grippe","flu"],
+    suggestions: [
+      {emoji:"🌿", nom:"Passion en Provence", conseil:"Thym et romarin — antiseptiques naturels pour la gorge et les bronches."},
+      {emoji:"🌿", nom:"Homemade Winter Mix", conseil:"Cannelle, clou de girofle, cardamome. Réchauffant et immunisant."},
+      {emoji:"🍯", nom:"Sirop de dattes", conseil:"Adoucissant naturel pour la gorge irritée."}
+    ]
+  },
+  fievre: {
+    mots: ["fièvre","fever","chaud","hot","température","temperature","frisson","chills","sweat","transpir","malade","sick","ill"],
+    suggestions: [
+      {emoji:"🌿", nom:"Passion en Provence", conseil:"Thym antiseptique et romarin pour soutenir l'immunité."},
+      {emoji:"🌿", nom:"Lune Céleste", conseil:"Gingembre et citron — sudorifique naturel pour aider le corps à réguler sa température."},
+      {emoji:"☀️", nom:"Sunclove", conseil:"Clou de girofle et orange — soutien immunitaire et réconfort."}
+    ]
+  },
+  sucre: {
+    mots: ["sucre","sugar","envie de sucr","craving","sweet","chocolat","chocolate","grignoter","snack","faim","hungry","fringale"],
+    suggestions: [
+      {emoji:"🍯", nom:"Sirop de dattes", conseil:"Alternative naturelle au sucre raffiné — 100% dattes de Tunisie."},
+      {emoji:"🍫", nom:"White Bliss Brownie", conseil:"Brownie protéiné faible en sucres qui satisfait l'envie de chocolat."},
+      {emoji:"🌿", nom:"Barre Protéinée Vanilla Dream", conseil:"Encas protéiné pour combler la fringale sans sucres vides."}
+    ]
+  },
+  sport: {
+    mots: ["match","game","training","entraîne","performance","sport","récup","recovery","boost","compet","competition","cardio","endurance","muscle","strength","force"],
+    suggestions: [
+      {emoji:"🧉", nom:"Maté Boost", conseil:"Caféine naturelle du maté pour l'énergie et la concentration avant l'effort."},
+      {emoji:"💚", nom:"Spiruline – Poudre", conseil:"Protéines, fer et antioxydants pour la performance et la récupération."},
+      {emoji:"🌿", nom:"Protéines de Chanvre – Poudre Naturelle", conseil:"Protéine végétale complète pour la récupération musculaire post-entraînement."}
+    ]
+  },
+  detox: {
+    mots: ["detox","détox","purif","nettoyer","cleanse","drain","rétention","peau","skin","acné","acne","teint"],
+    suggestions: [
+      {emoji:"🌿", nom:"Bye Bye Tox", conseil:"La tisane détox phare — ortie, bouleau, prêle. Draine en douceur."},
+      {emoji:"🌿", nom:"Thé Vert Detox", conseil:"Stimule le métabolisme et aide l'élimination des toxines."},
+      {emoji:"🌿", nom:"Queues de cerise", conseil:"Anti-rétention d'eau, drainante naturelle classique."}
+    ]
+  }
+};
+
+function analyserSymptome(texte) {
+  _phytoSymptome = texte;
+  if (texte.length < 3) { document.getElementById("phyto-result").style.display = "none"; return; }
+  var txt = texte.toLowerCase();
+  var trouve = null;
+  for (var cat in PHYTO_DB) {
+    var db = PHYTO_DB[cat];
+    for (var m = 0; m < db.mots.length; m++) {
+      if (txt.indexOf(db.mots[m]) > -1) { trouve = db; break; }
+    }
+    if (trouve) break;
+  }
+  if (!trouve) { document.getElementById("phyto-result").style.display = "none"; return; }
+  document.getElementById("phyto-
+
 function saveSuivi() {
   var slug = new URLSearchParams(window.location.search).get("client") || "admin";
   var today = new Date().toISOString().slice(0,10);
@@ -1406,6 +1538,24 @@ function fillAdmin(prenom, prog) {
 
   renderAdminDaysNav(prog.days || {});
   renderProductEditors(prog.products || []);
+    var phytoBlock = document.getElementById("phyto-admin-block");
+  if (prog.phyto_demande && prog.phyto_demande.symptome) {
+    phytoBlock.style.display = "block";
+    document.getElementById("phyto-admin-symptome").textContent = "Ressenti : " + prog.phyto_demande.symptome;
+    document.getElementById("phyto-admin-list").innerHTML = (prog.phyto_demande.suggestions || []).map(function(s) {
+      return '<div style="font-size:13px;color:var(--ink);padding:8px 12px;background:#f8f4ee;border-radius:10px">' + s + '</div>';
+    }).join("");
+    var poss = prog.phyto_demande.possession || [];
+    document.getElementById("phyto-admin-possession").textContent = poss.length > 0 ? "Déjà en possession : " + poss.join(", ") : "Aucun produit en possession";
+    document.getElementById("phyto-admin-date").textContent = "Envoyé le " + (prog.phyto_demande.date || "");
+    var statut = document.getElementById("phyto-admin-statut");
+    statut.textContent = prog.phyto_demande.statut === "traite" ? "Traité" : "En attente";
+    statut.style.background = prog.phyto_demande.statut === "traite" ? "#d1fae5" : "#fef3c7";
+    statut.style.color = prog.phyto_demande.statut === "traite" ? "#065f46" : "#92400e";
+  } else if (phytoBlock) {
+    phytoBlock.style.display = "none";
+  }
+
   var selBlock = document.getElementById("selection-admin-block");
   var selList = document.getElementById("selection-admin-list");
   var selDate = document.getElementById("selection-admin-date");
@@ -1647,7 +1797,20 @@ function copyLink() {
 /* ══════════════════════════════════════════════
    ADMIN : OUVERTURE / FERMETURE
 ══════════════════════════════════════════════ */
-async function marquerSelectionTraitee() {
+async function marquerPhytoTraite() {
+  if (!sb || !currentSlug) return;
+  var { data, error } = await sb.from("mt_clients").select("programme").eq("slug", currentSlug).single();
+  if (error || !data) return;
+  var prog = data.programme || {};
+  if (prog.phyto_demande) prog.phyto_demande.statut = "traite";
+  await sb.from("mt_clients").update({ programme: prog }).eq("slug", currentSlug);
+  document.getElementById("phyto-admin-statut").textContent = "Traité";
+  document.getElementById("phyto-admin-statut").style.background = "#d1fae5";
+  document.getElementById("phyto-admin-statut").style.color = "#065f46";
+  log("✅ Demande phyto marquée comme traitée.");
+}
+
+  async function marquerSelectionTraitee() {
   if (!sb || !currentSlug) return;
   var { data, error } = await sb.from("mt_clients").select("programme").eq("slug", currentSlug).single();
   if (error || !data) return;
