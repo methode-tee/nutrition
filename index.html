@@ -1391,6 +1391,18 @@ function showError(msg) {
 
   lucide.createIcons();
 })();
+  if ("serviceWorker" in navigator) {
+  window.addEventListener("load", async () => {
+    try {
+      await navigator.serviceWorker.register("/nutrition/service-worker.js", {
+        scope: "/nutrition/"
+      });
+      console.log("Service Worker enregistré");
+    } catch (err) {
+      console.error("Erreur Service Worker :", err);
+    }
+  });
+}
 </script>
 </body>
 </html>
