@@ -547,6 +547,33 @@
         <div id="score-badge" style="font-size:11px;color:white;font-weight:700;background:var(--brand);padding:5px 12px;border-radius:999px;display:none"></div>
       </div>
 
+            <!-- Historique visuel -->
+      <div class="card" style="padding:20px;margin-bottom:18px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+          <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0">📈 Mes 7 derniers jours</p>
+          <span id="streak-badge" style="font-size:11px;font-weight:700;color:white;background:var(--brand);padding:4px 10px;border-radius:999px;display:none"></span>
+        </div>
+
+        <!-- Streak jours -->
+        <div id="streak-days" style="display:flex;justify-content:space-between;gap:4px;margin-bottom:18px"></div>
+
+        <!-- Courbe énergie -->
+        <p style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:800;color:var(--muted);margin:0 0 8px">⚡ Énergie</p>
+        <div style="display:flex;align-items:flex-end;gap:4px;height:50px;margin-bottom:14px" id="chart-energie"></div>
+
+        <!-- Courbe sommeil -->
+        <p style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:800;color:var(--muted);margin:0 0 8px">🌙 Sommeil</p>
+        <div style="display:flex;align-items:flex-end;gap:4px;height:50px;margin-bottom:14px" id="chart-sommeil"></div>
+
+        <!-- Courbe digestion -->
+        <p style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:800;color:var(--muted);margin:0 0 8px">🌿 Digestion</p>
+        <div style="display:flex;align-items:flex-end;gap:4px;height:50px;margin-bottom:14px" id="chart-digestion"></div>
+
+        <!-- Poids -->
+        <p style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:800;color:var(--muted);margin:0 0 8px">⚖️ Poids</p>
+        <div id="poids-list" style="display:flex;justify-content:space-between;gap:4px"></div>
+      </div>
+
       <!-- Score semaine -->
       <div class="card" style="padding:20px;margin-bottom:18px">
         <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 8px">Score de la semaine</p>
@@ -1118,6 +1145,8 @@ function renderClientView(prenom, prog) {
   if (d) d.textContent = new Date().toLocaleDateString("fr-FR", {weekday:"long", day:"numeric", month:"long"});
   var slugR = new URLSearchParams(window.location.search).get("client");
   setTimeout(function() { restoreTasks(slugR); }, 80);
+   setTimeout(function() { renderHistorique(slugR); }, 120);
+
   setTimeout(function() { initSuivi(); }, 100);
   setTimeout(function() { initNotifications(slugR); }, 150);
 
@@ -1837,6 +1866,100 @@ function planifierRappels(slug) {
       } catch(e) {}
     }, 24 * 60 * 60 * 1000);
   }, delaiSuivi);
+}
+
+  /* ══════════════════════════════════════════════
+   HISTORIQUE VISUEL
+══════════════════════════════════════════════ */
+function renderHistorique(slug) {
+  var jours = [];
+  var joursLabels = ["D","L","M","M","J","V","S"];
+  for (var i = 6; i >= 0; i--) {
+    var d = new Date();
+    d.setDate(d.getDate() - i);
+    var dateStr = d.toISOString().slice(0, 10);
+    var key = "mt_suivi_" + (slug || "admin") + "_" + dateStr;
+    var label = joursLabels[d.getDay()];
+    try {
+      var saved = JSON.parse(localStorage.getItem(key) || "{}");
+      jours.push({
+        date: dateStr,
+        label: label,
+        filled: saved.filled || false,
+        energie: parseInt(saved.energie) || 0,
+        sommeil: parseInt(saved.sommeil) || 0,
+        digestion: parseInt(saved.digestion) || 0,
+        poids: saved.poids || ""
+      });
+    } catch(e) {
+      jours.push({ date: dateStr, label: label, filled: false, energie: 0, sommeil: 0, digestion: 0, poids: "" });
+    }
+  }
+
+  // Streak
+  var streak = 0;
+  for (var s = jours.length - 1; s >= 0; s--) {
+    if (jours[s].filled) streak++;
+    else break;
+  }
+  var streakBadge = document.getElementById("streak-badge");
+  if (streakBadge) {
+    if (streak > 0) {
+      streakBadge.style.display = "block";
+      streakBadge.textContent = "🔥 " + streak + " jour" + (streak > 1 ? "s" : "") + " de suite";
+    } else {
+      streakBadge.style.display = "none";
+    }
+  }
+
+  // Jours streak
+  var streakEl = document.getElementById("streak-days");
+  if (streakEl) {
+    streakEl.innerHTML = jours.map(function(j) {
+      var aujourd = j.date === new Date().toISOString().slice(0, 10);
+      var bg = j.filled ? "var(--brand)" : "#f0ece6";
+      var color = j.filled ? "white" : "var(--muted)";
+      var border = aujourd ? "2px solid var(--brand)" : "2px solid transparent";
+      return '<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">' +
+        '<div style="width:32px;height:32px;border-radius:50%;background:' + bg + ';display:flex;align-items:center;justify-content:center;font-size:14px;border:' + border + '">' +
+        (j.filled ? "✓" : '<span style="color:' + color + ';font-size:10px;font-weight:700">' + j.label + '</span>') +
+        '</div>' +
+        '<span style="font-size:9px;color:var(--muted);font-weight:600">' + j.label + '</span>' +
+        '</div>';
+    }).join("");
+  }
+
+  // Courbes barres
+  function renderCourbe(id, key, couleur) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    var max = 5;
+    el.innerHTML = jours.map(function(j) {
+      var val = j[key];
+      var hauteur = val > 0 ? Math.round((val / max) * 50) : 3;
+      var bg = val > 0 ? couleur : "#f0ece6";
+      var opacity = val > 0 ? "1" : "0.5";
+      return '<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:3px">' +
+        '<span style="font-size:9px;color:var(--muted);font-weight:700">' + (val > 0 ? val : "") + '</span>' +
+        '<div style="width:100%;height:' + hauteur + 'px;background:' + bg + ';border-radius:4px;opacity:' + opacity + ';transition:height .3s"></div>' +
+        '</div>';
+    }).join("");
+  }
+
+  renderCourbe("chart-energie", "energie", "#f59e0b");
+  renderCourbe("chart-sommeil", "sommeil", "#6366f1");
+  renderCourbe("chart-digestion", "digestion", "var(--brand)");
+
+  // Poids
+  var poidsEl = document.getElementById("poids-list");
+  if (poidsEl) {
+    poidsEl.innerHTML = jours.map(function(j) {
+      return '<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px">' +
+        '<span style="font-size:10px;font-weight:700;color:var(--ink)">' + (j.poids || "—") + '</span>' +
+        '<span style="font-size:9px;color:var(--muted)">' + j.label + '</span>' +
+        '</div>';
+    }).join("");
+  }
 }
 
 function renderProtocole(protocole) {
