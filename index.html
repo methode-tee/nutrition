@@ -1368,8 +1368,51 @@ function analyserSymptome(texte) {
     }
     if (trouve) break;
   }
-  if (!trouve) { document.getElementById("phyto-result").style.display = "none"; return; }
-  document.getElementById("phyto-
+    if (!trouve) { document.getElementById("phyto-result").style.display = "none"; return; }
+  document.getElementById("phyto-result").style.display = "block";
+  _phytoProduits = trouve.suggestions;
+  document.getElementById("phyto-suggestions").innerHTML = trouve.suggestions.map(function(s) {
+    return '<div style="padding:12px 14px;border:1px solid rgba(140,117,97,.15);border-radius:14px;background:#fdfbf7">' +
+      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">' +
+      '<span style="font-size:18px">' + s.emoji + '</span>' +
+      '<span style="font-size:13px;font-weight:700;color:var(--ink)">' + s.nom + '</span>' +
+      '</div>' +
+      '<p style="font-size:12px;color:var(--muted);margin:0">' + s.conseil + '</p>' +
+      '</div>';
+  }).join("");
+  document.getElementById("phyto-checklist").innerHTML = trouve.suggestions.map(function(s, i) {
+    return '<label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer">' +
+      '<input type="checkbox" id="phyto-check-' + i + '" style="width:18px;height:18px;accent-color:var(--brand)">' +
+      '<span>' + s.emoji + ' ' + s.nom + '</span>' +
+      '</label>';
+  }).join("");
+}
+
+async function envoyerPhyto() {
+  var slug = new URLSearchParams(window.location.search).get("client");
+  if (!slug || !sb) { alert("Connecte-toi d'abord."); return; }
+  var possession = [];
+  _phytoProduits.forEach(function(s, i) {
+    var el = document.getElementById("phyto-check-" + i);
+    if (el && el.checked) possession.push(s.nom);
+  });
+  var payload = {
+    symptome: _phytoSymptome,
+    suggestions: _phytoProduits.map(function(s) { return s.emoji + " " + s.nom; }),
+    possession: possession,
+    date: new Date().toLocaleDateString("fr-FR"),
+    statut: "en_attente"
+  };
+  var { data, error } = await sb.from("mt_clients").select("programme").eq("slug", slug).single();
+  if (error || !data) { alert("Erreur — réessaie."); return; }
+  var prog = data.programme || {};
+  prog.phyto_demande = payload;
+  await sb.from("mt_clients").update({ programme: prog }).eq("slug", slug);
+  alert("Envoyé à Tee ! Elle te répondra très vite.");
+  document.getElementById("phyto-input").value = "";
+  document.getElementById("phyto-result").style.display = "none";
+}
+
 
 function saveSuivi() {
   var slug = new URLSearchParams(window.location.search).get("client") || "admin";
