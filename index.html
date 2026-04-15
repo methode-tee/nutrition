@@ -359,7 +359,7 @@
   <!-- ── HEADER ── -->
   <header style="background:rgba(253,251,247,.92);backdrop-filter:blur(12px);padding:18px 20px 14px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:20;border-bottom:1px solid rgba(0,0,0,0.04);">
     <div>
-      <p style="font-size:9px;text-transform:uppercase;letter-spacing:.18em;color:#b5aca3;font-weight:800;margin-bottom:3px">Espace Client</p>
+     <p id="txt-espace-client" style="font-size:9px;text-transform:uppercase;letter-spacing:.18em;color:#b5aca3;font-weight:800;margin-bottom:3px">Espace Client</p>
       <h1 class="serif" style="font-size:20px;font-style:italic;font-weight:700;color:var(--brand);margin:0">Méthode Tee</h1>
     </div>
     <div id="avatar" style="width:42px;height:42px;border-radius:50%;background:var(--brand);color:white;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-style:italic;font-weight:700;font-size:19px;box-shadow:0 4px 14px rgba(83,100,74,.28)">T</div>
@@ -374,13 +374,13 @@
         <div>
           <p id="today-date" style="font-size:11px;color:var(--muted);font-weight:600;margin:0 0 4px;text-transform:capitalize"></p>
 
-          <h2 class="serif" style="font-size:34px;font-weight:700;color:var(--ink);margin:0 0 6px;line-height:1.15">Bonjour <span id="display-prenom">toi</span>,</h2>
-          <p style="font-size:12px;color:var(--muted)">Ton espace nutrition &amp; routines premium.</p>
+         <h2 class="serif" style="font-size:34px;font-weight:700;color:var(--ink);margin:0 0 6px;line-height:1.15"><span id="hello-prefix">Bonjour </span><span id="display-prenom">toi</span>,</h2>
+          <p id="txt-premium" style="font-size:12px;color:var(--muted)">Ton espace nutrition &amp; routines premium.</p>
         </div>
         <span class="badge" style="background:var(--brand);color:white;margin-top:4px;flex-shrink:0">
-          <i data-lucide="sparkles" style="width:11px;height:11px"></i>
-          Privé
-        </span>
+  <i data-lucide="sparkles" style="width:11px;height:11px"></i>
+  <span id="txt-prive">Privé</span>
+</span>
       </div>
       
       <!-- Banniere Maison Yanna -->
@@ -393,7 +393,7 @@
 
       <!-- Objectif -->
       <div class="goal-card" style="margin-bottom:20px">
-        <p style="font-size:9px;text-transform:uppercase;letter-spacing:.18em;font-weight:800;opacity:.75;margin-bottom:8px">Ton objectif principal</p>
+       <p id="txt-objectif-principal" style="font-size:9px;text-transform:uppercase;letter-spacing:.18em;font-weight:800;opacity:.75;margin-bottom:8px">Ton objectif principal</p>
         <h3 id="goal-title" class="serif" style="font-size:20px;font-style:italic;font-weight:700;margin:0 0 16px;line-height:1.3;position:relative;z-index:1"></h3>
         <ul id="goal-list" style="list-style:none;margin:0;padding:0;space-y:6px;position:relative;z-index:1"></ul>
       </div>
@@ -401,22 +401,22 @@
       <!-- Mot du coach -->
       <div class="card" style="padding:22px;margin-bottom:20px;position:relative">
         <div style="position:absolute;top:-14px;right:14px;width:46px;height:46px;background:white;border-radius:50%;box-shadow:0 4px 14px rgba(0,0,0,0.09);display:flex;align-items:center;justify-content:center;font-size:20px">✍️</div>
-        <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin-bottom:10px">Le mot de Tee</p>
+        <p id="txt-mot-tee" style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin-bottom:10px">Le mot de Tee</p>
         <p id="coach-msg" class="serif" style="font-size:14px;color:var(--ink);line-height:1.7;font-style:italic;margin:0"></p>
       </div>
 
       <!-- Priorités -->
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-        <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:#b5aca3;margin:0">Tes priorités du jour</p>
-        <span style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:700;color:var(--brand)">Checklist</span>
+        <p id="txt-priorites-jour" style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:#b5aca3;margin:0">Tes priorités du jour</p>
+        <span id="txt-checklist" style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:700;color:var(--brand)">Checklist</span>
       </div>
       <div id="tasks-list" style="display:flex;flex-direction:column;gap:10px"></div>
 
       <div class="card" style="padding:22px;margin-top:18px">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px">
           <div>
-            <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 6px">Rituel du jour</p>
-            <h3 class="serif" style="font-size:20px;margin:0;color:var(--ink)">Ton rythme Méthode Tee</h3>
+            <p id="txt-rituel-jour" style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 6px">Rituel du jour</p>
+           <h3 id="txt-rythme-methode" class="serif" style="font-size:20px;margin:0;color:var(--ink)">Ton rythme Méthode Tee</h3>
           </div>
           <div style="width:42px;height:42px;border-radius:50%;background:var(--paper);display:flex;align-items:center;justify-content:center;font-size:20px">🌿</div>
         </div>
@@ -426,8 +426,8 @@
       <div class="card" style="padding:22px;margin-top:18px">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px">
           <div>
-            <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 6px">Analyse du terrain</p>
-            <h3 class="serif" style="font-size:20px;margin:0;color:var(--ink)">Ce que nous travaillons</h3>
+            <p id="txt-analyse-terrain" style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 6px">Analyse du terrain</p>
+            <h3 id="txt-ce-que-nous-travaillons" class="serif" style="font-size:20px;margin:0;color:var(--ink)">Ce que nous travaillons</h3>
           </div>
           <div style="width:42px;height:42px;border-radius:50%;background:var(--paper);display:flex;align-items:center;justify-content:center;font-size:20px">🌱</div>
         </div>
@@ -439,8 +439,8 @@
     <section id="tab-repas" class="tab-section" style="padding-top:24px">
       <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:20px">
         <div>
-          <h2 class="serif" style="font-size:30px;font-weight:700;color:var(--ink);margin:0 0 4px">Ton Menu</h2>
-          <p style="font-size:12px;color:var(--muted)">Programme alimentaire personnalisé</p>
+          <h2 id="txt-menu" class="serif" style="font-size:30px;font-weight:700;color:var(--ink);margin:0 0 4px">Ton Menu</h2>
+          <p id="txt-programme-alim" style="font-size:12px;color:var(--muted)">Programme alimentaire personnalisé</p>
         </div>
         <span id="week-badge" style="font-size:11px;color:var(--accent);font-weight:700;background:rgba(140,117,97,.1);padding:5px 12px;border-radius:999px"></span>
       </div>
@@ -467,8 +467,8 @@
 
     <!-- SOINS -->
     <section id="tab-soins" class="tab-section" style="padding-top:24px">
-      <h2 class="serif" style="font-size:30px;font-weight:700;color:var(--ink);margin:0 0 4px">Soins</h2>
-      <p style="font-size:12px;color:var(--muted);margin:0 0 24px">Tes alliés naturels sélectionnés pour ton profil.</p>
+     <h2 id="txt-soins" class="serif" style="font-size:30px;font-weight:700;color:var(--ink);margin:0 0 4px">Soins</h2>
+<p id="txt-allies-naturels" style="font-size:12px;color:var(--muted);margin:0 0 24px">Tes alliés naturels sélectionnés pour ton profil.</p>
       <div class="card" style="padding:22px;margin-bottom:18px">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px">
           <div>
@@ -495,13 +495,13 @@
 
     <!-- SIGNATURE -->
     <section id="tab-signature" class="tab-section" style="padding-top:24px">
-      <h2 class="serif" style="font-size:30px;font-weight:700;color:var(--ink);margin:0 0 4px">Signature Healthy</h2>
-      <p style="font-size:12px;color:var(--muted);margin:0 0 24px">Ton plat signature personnalisé.</p>
+      <h2 id="txt-signature-healthy" class="serif" style="font-size:30px;font-weight:700;color:var(--ink);margin:0 0 4px">Signature Healthy</h2>
+<p id="txt-plat-signature-desc" style="font-size:12px;color:var(--muted);margin:0 0 24px">Ton plat signature personnalisé.</p>
       <div id="signature-card" class="card" style="padding:24px"></div>
     </section>
         <!-- PROGRAMME -->
     <section id="tab-programme" class="tab-section" style="padding-top:24px">
-      <h2 class="serif" style="font-size:30px;font-weight:700;color:var(--ink);margin:0 0 4px">Mon Programme</h2>
+      <h2 id="txt-programme" class="serif" style="font-size:30px;font-weight:700;color:var(--ink);margin:0 0 4px">Mon Programme</h2>
       <p id="prog-subtitle" style="font-size:12px;color:var(--muted);margin:0 0 20px"></p>
 
       <!-- Règle de la semaine -->
@@ -531,7 +531,7 @@
     <section id="tab-suivi" class="tab-section" style="padding-top:24px">
       <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:20px">
         <div>
-          <h2 class="serif" style="font-size:30px;font-weight:700;color:var(--ink);margin:0 0 4px">Mon Suivi</h2>
+         <h2 id="txt-suivi" class="serif" style="font-size:30px;font-weight:700;color:var(--ink);margin:0 0 4px">Mon Suivi</h2>
           <p id="suivi-date" style="font-size:12px;color:var(--muted)"></p>
         </div>
         <div id="score-badge" style="font-size:11px;color:white;font-weight:700;background:var(--brand);padding:5px 12px;border-radius:999px;display:none"></div>
@@ -616,8 +616,8 @@
 
     <!-- MÉTHODE -->
     <section id="tab-methode" class="tab-section" style="padding-top:24px">
-      <h2 class="serif" style="font-size:30px;font-weight:700;color:var(--ink);margin:0 0 4px">Méthode Tee</h2>
-      <p style="font-size:12px;color:var(--muted);margin:0 0 24px">Tes conseils personnalisés pour réussir.</p>
+    <h2 id="txt-methode" class="serif" style="font-size:30px;font-weight:700;color:var(--ink);margin:0 0 4px">Méthode Tee</h2>
+<p id="txt-conseils-perso" style="font-size:12px;color:var(--muted);margin:0 0 24px">Tes conseils personnalisés pour réussir.</p>
       <div id="method-rules" style="display:flex;flex-direction:column;gap:14px"></div>
     </section>
 
@@ -627,32 +627,32 @@
   <nav class="bottom-nav">
     <button class="nav-btn active" onclick="switchTab('accueil',this)" id="nav-accueil">
       <i data-lucide="layout-dashboard" style="width:20px;height:20px"></i>
-      <span>Accueil</span>
+     <span id="nav-label-accueil">Accueil</span>
     </button>
     <button class="nav-btn" onclick="switchTab('repas',this)" id="nav-repas">
       <i data-lucide="utensils" style="width:20px;height:20px"></i>
-      <span>Repas</span>
+  <span id="nav-label-repas">Repas</span>
     </button>
     <button class="nav-btn" onclick="switchTab('soins',this)" id="nav-soins">
       <i data-lucide="leaf" style="width:20px;height:20px"></i>
-      <span>Soins</span>
+      <span id="nav-label-soins">Soins</span>
     </button>
     <button class="nav-btn" onclick="switchTab('signature',this)" id="nav-signature">
       <i data-lucide="salad" style="width:20px;height:20px"></i>
-      <span>Signature</span>
+    <span id="nav-label-signature">Signature</span>
     </button>
         <button class="nav-btn" onclick="switchTab('programme',this)" id="nav-programme">
       <i data-lucide="trending-up" style="width:20px;height:20px"></i>
-      <span>Programme</span>
+     <span id="nav-label-programme">Programme</span>
     </button>
 
         <button class="nav-btn" onclick="switchTab('suivi',this)" id="nav-suivi">
       <i data-lucide="bar-chart-2" style="width:20px;height:20px"></i>
-      <span>Suivi</span>
+<span id="nav-label-suivi">Suivi</span>
     </button>
     <button class="nav-btn" onclick="switchTab('methode',this)" id="nav-methode">
       <i data-lucide="book-open" style="width:20px;height:20px"></i>
-      <span>Méthode</span>
+      <span id="nav-label-methode">Méthode</span>
     </button>
   </nav>
 
@@ -726,6 +726,13 @@
             <label class="field-label">Prénom affiché après Bonjour</label>
             <input id="f-prenom" class="admin-input" placeholder="Rams" />
           </div>
+          <div>
+  <label class="field-label">Langue</label>
+  <select id="f-langue" class="admin-input" style="cursor:pointer">
+    <option value="fr">Français</option>
+    <option value="en">English</option>
+  </select>
+</div>
           <div>
             <label class="field-label">Semaine</label>
             <input id="f-semaine" class="admin-input" placeholder="Semaine 2" />
@@ -940,6 +947,7 @@ let isClientMode = false; // true = accès via ?client=, cacher admin
 // Programme en cours d'édition (côté admin)
 function emptyProgramme() {
   return {
+    langue: "fr",
     semaine: "",
     objectif: "",
     coach: "",
@@ -951,7 +959,12 @@ function emptyProgramme() {
     rituel: { matin: "", midi: "", soir: "", note: "" },
     terrain: { dominant: "", axes: [], note: "" },
     protocole: { matin: "", midi: "", soir: "", duree: "" },
-    methode: [], offre: "", notes_priv: "", timeline: {}
+    methode: [],
+    offre: "",
+    notes_priv: "",
+    timeline: {}
+  };
+}
 
 
   };
@@ -1045,7 +1058,168 @@ async function loadClientFromURL() {
     showError("Erreur de connexion : " + e.message);
   }
 }
+const I18N = {
+  fr: {
+    espaceClient: "Espace Client",
+    bonjour: "Bonjour",
+    premium: "Ton espace nutrition & routines premium.",
+    prive: "Privé",
 
+    objectifPrincipal: "Ton objectif principal",
+    motDeTee: "Le mot de Tee",
+    prioritesJour: "Tes priorités du jour",
+    checklist: "Checklist",
+
+    rituelJour: "Rituel du jour",
+    rythmeMethode: "Ton rythme Méthode Tee",
+    analyseTerrain: "Analyse du terrain",
+    ceQueNousTravaillons: "Ce que nous travaillons",
+
+    menu: "Ton Menu",
+    programmeAlim: "Programme alimentaire personnalisé",
+    eveilMatin: "Éveil & Matin",
+    dejeuner: "Déjeuner",
+    collation: "Collation",
+    dinerSoir: "Dîner & Soir",
+
+    soins: "Soins",
+    alliesNaturels: "Tes alliés naturels sélectionnés pour ton profil.",
+    protocoleVegetal: "Protocole végétal",
+    rythmePlantes: "Rythme plantes & infusions",
+
+    signatureHealthy: "Signature Healthy",
+    platSignatureDesc: "Ton plat signature personnalisé.",
+
+    programme: "Mon Programme",
+    suivi: "Mon Suivi",
+    methode: "Méthode",
+    conseilsPerso: "Tes conseils personnalisés pour réussir.",
+
+    progressionGlobale: "Progression globale",
+    scoreSemaine: "Score de la semaine",
+    checksJour: "Checks du jour",
+    mesuresJour: "Mesures du jour",
+    poids: "Poids (kg)",
+
+    navAccueil: "Accueil",
+    navRepas: "Repas",
+    navSoins: "Soins",
+    navSignature: "Signature",
+    navProgramme: "Programme",
+    navSuivi: "Suivi",
+    navMethode: "Méthode"
+  },
+  en: {
+    espaceClient: "Client Area",
+    bonjour: "Hello",
+    premium: "Your nutrition & premium routines space.",
+    prive: "Private",
+
+    objectifPrincipal: "Your main goal",
+    motDeTee: "Tee’s note",
+    prioritesJour: "Your priorities today",
+    checklist: "Checklist",
+
+    rituelJour: "Daily ritual",
+    rythmeMethode: "Your Méthode Tee rhythm",
+    analyseTerrain: "Body terrain analysis",
+    ceQueNousTravaillons: "What we are working on",
+
+    menu: "Your Meal Plan",
+    programmeAlim: "Personalized nutrition program",
+    eveilMatin: "Morning",
+    dejeuner: "Lunch",
+    collation: "Snack",
+    dinerSoir: "Dinner & Evening",
+
+    soins: "Care",
+    alliesNaturels: "Your natural allies selected for your profile.",
+    protocoleVegetal: "Plant protocol",
+    rythmePlantes: "Plant & infusion rhythm",
+
+    signatureHealthy: "Healthy Signature",
+    platSignatureDesc: "Your personalized signature meal.",
+
+    programme: "My Program",
+    suivi: "My Tracking",
+    methode: "Method",
+    conseilsPerso: "Your personalized guidance for success.",
+
+    progressionGlobale: "Overall progress",
+    scoreSemaine: "Weekly score",
+    checksJour: "Daily checks",
+    mesuresJour: "Today’s metrics",
+    poids: "Weight (kg)",
+
+    navAccueil: "Home",
+    navRepas: "Meals",
+    navSoins: "Care",
+    navSignature: "Signature",
+    navProgramme: "Program",
+    navSuivi: "Tracking",
+    navMethode: "Method"
+  }
+};
+
+function applyTranslations(lang) {
+  const t = I18N[lang] || I18N.fr;
+
+  const setText = (id, value) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value;
+  };
+
+  setText("txt-espace-client", t.espaceClient);
+  setText("txt-premium", t.premium);
+  setText("txt-prive", t.prive);
+
+  setText("txt-objectif-principal", t.objectifPrincipal);
+  setText("txt-mot-tee", t.motDeTee);
+  setText("txt-priorites-jour", t.prioritesJour);
+  setText("txt-checklist", t.checklist);
+
+  setText("txt-rituel-jour", t.rituelJour);
+  setText("txt-rythme-methode", t.rythmeMethode);
+  setText("txt-analyse-terrain", t.analyseTerrain);
+  setText("txt-ce-que-nous-travaillons", t.ceQueNousTravaillons);
+
+  setText("txt-menu", t.menu);
+  setText("txt-programme-alim", t.programmeAlim);
+  setText("txt-eveil-matin", t.eveilMatin);
+  setText("txt-dejeuner", t.dejeuner);
+  setText("txt-collation", t.collation);
+  setText("txt-diner-soir", t.dinerSoir);
+
+  setText("txt-soins", t.soins);
+  setText("txt-allies-naturels", t.alliesNaturels);
+  setText("txt-protocole-vegetal", t.protocoleVegetal);
+  setText("txt-rythme-plantes", t.rythmePlantes);
+
+  setText("txt-signature-healthy", t.signatureHealthy);
+  setText("txt-plat-signature-desc", t.platSignatureDesc);
+
+  setText("txt-programme", t.programme);
+  setText("txt-suivi", t.suivi);
+  setText("txt-methode", t.methode);
+  setText("txt-conseils-perso", t.conseilsPerso);
+
+  setText("txt-progression-globale", t.progressionGlobale);
+  setText("txt-score-semaine", t.scoreSemaine);
+  setText("txt-checks-jour", t.checksJour);
+  setText("txt-mesures-jour", t.mesuresJour);
+  setText("txt-poids", t.poids);
+
+  setText("nav-label-accueil", t.navAccueil);
+  setText("nav-label-repas", t.navRepas);
+  setText("nav-label-soins", t.navSoins);
+  setText("nav-label-signature", t.navSignature);
+  setText("nav-label-programme", t.navProgramme);
+  setText("nav-label-suivi", t.navSuivi);
+  setText("nav-label-methode", t.navMethode);
+
+  const helloPrefix = document.getElementById("hello-prefix");
+  if (helloPrefix) helloPrefix.textContent = t.bonjour + " ";
+}
 /* ══════════════════════════════════════════════
    RENDU CÔTÉ CLIENT
 ══════════════════════════════════════════════ */
@@ -1056,6 +1230,7 @@ function renderClientView(prenom, prog) {
   document.getElementById("display-prenom").textContent = p;
   document.getElementById("avatar").textContent = p.charAt(0).toUpperCase();
   document.title = "Méthode Tee — " + p;
+  applyTranslations(prog.langue || "fr");
 
   // Objectif
   document.getElementById("goal-title").textContent = prog.objectif || "";
@@ -1815,6 +1990,7 @@ async function deleteClient() {
 ══════════════════════════════════════════════ */
 function fillAdmin(prenom, prog) {
   document.getElementById("f-prenom").value = prenom || "";
+  document.getElementById("f-langue").value = prog.langue || "fr";
   document.getElementById("f-slug").value = currentSlug || "";
   document.getElementById("f-semaine").value = prog.semaine || "";
   document.getElementById("f-objectif").value = prog.objectif || "";
@@ -2021,8 +2197,9 @@ async function saveClient() {
     }
   }
 
-  programme.semaine = document.getElementById("f-semaine").value.trim();
-  programme.offre = document.getElementById("f-offre").value;
+  programme.langue = document.getElementById("f-langue").value || "fr";
+programme.semaine = document.getElementById("f-semaine").value.trim();
+programme.offre = document.getElementById("f-offre").value;
   programme.notes_priv = document.getElementById("f-notes-priv").value.trim();
     programme.timeline = syncTimeline();
 
