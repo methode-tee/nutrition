@@ -382,6 +382,16 @@
           Privé
         </span>
       </div>
+
+            <!-- Notifications -->
+      <div id="notif-banner" style="display:none;margin:0 0 16px;border-radius:16px;padding:14px 16px;background:#f0f9f0;border:1.5px solid rgba(83,100,74,.2);display:flex;align-items:center;justify-content:space-between;gap:12px">
+        <div>
+          <p style="font-size:12px;font-weight:700;color:var(--brand);margin:0 0 2px">🔔 Rappels quotidiens</p>
+          <p style="font-size:11px;color:var(--muted);margin:0">Rituel matin, infusion soir, suivi du jour</p>
+        </div>
+        <button onclick="activerNotifications()" style="border:none;border-radius:999px;background:var(--brand);color:white;font-family:inherit;font-size:11px;font-weight:700;padding:8px 14px;cursor:pointer;white-space:nowrap">Activer</button>
+      </div>
+
       
       <!-- Banniere Maison Yanna -->
       <div id="my-banner" style="display:none;margin:0 0 20px;border-radius:18px;padding:15px 18px;background:linear-gradient(135deg,#2D241E 0%,#53644A 100%);color:white;position:relative;overflow:hidden">
@@ -1108,7 +1118,9 @@ function renderClientView(prenom, prog) {
   if (d) d.textContent = new Date().toLocaleDateString("fr-FR", {weekday:"long", day:"numeric", month:"long"});
   var slugR = new URLSearchParams(window.location.search).get("client");
   setTimeout(function() { restoreTasks(slugR); }, 80);
-    setTimeout(function() { initSuivi(); }, 100);
+  setTimeout(function() { initSuivi(); }, 100);
+  setTimeout(function() { initNotifications(slugR); }, 150);
+
   var offreVal = prog.offre || "";
   var bannerDiv = document.getElementById("my-banner");
   var bannerTxt = document.getElementById("my-banner-text");
@@ -1708,6 +1720,123 @@ function syncTimeline() {
     });
   }
   return { dateDebut: dateDebut, nbSemaines: nbSemaines, semaines: semaines };
+}
+/* ══════════════════════════════════════════════
+   NOTIFICATIONS / RAPPELS
+══════════════════════════════════════════════ */
+function initNotifications(slug) {
+  if (!("Notification" in window)) return;
+  var banner = document.getElementById("notif-banner");
+  if (!banner) return;
+
+  if (Notification.permission === "granted") {
+    banner.style.display = "none";
+    planifierRappels(slug);
+  } else if (Notification.permission === "default") {
+    banner.style.display = "flex";
+  } else {
+    banner.style.display = "none";
+  }
+}
+
+async function activerNotifications() {
+  if (!("Notification" in window)) {
+    alert("Ton navigateur ne supporte pas les notifications.");
+    return;
+  }
+  var perm = await Notification.requestPermission();
+  var banner = document.getElementById("notif-banner");
+  if (perm === "granted") {
+    if (banner) banner.style.display = "none";
+    var slug = new URLSearchParams(window.location.search).get("client") || "admin";
+    planifierRappels(slug);
+    new Notification("Méthode Tee 🌿", {
+      body: "Rappels activés ! Tu seras notifié chaque jour.",
+      icon: "/nutrition/icon-192.PNG"
+    });
+  } else {
+    if (banner) banner.style.display = "none";
+    alert("Notifications refusées. Tu peux les activer dans les réglages de ton navigateur.");
+  }
+}
+
+function planifierRappels(slug) {
+  if (Notification.permission !== "granted") return;
+
+  var maintenant = new Date();
+  var heure = maintenant.getHours();
+  var minute = maintenant.getMinutes();
+
+  // Rappel matin 8h00
+  var rappelMatin = new Date();
+  rappelMatin.setHours(8, 0, 0, 0);
+  if (rappelMatin <= maintenant) rappelMatin.setDate(rappelMatin.getDate() + 1);
+  var delaiMatin = rappelMatin - maintenant;
+
+  setTimeout(function() {
+    new Notification("🌅 Méthode Tee — Rituel du matin", {
+      body: "C'est l'heure de ton rituel du matin. Eau chaude, infusion, et bonne journée !",
+      icon: "/nutrition/icon-192.PNG"
+    });
+    setInterval(function() {
+      new Notification("🌅 Méthode Tee — Rituel du matin", {
+        body: "C'est l'heure de ton rituel du matin. Eau chaude, infusion, et bonne journée !",
+        icon: "/nutrition/icon-192.PNG"
+      });
+    }, 24 * 60 * 60 * 1000);
+  }, delaiMatin);
+
+  // Rappel infusion soir 20h00
+  var rappelSoir = new Date();
+  rappelSoir.setHours(20, 0, 0, 0);
+  if (rappelSoir <= maintenant) rappelSoir.setDate(rappelSoir.getDate() + 1);
+  var delaiSoir = rappelSoir - maintenant;
+
+  setTimeout(function() {
+    new Notification("🍵 Méthode Tee — Infusion du soir", {
+      body: "Pense à ton infusion du soir pour préparer ton corps au repos.",
+      icon: "/nutrition/icon-192.PNG"
+    });
+    setInterval(function() {
+      new Notification("🍵 Méthode Tee — Infusion du soir", {
+        body: "Pense à ton infusion du soir pour préparer ton corps au repos.",
+        icon: "/nutrition/icon-192.PNG"
+      });
+    }, 24 * 60 * 60 * 1000);
+  }, delaiSoir);
+
+  // Rappel suivi 21h00
+  var rappelSuivi = new Date();
+  rappelSuivi.setHours(21, 0, 0, 0);
+  if (rappelSuivi <= maintenant) rappelSuivi.setDate(rappelSuivi.getDate() + 1);
+  var delaiSuivi = rappelSuivi - maintenant;
+
+  setTimeout(function() {
+    var today = new Date().toISOString().slice(0, 10);
+    var key = "mt_suivi_" + (slug || "admin") + "_" + today;
+    try {
+      var saved = JSON.parse(localStorage.getItem(key) || "{}");
+      if (!saved.filled) {
+        new Notification("✅ Méthode Tee — Suivi du jour", {
+          body: "Tu n'as pas encore rempli ton suivi aujourd'hui. 2 minutes suffisent !",
+          icon: "/nutrition/icon-192.PNG"
+        });
+      }
+    } catch(e) {}
+    setInterval(function() {
+      var today2 = new Date().toISOString().slice(0, 10);
+      var key2 = "mt_suivi_" + (slug || "admin") + "_" + today2;
+      try {
+        var saved2 = JSON.parse(localStorage.getItem(key2) || "{}");
+        if (!saved2.filled) {
+          new Notification("✅ Méthode Tee — Suivi du jour", {
+            body: "Tu n'as pas encore rempli ton suivi aujourd'hui. 2 minutes suffisent !",
+            icon: "/nutrition/icon-192.PNG"
+          });
+        }
+      } catch(e) {}
+    }, 24 * 60 * 60 * 1000);
+  }, delaiSuivi);
 }
 
 function renderProtocole(protocole) {
