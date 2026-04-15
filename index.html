@@ -509,6 +509,49 @@
       <p style="font-size:12px;color:var(--muted);margin:0 0 24px">Ton plat signature personnalisé.</p>
       <div id="signature-card" class="card" style="padding:24px"></div>
     </section>
+
+        <!-- TRANSFORMATION -->
+    <section id="tab-transformation" class="tab-section" style="padding-top:24px">
+      <h2 class="serif" style="font-size:30px;font-weight:700;color:var(--ink);margin:0 0 4px">Ma Transformation</h2>
+      <p style="font-size:12px;color:var(--muted);margin:0 0 24px">Ton évolution depuis le début du programme.</p>
+
+      <!-- Point de départ -->
+      <div class="card" style="padding:22px;margin-bottom:16px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+          <div style="width:36px;height:36px;border-radius:50%;background:rgba(140,117,97,.12);display:flex;align-items:center;justify-content:center;font-size:18px">📍</div>
+          <div>
+            <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--muted);margin:0 0 2px">Point de départ</p>
+            <p style="font-size:14px;font-weight:700;color:var(--ink);margin:0" id="transfo-depart-titre"></p>
+          </div>
+        </div>
+        <div id="transfo-depart-content"></div>
+      </div>
+
+      <!-- Objectifs -->
+      <div class="card" style="padding:22px;margin-bottom:16px;background:var(--brand);border:none">
+        <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:rgba(255,255,255,.7);margin:0 0 12px">🎯 Mes objectifs</p>
+        <div id="transfo-objectifs"></div>
+      </div>
+
+      <!-- Évolution semaine par semaine -->
+      <div class="card" style="padding:22px;margin-bottom:16px">
+        <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 14px">📈 Évolution semaine par semaine</p>
+        <div id="transfo-evolution" style="display:flex;flex-direction:column;gap:12px"></div>
+      </div>
+
+      <!-- Victoires -->
+      <div class="card" style="padding:22px;margin-bottom:16px">
+        <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 14px">🏆 Mes victoires</p>
+        <div id="transfo-victoires" style="display:flex;flex-direction:column;gap:8px"></div>
+      </div>
+
+      <!-- Ressentis marquants -->
+      <div class="card" style="padding:22px;margin-bottom:16px">
+        <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 14px">💬 Ressentis marquants</p>
+        <div id="transfo-ressentis" style="display:flex;flex-direction:column;gap:8px"></div>
+      </div>
+    </section>
+
         <!-- PROGRAMME -->
     <section id="tab-programme" class="tab-section" style="padding-top:24px">
       <h2 class="serif" style="font-size:30px;font-weight:700;color:var(--ink);margin:0 0 4px">Mon Programme</h2>
@@ -677,6 +720,10 @@
     <button class="nav-btn" onclick="switchTab('signature',this)" id="nav-signature">
       <i data-lucide="salad" style="width:20px;height:20px"></i>
       <span>Signature</span>
+    </button>
+        <button class="nav-btn" onclick="switchTab('transformation',this)" id="nav-transformation">
+      <i data-lucide="sparkles" style="width:20px;height:20px"></i>
+      <span>Bilan</span>
     </button>
         <button class="nav-btn" onclick="switchTab('programme',this)" id="nav-programme">
       <i data-lucide="trending-up" style="width:20px;height:20px"></i>
@@ -905,6 +952,27 @@
         <p style="font-size:11px;color:var(--muted);margin:0 0 14px">Visible uniquement dans l'admin — jamais affiché au client.</p>
         <textarea id="f-notes-priv" class="admin-textarea" placeholder="Sensible au gluten, stress élevé semaine 2, progression rapide..."></textarea>
       </div>
+
+            <!-- Fiche transformation -->
+      <div class="admin-section">
+        <h3 class="serif" style="font-size:20px;color:var(--ink);margin:0 0 6px">Fiche Transformation</h3>
+        <p style="font-size:11px;color:var(--muted);margin:0 0 14px">Visible par le client dans l'onglet "Bilan".</p>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div>
+            <label class="field-label">Point de départ (terrain initial)</label>
+            <textarea id="f-transfo-depart" class="admin-textarea" placeholder="Fatigue chronique, ballonnements, manque de sommeil..."></textarea>
+          </div>
+          <div>
+            <label class="field-label">Victoires (une par ligne)</label>
+            <textarea id="f-transfo-victoires" class="admin-textarea" placeholder="Plus de ballonnements&#10;Énergie stable toute la journée&#10;-2kg en 3 semaines"></textarea>
+          </div>
+          <div>
+            <label class="field-label">Ressentis marquants (une par ligne)</label>
+            <textarea id="f-transfo-ressentis" class="admin-textarea" placeholder="Je me sens plus légère&#10;Mon sommeil s'est vraiment amélioré&#10;Je n'ai plus de fringales sucrées"></textarea>
+          </div>
+        </div>
+      </div>
+
       <!-- Timeline / Programme -->
       <div class="admin-section">
         <h3 class="serif" style="font-size:20px;color:var(--ink);margin:0 0 6px">Programme & Timeline</h3>
@@ -988,7 +1056,8 @@ function emptyProgramme() {
     rituel: { matin: "", midi: "", soir: "", note: "" },
     terrain: { dominant: "", axes: [], note: "" },
     protocole: { matin: "", midi: "", soir: "", duree: "" },
-    methode: [], offre: "", notes_priv: "", timeline: {}
+    methode: [], offre: "", notes_priv: "", timeline: {}, transformation: {}
+
 
 
   };
@@ -1139,6 +1208,8 @@ function renderClientView(prenom, prog) {
   renderMethodRules(prog.methode || []);
 
     renderProgramme(prog);
+    renderTransformation(prog);
+
 
   // Icônes Lucide
     var d = document.getElementById("today-date");
@@ -1871,7 +1942,97 @@ function planifierRappels(slug) {
   /* ══════════════════════════════════════════════
    HISTORIQUE VISUEL
 ══════════════════════════════════════════════ */
-function renderHistorique(slug) {
+/* ══════════════════════════════════════════════
+   FICHE TRANSFORMATION
+══════════════════════════════════════════════ */
+function renderTransformation(prog) {
+  var transfo = prog.transformation || {};
+  var timeline = prog.timeline || {};
+  var semaines = timeline.semaines || [];
+
+  // Point de départ
+  var departTitre = document.getElementById("transfo-depart-titre");
+  var departContent = document.getElementById("transfo-depart-content");
+  if (departTitre) departTitre.textContent = "Semaine 1 — " + (new Date(timeline.dateDebut || Date.now()).toLocaleDateString("fr-FR", {month:"long", year:"numeric"}));
+  if (departContent) {
+    var depart = transfo.depart || "";
+    if (depart) {
+      departContent.innerHTML = depart.split("\n").filter(Boolean).map(function(d) {
+        return '<div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);margin-bottom:6px">' +
+          '<span style="color:var(--accent);font-weight:700">•</span>' + d.trim() + '</div>';
+      }).join("");
+    } else {
+      departContent.innerHTML = '<p style="font-size:12px;color:var(--muted);font-style:italic;margin:0">Bilan de départ à venir…</p>';
+    }
+  }
+
+  // Objectifs
+  var objEl = document.getElementById("transfo-objectifs");
+  if (objEl) {
+    var goals = prog.goals || [];
+    if (goals.length) {
+      objEl.innerHTML = goals.map(function(g) {
+        return '<div style="display:flex;align-items:center;gap:8px;font-size:13px;color:white;margin-bottom:6px">' +
+          '<span style="font-size:16px">→</span>' + g + '</div>';
+      }).join("");
+    } else {
+      objEl.innerHTML = '<p style="font-size:12px;color:rgba(255,255,255,.7);font-style:italic;margin:0">Objectifs à définir…</p>';
+    }
+  }
+
+  // Évolution semaine par semaine
+  var evoEl = document.getElementById("transfo-evolution");
+  if (evoEl) {
+    if (semaines.length) {
+      evoEl.innerHTML = semaines.map(function(s, i) {
+        if (!s.ameliorations && !s.notesCoach && !s.terrain) return "";
+        return '<div style="border-left:3px solid var(--brand);padding-left:14px">' +
+          '<p style="font-size:11px;font-weight:800;color:var(--brand);text-transform:uppercase;letter-spacing:.08em;margin:0 0 6px">Semaine ' + (i+1) + '</p>' +
+          (s.ameliorations ? s.ameliorations.split("\n").filter(Boolean).map(function(a) {
+            return '<div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--ink);margin-bottom:4px">' +
+              '<span style="color:#34d399;font-weight:700">+</span>' + a.trim() + '</div>';
+          }).join("") : "") +
+          (s.notesCoach ? '<p style="font-size:11px;color:var(--muted);font-style:italic;margin:6px 0 0">"' + s.notesCoach + '"</p>' : "") +
+          '</div>';
+      }).filter(Boolean).join("") || '<p style="font-size:12px;color:var(--muted);font-style:italic;margin:0">Évolution en cours…</p>';
+    } else {
+      evoEl.innerHTML = '<p style="font-size:12px;color:var(--muted);font-style:italic;margin:0">Évolution en cours…</p>';
+    }
+  }
+
+  // Victoires
+  var vicEl = document.getElementById("transfo-victoires");
+  if (vicEl) {
+    var victoires = transfo.victoires || "";
+    if (victoires) {
+      vicEl.innerHTML = victoires.split("\n").filter(Boolean).map(function(v) {
+        return '<div style="display:flex;align-items:center;gap:10px;background:#f8f4ee;border-radius:14px;padding:12px 14px">' +
+          '<span style="font-size:20px">🏆</span>' +
+          '<span style="font-size:13px;font-weight:600;color:var(--ink)">' + v.trim() + '</span>' +
+          '</div>';
+      }).join("");
+    } else {
+      vicEl.innerHTML = '<p style="font-size:12px;color:var(--muted);font-style:italic;margin:0">Tes victoires apparaîtront ici au fil du programme…</p>';
+    }
+  }
+
+  // Ressentis
+  var ressEl = document.getElementById("transfo-ressentis");
+  if (ressEl) {
+    var ressentis = transfo.ressentis || "";
+    if (ressentis) {
+      ressEl.innerHTML = ressentis.split("\n").filter(Boolean).map(function(r) {
+        return '<div style="background:rgba(83,100,74,.06);border-radius:14px;padding:12px 14px">' +
+          '<p class="serif" style="font-size:13px;color:var(--ink);font-style:italic;margin:0">"' + r.trim() + '"</p>' +
+          '</div>';
+      }).join("");
+    } else {
+      ressEl.innerHTML = '<p style="font-size:12px;color:var(--muted);font-style:italic;margin:0">Tes ressentis apparaîtront ici…</p>';
+    }
+  }
+}
+
+  function renderHistorique(slug) {
   var jours = [];
   var joursLabels = ["D","L","M","M","J","V","S"];
   for (var i = 6; i >= 0; i--) {
@@ -2090,6 +2251,10 @@ function fillAdmin(prenom, prog) {
   document.getElementById("f-method").value = JSON.stringify(prog.methode || [], null, 2);
   document.getElementById("f-offre").value = prog.offre || "";
   document.getElementById("f-notes-priv").value = prog.notes_priv || "";
+    var tr = prog.transformation || {};
+  document.getElementById("f-transfo-depart").value = tr.depart || "";
+  document.getElementById("f-transfo-victoires").value = tr.victoires || "";
+  document.getElementById("f-transfo-ressentis").value = tr.ressentis || "";
   var tl = prog.timeline || {};
   document.getElementById("f-date-debut").value = tl.dateDebut || "";
   document.getElementById("f-nb-semaines").value = tl.nbSemaines || 4;
@@ -2276,7 +2441,13 @@ async function saveClient() {
   programme.semaine = document.getElementById("f-semaine").value.trim();
   programme.offre = document.getElementById("f-offre").value;
   programme.notes_priv = document.getElementById("f-notes-priv").value.trim();
-    programme.timeline = syncTimeline();
+  programme.transformation = {
+    depart: document.getElementById("f-transfo-depart").value.trim(),
+    victoires: document.getElementById("f-transfo-victoires").value.trim(),
+    ressentis: document.getElementById("f-transfo-ressentis").value.trim()
+  };
+
+  programme.timeline = syncTimeline();
 
   programme.objectif = document.getElementById("f-objectif").value.trim();
   programme.coach = document.getElementById("f-coach").value.trim();
