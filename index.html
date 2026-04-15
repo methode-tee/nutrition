@@ -359,7 +359,9 @@
   <!-- ── HEADER ── -->
   <header style="background:rgba(253,251,247,.92);backdrop-filter:blur(12px);padding:18px 20px 14px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:20;border-bottom:1px solid rgba(0,0,0,0.04);">
     <div>
-      <p style="font-size:9px;text-transform:uppercase;letter-spacing:.18em;color:#b5aca3;font-weight:800;margin-bottom:3px">Espace Client</p>
+            <p style="font-size:9px;text-transform:uppercase;letter-spacing:.18em;color:#b5aca3;font-weight:800;margin-bottom:3px"><span data-trad="espaceClient">Espace Client</span></p>
+
+
       <h1 class="serif" style="font-size:20px;font-style:italic;font-weight:700;color:var(--brand);margin:0">Méthode Tee</h1>
     </div>
     <div id="avatar" style="width:42px;height:42px;border-radius:50%;background:var(--brand);color:white;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-style:italic;font-weight:700;font-size:19px;box-shadow:0 4px 14px rgba(83,100,74,.28)">T</div>
@@ -375,11 +377,13 @@
           <p id="today-date" style="font-size:11px;color:var(--muted);font-weight:600;margin:0 0 4px;text-transform:capitalize"></p>
 
           <h2 class="serif" style="font-size:34px;font-weight:700;color:var(--ink);margin:0 0 6px;line-height:1.15">Bonjour <span id="display-prenom">toi</span>,</h2>
-          <p style="font-size:12px;color:var(--muted)">Ton espace nutrition &amp; routines premium.</p>
+          <p style="font-size:12px;color:var(--muted)"><span data-trad="espaceNutrition">Ton espace nutrition &amp; routines premium.</span><
+/p>
         </div>
         <span class="badge" style="background:var(--brand);color:white;margin-top:4px;flex-shrink:0">
           <i data-lucide="sparkles" style="width:11px;height:11px"></i>
-          Privé
+          ><span data-trad="prive">Privé</span><
+
         </span>
       </div>
       
@@ -393,7 +397,8 @@
 
       <!-- Objectif -->
       <div class="goal-card" style="margin-bottom:20px">
-        <p style="font-size:9px;text-transform:uppercase;letter-spacing:.18em;font-weight:800;opacity:.75;margin-bottom:8px">Ton objectif principal</p>
+        <p style="font-size:9px;text-transform:uppercase;letter-spacing:.18em;font-weight:800;opacity:.75;margin-bottom:8px"><span data-trad="objectifPrincipal">Ton objectif principal</span><
+/p>
         <h3 id="goal-title" class="serif" style="font-size:20px;font-style:italic;font-weight:700;margin:0 0 16px;line-height:1.3;position:relative;z-index:1"></h3>
         <ul id="goal-list" style="list-style:none;margin:0;padding:0;space-y:6px;position:relative;z-index:1"></ul>
       </div>
@@ -401,22 +406,27 @@
       <!-- Mot du coach -->
       <div class="card" style="padding:22px;margin-bottom:20px;position:relative">
         <div style="position:absolute;top:-14px;right:14px;width:46px;height:46px;background:white;border-radius:50%;box-shadow:0 4px 14px rgba(0,0,0,0.09);display:flex;align-items:center;justify-content:center;font-size:20px">✍️</div>
-        <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin-bottom:10px">Le mot de Tee</p>
+        <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin-bottom:10px"><span data-trad="motDeTee">Le mot de Tee</span><
+/p>
         <p id="coach-msg" class="serif" style="font-size:14px;color:var(--ink);line-height:1.7;font-style:italic;margin:0"></p>
       </div>
 
       <!-- Priorités -->
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-        <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:#b5aca3;margin:0">Tes priorités du jour</p>
-        <span style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:700;color:var(--brand)">Checklist</span>
+        <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:#b5aca3;margin:0"><span data-trad="prioritesDuJour">Tes priorités du jour</span><
+/p>
+        <span style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:700;color:var(--brand)"><span data-trad="checklist">Checklist</span><
+/span>
       </div>
       <div id="tasks-list" style="display:flex;flex-direction:column;gap:10px"></div>
 
       <div class="card" style="padding:22px;margin-top:18px">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px">
           <div>
-            <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 6px">Rituel du jour</p>
-            <h3 class="serif" style="font-size:20px;margin:0;color:var(--ink)">Ton rythme Méthode Tee</h3>
+            <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 6px"><span data-trad="rituelDuJour">Rituel du jour</span><
+/p>
+            <h3 class="serif" style="font-size:20px;margin:0;color:var(--ink)"><span data-trad="rythmeMT">Ton rythme Méthode Tee</span><
+/h3>
           </div>
           <div style="width:42px;height:42px;border-radius:50%;background:var(--paper);display:flex;align-items:center;justify-content:center;font-size:20px">🌿</div>
         </div>
@@ -426,8 +436,10 @@
       <div class="card" style="padding:22px;margin-top:18px">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px">
           <div>
-            <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 6px">Analyse du terrain</p>
-            <h3 class="serif" style="font-size:20px;margin:0;color:var(--ink)">Ce que nous travaillons</h3>
+            <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 6px"><span data-trad="analyseTerrain">Analyse du terrain</span><
+/p>
+            <h3 class="serif" style="font-size:20px;margin:0;color:var(--ink)"><span data-trad="ceQueTravaillons">Ce que nous travaillons</span><
+/h3>
           </div>
           <div style="width:42px;height:42px;border-radius:50%;background:var(--paper);display:flex;align-items:center;justify-content:center;font-size:20px">🌱</div>
         </div>
@@ -439,15 +451,18 @@
     <section id="tab-repas" class="tab-section" style="padding-top:24px">
       <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:20px">
         <div>
-          <h2 class="serif" style="font-size:30px;font-weight:700;color:var(--ink);margin:0 0 4px">Ton Menu</h2>
-          <p style="font-size:12px;color:var(--muted)">Programme alimentaire personnalisé</p>
+          <h2 class="serif" style="font-size:30px;font-weight:700;color:var(--ink);margin:0 0 4px"><span data-trad="tonMenu">Ton Menu</span><
+/h2>
+          <p style="font-size:12px;color:var(--muted)"><span data-trad="programmeAlim">Programme alimentaire personnalisé</span><
+/p>
         </div>
         <span id="week-badge" style="font-size:11px;color:var(--accent);font-weight:700;background:rgba(140,117,97,.1);padding:5px 12px;border-radius:999px"></span>
       </div>
       <div id="days-nav" style="display:flex;overflow-x:auto;gap:10px;margin:0 -20px;padding:0 20px 16px;scrollbar-width:none"></div>
       <div style="display:flex;flex-direction:column;gap:14px">
         <div class="card" style="padding:18px">
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="font-size:22px">🌅</span><p style="font-size:11px;text-transform:uppercase;letter-spacing:.12em;font-weight:800;color:var(--brand);margin:0">Éveil &amp; Matin</p></div>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="font-size:22px">🌅</span><p style="font-size:11px;text-transform:uppercase;letter-spacing:.12em;font-weight:800;color:var(--brand);margin:0"><span data-trad="eveilMatin">Éveil &amp; Matin</span><
+/p></div>
           <p id="meal-morning" style="font-size:13px;color:#4a3f38;line-height:1.7;margin:0;padding-left:14px;border-left:2px solid #e8e4de"></p>
         </div>
         <div class="card" style="padding:18px">
@@ -467,13 +482,17 @@
 
     <!-- SOINS -->
     <section id="tab-soins" class="tab-section" style="padding-top:24px">
-      <h2 class="serif" style="font-size:30px;font-weight:700;color:var(--ink);margin:0 0 4px">Soins</h2>
-      <p style="font-size:12px;color:var(--muted);margin:0 0 24px">Tes alliés naturels sélectionnés pour ton profil.</p>
+      <h2 class="serif" style="font-size:30px;font-weight:700;color:var(--ink);margin:0 0 4px"><span data-trad="soins">Soins</span><
+/h2>
+      <p style="font-size:12px;color:var(--muted);margin:0 0 24px"><span data-trad="alliesNaturels">Tes alliés naturels sélectionnés pour ton profil.</span><
+/p>
       <div class="card" style="padding:22px;margin-bottom:18px">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px">
           <div>
-            <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 6px">Protocole végétal</p>
-            <h3 class="serif" style="font-size:20px;margin:0;color:var(--ink)">Rythme plantes & infusions</h3>
+            <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 6px"><span data-trad="protocoleVegetal">Protocole végétal</span><
+/p>
+            <h3 class="serif" style="font-size:20px;margin:0;color:var(--ink)"><span data-trad="rythmePlantes">Rythme plantes &amp; infusions</span><
+/h3>
           </div>
           <div style="width:42px;height:42px;border-radius:50%;background:var(--paper);display:flex;align-items:center;justify-content:center;font-size:20px">🍵</div>
         </div>
@@ -484,10 +503,13 @@
       <!-- Panier selection -->
       <div id="selection-panel" style="display:none;margin-top:18px">
         <div class="card" style="padding:20px">
-          <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 10px">Ma sélection</p>
+          <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 10px"><span data-trad="maSelection">Ma sélection</span><
+/p>
           <div id="selection-list" style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px"></div>
-          <button onclick="envoyerSelection()" style="width:100%;padding:13px;border-radius:999px;border:none;background:var(--ink);color:white;font-family:inherit;font-size:12px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;cursor:pointer">Envoyer ma sélection à Tee</button>
-          <button onclick="viderSelection()" style="width:100%;padding:10px;border-radius:999px;border:none;background:#f0ece6;color:var(--muted);font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;margin-top:8px">Vider la sélection</button>
+          <button onclick="envoyerSelection()" style="width:100%;padding:13px;border-radius:999px;border:none;background:var(--ink);color:white;font-family:inherit;font-size:12px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;cursor:pointer"<span data-trad="envoyerSelectionATee">Envoyer ma sélection à Tee</span>
+/button>
+          <button onclick="viderSelection()" style="width:100%;padding:10px;border-radius:999px;border:none;background:#f0ece6;color:var(--muted);font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;margin-top:8px"<span data-trad="viderSelection">Vider la sélection</span>
+/button>
         </div>
       </div>
 
@@ -531,7 +553,8 @@
     <section id="tab-suivi" class="tab-section" style="padding-top:24px">
       <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:20px">
         <div>
-          <h2 class="serif" style="font-size:30px;font-weight:700;color:var(--ink);margin:0 0 4px">Mon Suivi</h2>
+          <h2 class="serif" style="font-size:30px;font-weight:700;color:var(--ink);margin:0 0 4px"><span data-trad="monSuivi">Mon Suivi</span><
+/h2>
           <p id="suivi-date" style="font-size:12px;color:var(--muted)"></p>
         </div>
         <div id="score-badge" style="font-size:11px;color:white;font-weight:700;background:var(--brand);padding:5px 12px;border-radius:999px;display:none"></div>
@@ -539,7 +562,8 @@
 
       <!-- Score semaine -->
       <div class="card" style="padding:20px;margin-bottom:18px">
-        <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 8px">Score de la semaine</p>
+        <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 8px"><span data-trad="scoreSemaine">Score de la semaine</span><
+/p>
         <div id="score-bar-wrap" style="background:#f0ece6;border-radius:999px;height:10px;overflow:hidden;margin-bottom:8px">
           <div id="score-bar" style="height:100%;background:var(--brand);border-radius:999px;transition:width .5s;width:0%"></div>
         </div>
@@ -548,22 +572,27 @@
 
       <!-- Checks du jour -->
       <div class="card" style="padding:20px;margin-bottom:18px">
-        <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 14px">Checks du jour</p>
+        <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 14px"><span data-trad="checksDuJour">Checks du jour</span><
+/p>
         <div style="display:flex;flex-direction:column;gap:12px">
           <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer">
-            <span style="font-size:13px;color:var(--ink)">💧 Eau suffisante</span>
+            <span style="font-size:13px;color:var(--ink)"><span data-trad="eauSuffisante">💧 Eau suffisante</span><
+/span>
             <input type="checkbox" id="check-eau" onchange="saveSuivi()" style="width:20px;height:20px;accent-color:var(--brand)">
           </label>
           <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer">
-            <span style="font-size:13px;color:var(--ink)">🥗 Repas respectés</span>
+            <span style="font-size:13px;color:var(--ink)"><span data-trad="repasRespect">🥗 Repas respectés</span><
+/span>
             <input type="checkbox" id="check-repas" onchange="saveSuivi()" style="width:20px;height:20px;accent-color:var(--brand)">
           </label>
           <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer">
-            <span style="font-size:13px;color:var(--ink)">🍵 Infusion / protocole</span>
+            <span style="font-size:13px;color:var(--ink)"><span data-trad="infusionProtocole">🍵 Infusion / protocole</span><
+/span>
             <input type="checkbox" id="check-infusion" onchange="saveSuivi()" style="width:20px;height:20px;accent-color:var(--brand)">
           </label>
           <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer">
-            <span style="font-size:13px;color:var(--ink)">🏃 Sport / marche</span>
+            <span style="font-size:13px;color:var(--ink)"><span data-trad="sportMarche">🏃 Sport / marche</span><
+/span>
             <input type="checkbox" id="check-sport" onchange="saveSuivi()" style="width:20px;height:20px;accent-color:var(--brand)">
           </label>
         </div>
@@ -571,7 +600,8 @@
 
       <!-- Mesures du jour -->
       <div class="card" style="padding:20px;margin-bottom:18px">
-        <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 14px">Mesures du jour</p>
+        <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 14px"><span data-trad="mesuresDuJour">Mesures du jour</span><
+/p>
         <div style="display:flex;flex-direction:column;gap:14px">
           <div>
             <label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:6px">Poids (kg)</label>
@@ -594,7 +624,8 @@
       
       <!-- Assistant phyto -->
       <div class="card" style="padding:20px;margin-bottom:18px">
-        <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 10px">Comment tu te sens ?</p>
+        <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 10px"><span data-trad="commentTuTeSens">Comment tu te sens ?</span><
+/p>
         <input id="phyto-input" type="text" placeholder="Fatigué, mal au dos... / Tired, back pain..." oninput="analyserSymptome(this.value)" style="width:100%;border:1.5px solid #e8e4de;border-radius:14px;padding:12px 14px;font-size:13px;font-family:inherit;outline:none;color:var(--ink)">
         <div id="phyto-result" style="display:none;margin-top:14px">
           <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 10px">Suggestions Maison Yanna</p>
@@ -603,13 +634,15 @@
             <p style="font-size:11px;color:var(--muted);margin:0 0 8px">Tu as déjà ces produits ?</p>
             <div id="phyto-checklist" style="display:flex;flex-direction:column;gap:8px"></div>
           </div>
-          <button onclick="envoyerPhyto()" style="width:100%;padding:13px;border-radius:999px;border:none;background:var(--ink);color:white;font-family:inherit;font-size:12px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;cursor:pointer;margin-top:14px">Envoyer à Tee</button>
+          <button onclick="envoyerPhyto()" style="width:100%;padding:13px;border-radius:999px;border:none;background:var(--ink);color:white;font-family:inherit;font-size:12px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;cursor:pointer;margin-top:14px"<span data-trad="envoyerATee">Envoyer à Tee</span>
+/button>
         </div>
       </div>
 
       <!-- Note libre -->
       <div class="card" style="padding:20px;margin-bottom:18px">
-        <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 10px">Note du jour</p>
+        <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 10px"><span data-trad="notesDuJour">Note du jour</span><
+/p>
         <textarea id="suivi-note" placeholder="Comment tu te sens aujourd'hui ?" oninput="saveSuivi()" style="width:100%;border:1.5px solid #e8e4de;border-radius:14px;padding:12px 14px;font-size:13px;font-family:inherit;min-height:90px;resize:none;outline:none;color:var(--ink)"></textarea>
       </div>
     </section>
@@ -730,6 +763,14 @@
             <label class="field-label">Semaine</label>
             <input id="f-semaine" class="admin-input" placeholder="Semaine 2" />
           </div>
+                    <div>
+            <label class="field-label">Langue du client</label>
+            <select id="f-langue" class="admin-input" style="cursor:pointer">
+              <option value="fr">🇫🇷 Français</option>
+              <option value="en">🇬🇧 English</option>
+            </select>
+          </div>
+
                     <div>
             <label class="field-label">Offre client</label>
             <select id="f-offre" class="admin-input" style="cursor:pointer">
@@ -868,6 +909,190 @@
         <p style="font-size:11px;color:var(--muted);margin:0 0 14px">Visible uniquement dans l'admin — jamais affiché au client.</p>
         <textarea id="f-notes-priv" class="admin-textarea" placeholder="Sensible au gluten, stress élevé semaine 2, progression rapide..."></textarea>
       </div>
+      key);
+}
+
+      /* ══════════════════════════════════════════════
+   TRADUCTIONS
+══════════════════════════════════════════════ */
+var LANG = {
+  fr: {
+    espaceClient: "Espace Client",
+    prive: "Privé",
+    objectifPrincipal: "Ton objectif principal",
+    motDeTee: "Le mot de Tee",
+    prioritesDuJour: "Tes priorités du jour",
+    checklist: "Checklist",
+    rituelDuJour: "Rituel du jour",
+    rythmeMT: "Ton rythme Méthode Tee",
+    analyseTerrain: "Analyse du terrain",
+    ceQueTravaillons: "Ce que nous travaillons",
+    tonMenu: "Ton Menu",
+    programmeAlim: "Programme alimentaire personnalisé",
+    eveilMatin: "Éveil & Matin",
+    dejeuner: "Déjeuner",
+    collation: "Collation",
+    dinerSoir: "Dîner & Soir",
+    soins: "Soins",
+    alliesNaturels: "Tes alliés naturels sélectionnés pour ton profil.",
+    protocoleVegetal: "Protocole végétal",
+    rythmePlantes: "Rythme plantes & infusions",
+    signatureHealthy: "Signature Healthy",
+    platSignature: "Ton plat signature personnalisé.",
+    methodeTee: "Méthode Tee",
+    conseilsPersonnalises: "Tes conseils personnalisés pour réussir.",
+    monSuivi: "Mon Suivi",
+    scoreSemaine: "Score de la semaine",
+    checksDuJour: "Checks du jour",
+    eauSuffisante: "💧 Eau suffisante",
+    repasRespect: "🥗 Repas respectés",
+    infusionProtocole: "🍵 Infusion / protocole",
+    sportMarche: "🏃 Sport / marche",
+    mesuresDuJour: "Mesures du jour",
+    poids: "Poids (kg)",
+    energie: "Energie",
+    sommeil: "Sommeil",
+    digestion: "Digestion",
+    commentTuTeSens: "Comment tu te sens ?",
+    phytoPlaceholder: "Fatigué, mal au dos... / Tired, back pain...",
+    suggestionsMY: "Suggestions Maison Yanna",
+    tuAsDejaDesProduits: "Tu as déjà ces produits ?",
+    envoyerATee: "Envoyer à Tee",
+    notesDuJour: "Note du jour",
+    notesDuJourPlaceholder: "Comment tu te sens aujourd'hui ?",
+    maSelection: "Ma sélection",
+    envoyerSelectionATee: "Envoyer ma sélection à Tee",
+    viderSelection: "Vider la sélection",
+    formatSouhaite: "Format souhaité (ex: 100g, 10 sachets...)",
+    monProgramme: "Mon Programme",
+    regleSemaine: "📋 Ta règle cette semaine",
+    progressionGlobale: "Progression globale",
+    terrainDepart: "Terrain de départ",
+    ameliorations: "✨ Améliorations observées",
+    noteDeTee: "Note de Tee",
+    aCvenir: "Données à venir…",
+    enCours: "En cours",
+    terminee: "Terminée ✓",
+    aVenir: "À venir",
+    scoreTxt: function(f,t,p) { return "Tu as rempli " + f + " jour" + (f>1?"s":"") + " sur " + t + " — Score : " + p + "%"; },
+    bonjour: "Bonjour",
+    espaceNutrition: "Ton espace nutrition & routines premium.",
+    maisonyannaBoutique: "Voir la boutique",
+    viderPlaceholder: "—",
+    dureeConseil: "Durée / conseil : ",
+    aucunRituel: "Aucun rituel ajouté.",
+    aucunTerrain: "Aucune analyse ajoutée.",
+    aucunProtocole: "Aucun protocole ajouté.",
+    selectionEnvoyee: "Sélection envoyée ! Ton coach la recevra très vite.",
+    selectionErreur: "Impossible d'envoyer — contacte ton coach directement.",
+    phytoEnvoye: "Envoyé à Tee ! Elle te répondra très vite.",
+    phytoErreur: "Erreur — réessaie.",
+    semaineSur: function(s,n) { return "Semaine " + s + " sur " + n; },
+    programmeDebut: function(n,d) { return "Programme de " + n + " semaines — démarré le " + d; },
+    programmePersonnalise: "Programme personnalisé Méthode Tee",
+    matin: "Matin", midi: "Midi", soir: "Soir"
+  },
+  en: {
+    espaceClient: "Client Space",
+    prive: "Private",
+    objectifPrincipal: "Your main goal",
+    motDeTee: "A word from Tee",
+    prioritesDuJour: "Your daily priorities",
+    checklist: "Checklist",
+    rituelDuJour: "Daily ritual",
+    rythmeMT: "Your Méthode Tee rhythm",
+    analyseTerrain: "Terrain analysis",
+    ceQueTravaillons: "What we're working on",
+    tonMenu: "Your Menu",
+    programmeAlim: "Personalised nutrition programme",
+    eveilMatin: "Wake up & Morning",
+    dejeuner: "Lunch",
+    collation: "Snack",
+    dinerSoir: "Dinner & Evening",
+    soins: "Care",
+    alliesNaturels: "Your natural allies selected for your profile.",
+    protocoleVegetal: "Plant protocol",
+    rythmePlantes: "Plants & infusions rhythm",
+    signatureHealthy: "Signature Healthy",
+    platSignature: "Your personalised signature dish.",
+    methodeTee: "Méthode Tee",
+    conseilsPersonnalises: "Your personalised advice to succeed.",
+    monSuivi: "My Tracking",
+    scoreSemaine: "Weekly score",
+    checksDuJour: "Daily checks",
+    eauSuffisante: "💧 Enough water",
+    repasRespect: "🥗 Meals followed",
+    infusionProtocole: "🍵 Infusion / protocol",
+    sportMarche: "🏃 Sport / walk",
+    mesuresDuJour: "Today's measures",
+    poids: "Weight (kg)",
+    energie: "Energy",
+    sommeil: "Sleep",
+    digestion: "Digestion",
+    commentTuTeSens: "How are you feeling?",
+    phytoPlaceholder: "Tired, back pain, bloating...",
+    suggestionsMY: "Maison Yanna suggestions",
+    tuAsDejaDesProduits: "Do you already have these products?",
+    envoyerATee: "Send to Tee",
+    notesDuJour: "Daily note",
+    notesDuJourPlaceholder: "How are you feeling today?",
+    maSelection: "My selection",
+    envoyerSelectionATee: "Send my selection to Tee",
+    viderSelection: "Clear selection",
+    formatSouhaite: "Desired format (e.g. 100g, 10 sachets...)",
+    monProgramme: "My Programme",
+    regleSemaine: "📋 Your rule this week",
+    progressionGlobale: "Overall progress",
+    terrainDepart: "Starting terrain",
+    ameliorations: "✨ Improvements observed",
+    noteDeTee: "Note from Tee",
+    aCvenir: "Data coming soon…",
+    enCours: "In progress",
+    terminee: "Completed ✓",
+    aVenir: "Upcoming",
+    scoreTxt: function(f,t,p) { return "You filled in " + f + " day" + (f>1?"s":"") + " out of " + t + " — Score: " + p + "%"; },
+    bonjour: "Hello",
+    espaceNutrition: "Your premium nutrition & routine space.",
+    maisonyannaBoutique: "Visit the shop",
+    viderPlaceholder: "—",
+    dureeConseil: "Duration / advice: ",
+    aucunRituel: "No ritual added.",
+    aucunTerrain: "No analysis added.",
+    aucunProtocole: "No protocol added.",
+    selectionEnvoyee: "Selection sent! Your coach will receive it very soon.",
+    selectionErreur: "Unable to send — contact your coach directly.",
+    phytoEnvoye: "Sent to Tee! She will reply very soon.",
+    phytoErreur: "Error — please try again.",
+    semaineSur: function(s,n) { return "Week " + s + " of " + n; },
+    programmeDebut: function(n,d) { return n + "-week programme — started " + d; },
+    programmePersonnalise: "Personalised Méthode Tee programme",
+    matin: "Morning", midi: "Midday", soir: "Evening"
+  }
+};
+
+var REGLES_SEMAINES_LANG = {
+  fr: {
+    1: { titre: "1 aliment par moment de la journée", detail: "Tu as 4 moments dans ta journée : Éveil & Matin, Déjeuner, Collation, Dîner & Soir. Pour chaque moment, choisis 1 aliment parmi ta liste — soit 4 choix au total dans la journée. Pas 1 seul pour toute la journée !" },
+    2: { titre: "2 aliments minimum par moment", detail: "Pour chaque moment (Éveil & Matin, Déjeuner, Collation, Dîner & Soir), tu choisis 2 aliments. Soit 8 choix minimum dans ta journée." },
+    3: { titre: "3 aliments par moment", detail: "Pour chaque moment de la journée, tu choisis 3 aliments parmi ta liste. Soit 12 choix dans la journée." },
+    default: { titre: "Respecte toute ta sélection", detail: "Tu es en phase de consolidation. Pour chaque moment, tu consommes l'ensemble de ta liste personnalisée." }
+  },
+  en: {
+    1: { titre: "1 food per meal moment", detail: "You have 4 moments in your day: Wake up & Morning, Lunch, Snack, Dinner & Evening. For each moment, choose 1 food from your list — that's 4 choices total throughout the day. Not just 1 for the whole day!" },
+    2: { titre: "2 foods minimum per moment", detail: "For each moment (Wake up & Morning, Lunch, Snack, Dinner & Evening), choose 2 foods from your list. That's at least 8 choices throughout the day." },
+    3: { titre: "3 foods per moment", detail: "For each moment of the day, choose 3 foods from your list. That's 12 choices throughout the day." },
+    default: { titre: "Follow your full selection", detail: "You're in the consolidation phase. For each moment, consume your entire personalised list." }
+  }
+};
+
+function getLang(prog) {
+  return (prog && prog.langue === "en") ? "en" : "fr";
+}
+
+function T(prog, key) {
+  var l = getLang(prog);
+  return (LANG[l] && LANG[l][key]) ? LANG[l][key] : (LANG["fr"][key] || 
+     
       <!-- Timeline / Programme -->
       <div class="admin-section">
         <h3 class="serif" style="font-size:20px;color:var(--ink);margin:0 0 6px">Programme & Timeline</h3>
@@ -951,7 +1176,8 @@ function emptyProgramme() {
     rituel: { matin: "", midi: "", soir: "", note: "" },
     terrain: { dominant: "", axes: [], note: "" },
     protocole: { matin: "", midi: "", soir: "", duree: "" },
-    methode: [], offre: "", notes_priv: "", timeline: {}
+    methode: [], offre: "", notes_priv: "", timeline: {}, langue: "fr"
+
 
 
   };
@@ -1051,11 +1277,21 @@ async function loadClientFromURL() {
 ══════════════════════════════════════════════ */
 function renderClientView(prenom, prog) {
   _currentProg = prog || {};
+  var l = getLang(prog);
+  var t = LANG[l];
+
   // Prénom
   const p = (prenom || "toi").trim();
   document.getElementById("display-prenom").textContent = p;
   document.getElementById("avatar").textContent = p.charAt(0).toUpperCase();
   document.title = "Méthode Tee — " + p;
+
+  // Traductions statiques
+  document.querySelectorAll("[data-trad]").forEach(function(el) {
+    var key = el.getAttribute("data-trad");
+    if (t[key]) el.textContent = t[key];
+  });
+
 
   // Objectif
   document.getElementById("goal-title").textContent = prog.objectif || "";
@@ -1836,6 +2072,7 @@ function fillAdmin(prenom, prog) {
   document.getElementById("f-protocole-soir").value = prog.protocole?.soir || "";
   document.getElementById("f-protocole-duree").value = prog.protocole?.duree || "";
   document.getElementById("f-method").value = JSON.stringify(prog.methode || [], null, 2);
+  document.getElementById("f-langue").value = prog.langue || "fr";
   document.getElementById("f-offre").value = prog.offre || "";
   document.getElementById("f-notes-priv").value = prog.notes_priv || "";
   var tl = prog.timeline || {};
@@ -2023,6 +2260,7 @@ async function saveClient() {
 
   programme.semaine = document.getElementById("f-semaine").value.trim();
   programme.offre = document.getElementById("f-offre").value;
+  programme.langue = document.getElementById("f-langue").value;
   programme.notes_priv = document.getElementById("f-notes-priv").value.trim();
     programme.timeline = syncTimeline();
 
