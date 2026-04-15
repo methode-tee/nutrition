@@ -2077,6 +2077,7 @@ function fillAdmin(prenom, prog) {
   document.getElementById("f-method").value = JSON.stringify(prog.methode || [], null, 2);
   document.getElementById("f-langue").value = prog.langue || "fr";
   document.getElementById("f-offre").value = prog.offre || "";
+  document.getElementById("f-langue").value = prog.langue || "fr";
   document.getElementById("f-notes-priv").value = prog.notes_priv || "";
   var tl = prog.timeline || {};
   document.getElementById("f-date-debut").value = tl.dateDebut || "";
@@ -2263,6 +2264,7 @@ async function saveClient() {
 
   programme.semaine = document.getElementById("f-semaine").value.trim();
   programme.offre = document.getElementById("f-offre").value;
+  programme.langue = document.getElementById("f-langue").value;
   programme.langue = document.getElementById("f-langue").value;
   programme.notes_priv = document.getElementById("f-notes-priv").value.trim();
     programme.timeline = syncTimeline();
