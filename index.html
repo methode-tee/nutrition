@@ -793,7 +793,17 @@
             <button class="chip" onclick="createClient()">+ Nouveau</button>
           </div>
         </div>
+               <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px">
+          <button class="chip" onclick="filtrerClients('')" id="filtre-tous">Tous</button>
+          <button class="chip" onclick="filtrerClients('nouveau')" id="filtre-nouveau">🟢 Nouveaux</button>
+          <button class="chip" onclick="filtrerClients('actif')" id="filtre-actif">🔵 Actifs</button>
+          <button class="chip" onclick="filtrerClients('relancer')" id="filtre-relancer">🟡 À relancer</button>
+          <button class="chip" onclick="filtrerClients('pause')" id="filtre-pause">⏸️ En pause</button>
+          <button class="chip" onclick="filtrerClients('termine')" id="filtre-termine">✅ Terminés</button>
+          <button class="chip" onclick="filtrerClients('vip')" id="filtre-vip">👑 VIP</button>
+        </div>
         <div id="clients-list" style="display:flex;flex-direction:column;gap:8px">
+
           <p style="font-size:12px;color:var(--muted)">Connecte Supabase pour voir les clients.</p>
         </div>
       </div>
@@ -814,6 +824,18 @@
             <label class="field-label">Semaine</label>
             <input id="f-semaine" class="admin-input" placeholder="Semaine 2" />
           </div>
+                    <div>
+            <label class="field-label">Statut du client</label>
+            <select id="f-statut" class="admin-input" style="cursor:pointer">
+              <option value="nouveau">🟢 Nouveau</option>
+              <option value="actif">🔵 Actif</option>
+              <option value="relancer">🟡 À relancer</option>
+              <option value="pause">⏸️ En pause</option>
+              <option value="termine">✅ Terminé</option>
+              <option value="vip">👑 VIP / Premium</option>
+            </select>
+          </div>
+
                     <div>
             <label class="field-label">Offre client</label>
             <select id="f-offre" class="admin-input" style="cursor:pointer">
@@ -1056,7 +1078,8 @@ function emptyProgramme() {
     rituel: { matin: "", midi: "", soir: "", note: "" },
     terrain: { dominant: "", axes: [], note: "" },
     protocole: { matin: "", midi: "", soir: "", duree: "" },
-    methode: [], offre: "", notes_priv: "", timeline: {}, transformation: {}
+    methode: [], offre: "", notes_priv: "", timeline: {}, transformation: {}, statut: "nouveau"
+
 
 
 
@@ -2157,31 +2180,65 @@ function switchTab(name, btn) {
 ══════════════════════════════════════════════ */
 async function loadAllClients() {
   if (!sb) { log("❌ Connecte Supabase d'abord."); return; }
-  const { data, error } = await sb.from(SB_TABLE).select("slug, prenom");
+    const { data, error } = await sb.from(SB_TABLE).select("slug, prenom, programme");
+
   if (error) { log("❌ " + error.message); return; }
   log("✅ " + (data.length) + " client(s) chargé(s).");
   renderClientsList(data);
 }
 
-function renderClientsList(list) {
-  const el = document.getElementById("clients-list");
+var _allClients = [];
+
+function filtrerClients(statut) {
+  document.querySelectorAll("[id^='filtre-']").forEach(function(b) { b.classList.remove("active"); });
+  var btnId = statut ? "filtre-" + statut : "filtre-tous";
+  var btn = document.getElementById(btnId);
+  if (btn) btn.classList.add("active");
+
+  var liste = statut
+    ? _allClients.filter(function(c) { return (c.programme && c.programme.statut) === statut; })
+    : _allClients;
+  afficherClients(liste);
+}
+
+var STATUT_MAP = {
+  nouveau:  { label: "Nouveau",    color: "#16a34a", bg: "#dcfce7" },
+  actif:    { label: "Actif",      color: "#2563eb", bg: "#dbeafe" },
+  relancer: { label: "À relancer", color: "#d97706", bg: "#fef3c7" },
+  pause:    { label: "En pause",   color: "#6b7280", bg: "#f3f4f6" },
+  termine:  { label: "Terminé",    color: "#7c3aed", bg: "#ede9fe" },
+  vip:      { label: "VIP",        color: "#b45309", bg: "#fef9c3" }
+};
+
+function afficherClients(list) {
+  var el = document.getElementById("clients-list");
   if (!list || !list.length) {
-    el.innerHTML = `<p style="font-size:12px;color:var(--muted)">Aucun client.</p>`;
+    el.innerHTML = '<p style="font-size:12px;color:var(--muted)">Aucun client.</p>';
     return;
   }
-  el.innerHTML = list.map(c =>
-    `<div class="client-row ${c.slug === currentSlug ? 'active' : ''}" onclick="selectClient('${c.slug}')">
-      <div style="display:flex;align-items:center;gap:10px;min-width:0">
-        <div class="mini-avatar">${(c.prenom || c.slug).charAt(0).toUpperCase()}</div>
-        <div style="min-width:0">
-          <div style="font-size:13px;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.prenom || "—"}</div>
-          <div style="font-size:11px;color:var(--muted)">${c.slug}</div>
-        </div>
-      </div>
-      <span style="font-size:11px;color:var(--muted)">Ouvrir →</span>
-    </div>`
-  ).join("");
+  el.innerHTML = list.map(function(c) {
+    var statut = (c.programme && c.programme.statut) || "nouveau";
+    var s = STATUT_MAP[statut] || STATUT_MAP.nouveau;
+    return '<div class="client-row ' + (c.slug === currentSlug ? "active" : "") + '" onclick="selectClient(\'' + c.slug + '\')">' +
+      '<div style="display:flex;align-items:center;gap:10px;min-width:0">' +
+      '<div class="mini-avatar">' + (c.prenom || c.slug).charAt(0).toUpperCase() + '</div>' +
+      '<div style="min-width:0">' +
+      '<div style="font-size:13px;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + (c.prenom || "—") + '</div>' +
+      '<div style="font-size:11px;color:var(--muted)">' + c.slug + '</div>' +
+      '</div></div>' +
+      '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">' +
+      '<span style="font-size:9px;font-weight:800;text-transform:uppercase;padding:3px 8px;border-radius:999px;background:' + s.bg + ';color:' + s.color + '">' + s.label + '</span>' +
+      '<span style="font-size:11px;color:var(--muted)">Ouvrir →</span>' +
+      '</div></div>';
+  }).join("");
 }
+
+function renderClientsList(list) {
+  _allClients = list || [];
+  document.getElementById("filtre-tous").classList.add("active");
+  afficherClients(_allClients);
+}
+
 
 async function selectClient(slug) {
   if (!sb) { log("❌ Connecte Supabase d'abord."); return; }
@@ -2250,6 +2307,7 @@ function fillAdmin(prenom, prog) {
   document.getElementById("f-protocole-duree").value = prog.protocole?.duree || "";
   document.getElementById("f-method").value = JSON.stringify(prog.methode || [], null, 2);
   document.getElementById("f-offre").value = prog.offre || "";
+  document.getElementById("f-statut").value = prog.statut || "nouveau";
   document.getElementById("f-notes-priv").value = prog.notes_priv || "";
     var tr = prog.transformation || {};
   document.getElementById("f-transfo-depart").value = tr.depart || "";
@@ -2440,6 +2498,9 @@ async function saveClient() {
 
   programme.semaine = document.getElementById("f-semaine").value.trim();
   programme.offre = document.getElementById("f-offre").value;
+  programme.statut = document.getElementById("f-statut").value;
+
+
   programme.notes_priv = document.getElementById("f-notes-priv").value.trim();
   programme.transformation = {
     depart: document.getElementById("f-transfo-depart").value.trim(),
