@@ -1095,15 +1095,24 @@
       </div>
 
 
-      <!-- Actions -->
+            <!-- Actions -->
       <div class="admin-section">
         <h3 class="serif" style="font-size:20px;color:var(--ink);margin:0 0 14px">Actions</h3>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <button class="btn btn-ghost" onclick="genererRapport()" style="grid-column:1/-1">📊 Rapport hebdomadaire</button>
           <button class="btn btn-ink" onclick="saveClient()" style="grid-column:1/-1">💾 Sauvegarder le client</button>
           <button class="btn btn-brand" onclick="copyLink()">🔗 Copier le lien</button>
           <button class="btn btn-ghost" onclick="duplicateClient()">⎘ Dupliquer</button>
           <button class="btn btn-danger" onclick="deleteClient()" style="grid-column:1/-1">🗑️ Supprimer ce client</button>
         </div>
+      </div>
+      <!-- Rapport hebdomadaire -->
+      <div class="admin-section" id="rapport-block" style="display:none">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+          <h3 class="serif" style="font-size:20px;color:var(--ink);margin:0">📊 Rapport hebdomadaire</h3>
+          <button onclick="copierRapport()" class="chip">Copier</button>
+        </div>
+        <div id="rapport-contenu" style="background:#f8f4ee;border-radius:16px;padding:18px;font-size:12px;line-height:1.8;color:var(--ink);white-space:pre-wrap;font-family:monospace"></div>
       </div>
 
     </div><!-- /admin-panel -->
@@ -3071,7 +3080,174 @@ function appliquerProtocole(type) {
   var msg = document.getElementById("protocole-applied");
   if (msg) { msg.style.display = "block"; setTimeout(function(){ msg.style.display = "none"; }, 3000); }
 }
+/* ══════════════════════════════════════════════
+   RAPPORT HEBDOMADAIRE
+══════════════════════════════════════════════ */
+async function genererRapport() {
+  if (!sb || !currentSlug) { log("❌ Sélectionne un client d'abord."); return; }
 
+  var { data, error } = await sb.from("mt_clients").select("prenom, programme").eq("slug", currentSlug).single();
+  if (error || !data) { log("❌ Erreur chargement client."); return; }
+
+  var prenom = data.prenom || currentSlug;
+  var prog = data.programme || {};
+  var suivi = prog.suivi || {};
+  var timeline = prog.timeline || {};
+  var semaineEnCours = getSemaineEnCours(timeline.dateDebut, timeline.nbSemaines || 4);
+
+  // Récupérer les 7 derniers jours
+  var jours = [];
+  for (var i = 6; i >= 0; i--) {
+    var d = new Date();
+    d.setDate(d.getDate() - i);
+    var dateStr = d.toISOString().slice(0, 10);
+    var entry = suivi[dateStr] || null;
+    jours.push({ date: dateStr, entry: entry });
+  }
+
+  var joursRemplis = jours.filter(function(j) { return j.entry && j.entry.filled; }).length;
+  var score = Math.round(joursRemplis / 7 * 100);
+
+  // Moyennes
+  var energies = jours.filter(function(j) { return j.entry && j.entry.energie; }).map(function(j) { return parseFloat(j.entry.energie); });
+  var sommeils = jours.filter(function(j) { return j.entry && j.entry.sommeil; }).map(function(j) { return parseFloat(j.entry.sommeil); });
+  var digestions = jours.filter(function(j) { return j.entry && j.entry.digestion; }).map(function(j) { return parseFloat(j.entry.digestion); });
+  var poids = jours.filter(function(j) { return j.entry && j.entry.poids; }).map(function(j) { return parseFloat(j.entry.poids); });
+
+  function moyenne(arr) {
+    if (!arr.length) return null;
+    return (arr.reduce(function(a, b) { return a + b; }, 0) / arr.length).toFixed(1);
+  }
+
+  function tendance(arr) {
+    if (arr.length < 2) return "";
+    var debut = arr.slice(0, Math.ceil(arr.length / 2));
+    var fin = arr.slice(Math.floor(arr.length / 2));
+    var moyDebut = debut.reduce(function(a,b){return a+b;},0)/debut.length;
+    var moyFin = fin.reduce(function(a,b){return a+b;},0)/fin.length;
+    if (moyFin > moyDebut + 0.2) return " ↑";
+    if (moyFin < moyDebut - 0.2) return " ↓";
+    return " →";
+  }
+
+  var moyEnergie = moyenne(energies);
+  var moySommeil = moyenne(sommeils);
+  var moyDigestion = moyenne(digestions);
+  var premierPoids = poids.length ? poids[0] : null;
+  var dernierPoids = poids.length ? poids[poids.length - 1] : null;
+  var diffPoids = (premierPoids && dernierPoids && premierPoids !== dernierPoids)
+    ? (dernierPoids - premierPoids).toFixed(1)
+    : null;
+
+  // Notes de la semaine
+  var notes = jours.filter(function(j) { return j.entry && j.entry.note; }).map(function(j) {
+    return "• " + new Date(j.date).toLocaleDateString("fr-FR", {weekday:"short", day:"numeric"}) + " : " + j.entry.note;
+  });
+
+  // Messages de la semaine
+  var messages = (prog.messages || []).filter(function(m) {
+    var dateMsg = m.date || "";
+    return m.auteur === "client";
+  }).slice(-3);
+
+  // Construction du rapport
+  var dateDebut = jours[0].date;
+  var dateFin = jours[6].date;
+  var dateDebutFr = new Date(dateDebut).toLocaleDateString("fr-FR", {day:"numeric", month:"long"});
+  var dateFinFr = new Date(dateFin).toLocaleDateString("fr-FR", {day:"numeric", month:"long"});
+
+  var rapport = "";
+  rapport += "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
+  rapport += "📊 RAPPORT HEBDOMADAIRE — MÉTHODE TEE\n";
+  rapport += "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n";
+  rapport += "👤 Client : " + prenom + "\n";
+  rapport += "📅 Semaine : " + dateDebutFr + " → " + dateFinFr + "\n";
+  rapport += "🗓️ Semaine " + semaineEnCours + " du programme\n\n";
+
+  rapport += "━━━ RÉGULARITÉ ━━━\n";
+  rapport += "Jours remplis : " + joursRemplis + "/7\n";
+  rapport += "Score : " + score + "%  " + (score >= 80 ? "🌟 Excellent" : score >= 60 ? "✅ Bien" : score >= 40 ? "⚠️ À améliorer" : "❌ Insuffisant") + "\n\n";
+
+  rapport += "━━━ MESURES ━━━\n";
+  if (moyEnergie) rapport += "⚡ Énergie moyenne : " + moyEnergie + "/5" + tendance(energies) + "\n";
+  if (moySommeil) rapport += "🌙 Sommeil moyen : " + moySommeil + "/5" + tendance(sommeils) + "\n";
+  if (moyDigestion) rapport += "🌿 Digestion moyenne : " + moyDigestion + "/5" + tendance(digestions) + "\n";
+  if (premierPoids && dernierPoids) {
+    rapport += "⚖️ Poids : " + premierPoids + " kg → " + dernierPoids + " kg";
+    if (diffPoids) rapport += "  (" + (parseFloat(diffPoids) > 0 ? "+" : "") + diffPoids + " kg)";
+    rapport += "\n";
+  }
+  rapport += "\n";
+
+  // Checks moyens
+  var totalEau = jours.filter(function(j) { return j.entry && j.entry.eau; }).length;
+  var totalRepas = jours.filter(function(j) { return j.entry && j.entry.repas; }).length;
+  var totalInfusion = jours.filter(function(j) { return j.entry && j.entry.infusion; }).length;
+  var totalSport = jours.filter(function(j) { return j.entry && j.entry.sport; }).length;
+
+  rapport += "━━━ HABITUDES ━━━\n";
+  rapport += "💧 Hydratation : " + totalEau + "/7 jours\n";
+  rapport += "🥗 Repas respectés : " + totalRepas + "/7 jours\n";
+  rapport += "🍵 Infusions prises : " + totalInfusion + "/7 jours\n";
+  rapport += "🏃 Sport / marche : " + totalSport + "/7 jours\n\n";
+
+  if (notes.length) {
+    rapport += "━━━ NOTES DU CLIENT ━━━\n";
+    rapport += notes.join("\n") + "\n\n";
+  }
+
+  rapport += "━━━ OBJECTIFS ━━━\n";
+  rapport += (prog.objectif || "Non défini") + "\n";
+  if (prog.goals && prog.goals.length) {
+    prog.goals.forEach(function(g) { rapport += "→ " + g + "\n"; });
+  }
+  rapport += "\n";
+
+  rapport += "━━━ RECOMMANDATIONS ━━━\n";
+  if (score < 60) rapport += "⚠️ Régularité à améliorer — encourager le client à remplir son suivi chaque soir.\n";
+  if (moyEnergie && parseFloat(moyEnergie) < 3) rapport += "⚡ Énergie basse — revoir le protocole énergisant.\n";
+  if (moySommeil && parseFloat(moySommeil) < 3) rapport += "🌙 Sommeil insuffisant — renforcer le rituel du soir.\n";
+  if (moyDigestion && parseFloat(moyDigestion) < 3) rapport += "🌿 Digestion difficile — adapter le protocole digestif.\n";
+  if (totalInfusion < 4) rapport += "🍵 Protocole végétal peu suivi — rappeler l'importance des infusions.\n";
+  if (score >= 80 && moyEnergie && parseFloat(moyEnergie) >= 4) rapport += "🌟 Excellente semaine — féliciter le client et envisager de passer à la semaine suivante.\n";
+  rapport += "\n";
+
+  rapport += "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
+  rapport += "Généré par Méthode Tee — " + new Date().toLocaleDateString("fr-FR") + "\n";
+
+  // Afficher
+  var block = document.getElementById("rapport-block");
+  var contenu = document.getElementById("rapport-contenu");
+  if (block) block.style.display = "block";
+  if (contenu) contenu.textContent = rapport;
+
+  // Scroll vers le rapport
+  setTimeout(function() {
+    if (block) block.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, 100);
+
+  log("✅ Rapport généré pour " + prenom);
+}
+
+function copierRapport() {
+  var contenu = document.getElementById("rapport-contenu");
+  if (!contenu) return;
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(contenu.textContent).then(function() {
+      log("✅ Rapport copié ! Tu peux le coller dans WhatsApp ou par email.");
+    });
+  } else {
+    var ta = document.createElement("textarea");
+    ta.value = contenu.textContent;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand("copy");
+    document.body.removeChild(ta);
+    log("✅ Rapport copié !");
+  }
+}
+
+  
   function openAdmin() {
   document.getElementById("admin-overlay").classList.add("open");
   lucide.createIcons();
