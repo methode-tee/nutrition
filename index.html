@@ -968,6 +968,25 @@
         <button onclick="marquerPhytoTraite()" class="btn btn-brand" style="width:100%">Marquer comme traité</button>
       </div>
 
+            <!-- Suivi client -->
+      <div class="admin-section" id="suivi-admin-block">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+          <h3 class="serif" style="font-size:20px;color:var(--ink);margin:0">Suivi client</h3>
+          <span id="suivi-admin-derniere" style="font-size:11px;color:var(--muted)"></span>
+        </div>
+
+        <!-- Résumé dernière entrée -->
+        <div id="suivi-admin-resume" style="background:#f8f4ee;border-radius:16px;padding:16px;margin-bottom:14px;display:none">
+          <p style="font-size:10px;text-transform:uppercase;letter-spacing:.12em;font-weight:800;color:var(--brand);margin:0 0 10px">Dernière entrée</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px" id="suivi-admin-derniere-data"></div>
+        </div>
+
+        <!-- Historique 7 jours -->
+        <p style="font-size:10px;text-transform:uppercase;letter-spacing:.12em;font-weight:800;color:var(--muted);margin:0 0 10px">Historique 7 jours</p>
+        <div id="suivi-admin-historique" style="display:flex;flex-direction:column;gap:8px"></div>
+      </div>
+
+
             <!-- Notes privées coach -->
       <div class="admin-section">
         <h3 class="serif" style="font-size:20px;color:var(--ink);margin:0 0 6px">Notes privées</h3>
@@ -2076,6 +2095,111 @@ function renderTransformation(prog) {
   }
 }
 
+  /* ══════════════════════════════════════════════
+   SUIVI ADMIN
+══════════════════════════════════════════════ */
+function renderSuiviAdmin(prog) {
+  var suivi = prog.suivi || {};
+  var dates = Object.keys(suivi).sort().reverse();
+
+  var derniereEl = document.getElementById("suivi-admin-derniere");
+  var resumeEl = document.getElementById("suivi-admin-resume");
+  var dataEl = document.getElementById("suivi-admin-derniere-data");
+  var histoEl = document.getElementById("suivi-admin-historique");
+
+  if (!dates.length) {
+    if (derniereEl) derniereEl.textContent = "Aucune donnée";
+    if (resumeEl) resumeEl.style.display = "none";
+    if (histoEl) histoEl.innerHTML = '<p style="font-size:12px;color:var(--muted);font-style:italic">Aucun suivi enregistré pour ce client.</p>';
+    return;
+  }
+
+  // Dernière entrée
+  var derniere = dates[0];
+  var d = suivi[derniere];
+  if (derniereEl) derniereEl.textContent = "Dernière : " + new Date(derniere).toLocaleDateString("fr-FR", {weekday:"long", day:"numeric", month:"long"});
+  if (resumeEl) resumeEl.style.display = "block";
+
+  function stat(label, value, unit) {
+    return '<div style="background:white;border-radius:12px;padding:10px 12px">' +
+      '<p style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;font-weight:800;color:var(--muted);margin:0 0 4px">' + label + '</p>' +
+      '<p style="font-size:16px;font-weight:700;color:var(--ink);margin:0">' + (value || "—") + '<span style="font-size:11px;color:var(--muted)">' + (unit || "") + '</span></p>' +
+      '</div>';
+  }
+
+  function check(label, val) {
+    return '<div style="display:flex;align-items:center;gap:6px;font-size:12px;color:' + (val ? "var(--brand)" : "var(--muted)") + '">' +
+      '<span style="font-size:14px">' + (val ? "✅" : "⬜") + '</span>' + label + '</div>';
+  }
+
+  if (dataEl) {
+    dataEl.innerHTML =
+      stat("Poids", d.poids, " kg") +
+      stat("Énergie", d.energie ? d.energie + "/5" : "—", "") +
+      stat("Sommeil", d.sommeil ? d.sommeil + "/5" : "—", "") +
+      stat("Digestion", d.digestion ? d.digestion + "/5" : "—", "");
+  }
+
+  // Checks de la dernière entrée
+  var checksEl = document.getElementById("suivi-admin-resume");
+  if (checksEl && d) {
+    var checksDiv = document.createElement("div");
+    checksDiv.style.cssText = "display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px";
+    checksDiv.innerHTML =
+      check("Eau", d.eau) +
+      check("Repas", d.repas) +
+      check("Infusion", d.infusion) +
+      check("Sport", d.sport);
+    var existing = checksEl.querySelector(".checks-grid");
+    if (existing) existing.remove();
+    checksDiv.className = "checks-grid";
+    checksEl.appendChild(checksDiv);
+
+    if (d.note) {
+      var noteDiv = document.createElement("div");
+      noteDiv.style.cssText = "margin-top:10px;padding:10px 12px;background:white;border-radius:12px";
+      noteDiv.innerHTML = '<p style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;font-weight:800;color:var(--muted);margin:0 0 4px">Note du jour</p>' +
+        '<p style="font-size:12px;color:var(--ink);font-style:italic;margin:0">"' + d.note + '"</p>';
+      var existingNote = checksEl.querySelector(".note-div");
+      if (existingNote) existingNote.remove();
+      noteDiv.className = "note-div";
+      checksEl.appendChild(noteDiv);
+    }
+  }
+
+  // Historique 7 derniers jours
+  if (histoEl) {
+    var joursLabels = ["Dim","Lun","Mar","Mer","Jeu","Ven","Sam"];
+    var html = "";
+    for (var i = 0; i < Math.min(7, dates.length); i++) {
+      var date = dates[i];
+      var entry = suivi[date];
+      var jsDate = new Date(date);
+      var label = joursLabels[jsDate.getDay()] + " " + jsDate.getDate();
+      var score = [entry.eau, entry.repas, entry.infusion, entry.sport].filter(Boolean).length;
+      var scorePct = Math.round(score / 4 * 100);
+      var couleur = scorePct === 100 ? "var(--brand)" : scorePct >= 50 ? var(--accent)" : "#e8e4de";
+
+      html += '<div style="border:1.5px solid #ede9e3;border-radius:14px;padding:12px 14px">' +
+        '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">' +
+        '<span style="font-size:12px;font-weight:700;color:var(--ink)">' + label + '</span>' +
+        '<div style="display:flex;align-items:center;gap:8px">' +
+        (entry.poids ? '<span style="font-size:11px;color:var(--muted)">' + entry.poids + ' kg</span>' : "") +
+        '<span style="font-size:10px;font-weight:800;padding:2px 8px;border-radius:999px;background:' + (scorePct === 100 ? "#dcfce7" : "#f0ece6") + ';color:' + (scorePct === 100 ? "#16a34a" : "var(--muted)") + '">' + score + '/4 checks</span>' +
+        '</div></div>' +
+        '<div style="display:flex;gap:10px">' +
+        '<span style="font-size:11px;color:#f59e0b">⚡ ' + (entry.energie || "—") + '/5</span>' +
+        '<span style="font-size:11px;color:#6366f1">🌙 ' + (entry.sommeil || "—") + '/5</span>' +
+        '<span style="font-size:11px;color:var(--brand)">🌿 ' + (entry.digestion || "—") + '/5</span>' +
+        '</div>' +
+        (entry.note ? '<p style="font-size:11px;color:var(--muted);font-style:italic;margin:8px 0 0;border-top:1px solid #f0ece6;padding-top:8px">"' + entry.note + '"</p>' : "") +
+        '</div>';
+    }
+    histoEl.innerHTML = html || '<p style="font-size:12px;color:var(--muted);font-style:italic">Aucun suivi enregistré.</p>';
+  }
+}
+
+
   function renderHistorique(slug) {
   var jours = [];
   var joursLabels = ["D","L","M","M","J","V","S"];
@@ -2338,7 +2462,7 @@ function fillAdmin(prenom, prog) {
   document.getElementById("f-date-debut").value = tl.dateDebut || "";
   document.getElementById("f-nb-semaines").value = tl.nbSemaines || 4;
   renderTimelineAdmin(tl);
-
+  renderSuiviAdmin(prog);
   renderAdminDaysNav(prog.days || {});
   renderProductEditors(prog.products || []);
     var phytoBlock = document.getElementById("phyto-admin-block");
