@@ -694,6 +694,23 @@
       </div>
     </section>
 
+        <!-- MESSAGES -->
+    <section id="tab-messages" class="tab-section" style="padding-top:24px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:20px">
+        <div>
+          <h2 class="serif" style="font-size:30px;font-weight:700;color:var(--ink);margin:0 0 4px">Messages</h2>
+          <p style="font-size:12px;color:var(--muted)">Ton espace d'échange avec Tee.</p>
+        </div>
+        <div id="messages-badge" style="display:none;width:20px;height:20px;border-radius:50%;background:#dc2626;color:white;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center"></div>
+      </div>
+      <div id="messages-fil" style="display:flex;flex-direction:column;gap:12px;margin-bottom:20px;min-height:200px"></div>
+      <div class="card" style="padding:16px;margin-top:20px">
+        <textarea id="message-input" placeholder="Écris ton message à Tee…" style="width:100%;border:1.5px solid #e8e4de;border-radius:14px;padding:12px 14px;font-size:13px;font-family:inherit;min-height:80px;resize:none;outline:none;color:var(--ink);margin-bottom:10px"></textarea>
+        <button onclick="envoyerMessage()" style="width:100%;padding:13px;border-radius:999px;border:none;background:var(--ink);color:white;font-family:inherit;font-size:12px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;cursor:pointer">Envoyer à Tee</button>
+      </div>
+    </section>
+
+
     <!-- MÉTHODE -->
     <section id="tab-methode" class="tab-section" style="padding-top:24px">
       <h2 class="serif" style="font-size:30px;font-weight:700;color:var(--ink);margin:0 0 4px">Méthode Tee</h2>
@@ -954,26 +971,7 @@
           <div><label class="field-label">Durée / conseil</label><input id="f-protocole-duree" class="admin-input" placeholder="Ex : 7 jours / 21 jours" /></div>
         </div>
       </div>
-     
-    <!-- MESSAGES -->
-    <section id="tab-messages" class="tab-section" style="padding-top:24px">
-      <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:20px">
-        <div>
-          <h2 class="serif" style="font-size:30px;font-weight:700;color:var(--ink);margin:0 0 4px">Messages</h2>
-          <p style="font-size:12px;color:var(--muted)">Ton espace d'échange avec Tee.</p>
-        </div>
-        <div id="messages-badge" style="display:none;width:20px;height:20px;border-radius:50%;background:#dc2626;color:white;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center"></div>
-      </div>
-
-      <!-- Fil de messages -->
-      <div id="messages-fil" style="display:flex;flex-direction:column;gap:12px;margin-bottom:20px;min-height:200px"></div>
-
-      <!-- Zone de saisie -->
-      <div class="card" style="padding:16px">
-        <textarea id="message-input" placeholder="Écris ton message à Tee…" style="width:100%;border:1.5px solid #e8e4de;border-radius:14px;padding:12px 14px;font-size:13px;font-family:inherit;min-height:80px;resize:none;outline:none;color:var(--ink);margin-bottom:10px"></textarea>
-        <button onclick="envoyerMessage()" style="width:100%;padding:13px;border-radius:999px;border:none;background:var(--ink);color:white;font-family:inherit;font-size:12px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;cursor:pointer">Envoyer à Tee</button>
-      </div>
-    </section>
+    
 
 <!-- Méthode -->
       <div class="admin-section">
