@@ -1654,11 +1654,32 @@ function saveSuivi() {
     sommeil: document.getElementById("suivi-sommeil").value,
     digestion: document.getElementById("suivi-digestion").value,
     note: document.getElementById("suivi-note").value,
-    filled: true
+    filled: true,
+    date: today
   };
   try { localStorage.setItem(key, JSON.stringify(data)); } catch(e) {}
   updateScore(slug);
+
+  // Remontée automatique dans Supabase
+  if (sb && slug && slug !== "admin") {
+    clearTimeout(saveSuivi._timer);
+    saveSuivi._timer = setTimeout(async function() {
+      try {
+        var { data: clientData, error } = await sb
+          .from("mt_clients")
+          .select("programme")
+          .eq("slug", slug)
+          .single();
+        if (error || !clientData) return;
+        var prog = clientData.programme || {};
+        if (!prog.suivi) prog.suivi = {};
+        prog.suivi[today] = data;
+        await sb.from("mt_clients").update({ programme: prog }).eq("slug", slug);
+      } catch(e) {}
+    }, 2000);
+  }
 }
+
 
 function updateScore(slug) {
   var total = 0; var filled = 0;
