@@ -2178,7 +2178,8 @@ function renderSuiviAdmin(prog) {
       var label = joursLabels[jsDate.getDay()] + " " + jsDate.getDate();
       var score = [entry.eau, entry.repas, entry.infusion, entry.sport].filter(Boolean).length;
       var scorePct = Math.round(score / 4 * 100);
-      var couleur = scorePct === 100 ? "var(--brand)" : scorePct >= 50 ? var(--accent)" : "#e8e4de";
+      var couleur = scorePct === 100 ? "var(--brand)" : scorePct >= 50 ? "#8C7561" : "#e8e4de";
+
 
       html += '<div style="border:1.5px solid #ede9e3;border-radius:14px;padding:12px 14px">' +
         '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">' +
