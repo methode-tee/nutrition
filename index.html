@@ -1299,14 +1299,21 @@ function renderClientView(prenom, prog) {
   renderMethodRules(prog.methode || []);
 
     renderProgramme(prog);
-    renderTransformation(prog);
-    renderMessages(prog);
+      renderTransformation(prog);
+  setTimeout(function() { renderMessages(prog); }, 50);
+
 
 
 
   // Icônes Lucide
     var d = document.getElementById("today-date");
   if (d) d.textContent = new Date().toLocaleDateString("fr-FR", {weekday:"long", day:"numeric", month:"long"});
+  
+    // Forcer l'affichage de la zone de saisie messages
+  var msgInput = document.getElementById("message-input");
+  var msgBtn = msgInput ? msgInput.closest(".card") : null;
+  if (msgBtn) msgBtn.style.display = "block";
+
   var slugR = new URLSearchParams(window.location.search).get("client");
   setTimeout(function() { restoreTasks(slugR); }, 80);
    setTimeout(function() { renderHistorique(slugR); }, 120);
