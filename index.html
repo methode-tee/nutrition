@@ -734,6 +734,12 @@
       <i data-lucide="bar-chart-2" style="width:20px;height:20px"></i>
       <span>Suivi</span>
     </button>
+
+        <button class="nav-btn" onclick="switchTab('messages',this)" id="nav-messages">
+      <i data-lucide="message-circle" style="width:20px;height:20px"></i>
+      <span>Messages</span>
+    </button>
+
     <button class="nav-btn" onclick="switchTab('methode',this)" id="nav-methode">
       <i data-lucide="book-open" style="width:20px;height:20px"></i>
       <span>Méthode</span>
@@ -949,6 +955,25 @@
         </div>
       </div>
      
+    <!-- MESSAGES -->
+    <section id="tab-messages" class="tab-section" style="padding-top:24px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:20px">
+        <div>
+          <h2 class="serif" style="font-size:30px;font-weight:700;color:var(--ink);margin:0 0 4px">Messages</h2>
+          <p style="font-size:12px;color:var(--muted)">Ton espace d'échange avec Tee.</p>
+        </div>
+        <div id="messages-badge" style="display:none;width:20px;height:20px;border-radius:50%;background:#dc2626;color:white;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center"></div>
+      </div>
+
+      <!-- Fil de messages -->
+      <div id="messages-fil" style="display:flex;flex-direction:column;gap:12px;margin-bottom:20px;min-height:200px"></div>
+
+      <!-- Zone de saisie -->
+      <div class="card" style="padding:16px">
+        <textarea id="message-input" placeholder="Écris ton message à Tee…" style="width:100%;border:1.5px solid #e8e4de;border-radius:14px;padding:12px 14px;font-size:13px;font-family:inherit;min-height:80px;resize:none;outline:none;color:var(--ink);margin-bottom:10px"></textarea>
+        <button onclick="envoyerMessage()" style="width:100%;padding:13px;border-radius:999px;border:none;background:var(--ink);color:white;font-family:inherit;font-size:12px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;cursor:pointer">Envoyer à Tee</button>
+      </div>
+    </section>
 
 <!-- Méthode -->
       <div class="admin-section">
@@ -998,6 +1023,18 @@
         <div id="suivi-admin-historique" style="display:flex;flex-direction:column;gap:8px"></div>
       </div>
 
+      <!-- Messagerie client -->
+      <div class="admin-section" id="messages-admin-block">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+          <h3 class="serif" style="font-size:20px;color:var(--ink);margin:0">Messages</h3>
+          <span id="messages-admin-badge" style="display:none;font-size:10px;font-weight:800;text-transform:uppercase;padding:4px 10px;border-radius:999px;background:#fee2e2;color:#dc2626">Nouveau</span>
+        </div>
+        <!-- Fil admin -->
+        <div id="messages-admin-fil" style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px;max-height:300px;overflow-y:auto"></div>
+        <!-- Réponse Tee -->
+        <textarea id="messages-admin-input" placeholder="Ta réponse…" style="width:100%;border:1.5px solid #e8e4de;border-radius:14px;padding:11px 14px;font-size:13px;font-family:inherit;min-height:80px;resize:none;outline:none;color:var(--ink);margin-bottom:10px"></textarea>
+        <button onclick="repondreMessage()" class="btn btn-brand" style="width:100%">Répondre</button>
+      </div>
 
             <!-- Notes privées coach -->
       <div class="admin-section">
@@ -1263,6 +1300,8 @@ function renderClientView(prenom, prog) {
 
     renderProgramme(prog);
     renderTransformation(prog);
+    renderMessages(prog);
+
 
 
   // Icônes Lucide
@@ -1281,7 +1320,19 @@ function renderClientView(prenom, prog) {
   var offresMap = {"signature":"Offre Signature : -15% sur toute la boutique Maison Yanna","privilege":"Offre Privilege : Selectionne 5 produits offerts et envoie ta selection par message","elite":"Offre Elite : 10 produits offerts a la quantite souhaitee, envoie ta selection par message"};
   if (bannerDiv && bannerTxt && offresMap[offreVal]) { bannerTxt.textContent = offresMap[offreVal]; bannerDiv.style.display = "block"; } else if (bannerDiv) { bannerDiv.style.display = "none"; }
 
+    var messagesNonLus = (prog.messages || []).filter(function(m) { return m.auteur === "tee" && !m.lu; }).length;
+  var msgBadge = document.getElementById("messages-badge");
+  if (msgBadge) {
+    if (messagesNonLus > 0) {
+      msgBadge.style.display = "flex";
+      msgBadge.textContent = messagesNonLus;
+    } else {
+      msgBadge.style.display = "none";
+    }
+  }
+
   lucide.createIcons();
+
 }
 
 function toggleTask(i) {
@@ -2185,6 +2236,120 @@ async function renderSuiviGlobal() {
     listEl.innerHTML = '<p style="font-size:12px;color:var(--muted)">Erreur : ' + e.message + '</p>';
   }
 }
+/* ══════════════════════════════════════════════
+   MESSAGERIE
+══════════════════════════════════════════════ */
+function renderMessages(prog) {
+  var messages = prog.messages || [];
+  var fil = document.getElementById("messages-fil");
+  if (!fil) return;
+
+  if (!messages.length) {
+    fil.innerHTML = '<div style="text-align:center;padding:40px 20px"><p style="font-size:13px;color:var(--muted)">Aucun message pour le moment.</p><p style="font-size:12px;color:var(--muted)">Écris à Tee, elle te répondra très vite 🌿</p></div>';
+    return;
+  }
+
+  fil.innerHTML = messages.map(function(m) {
+    var estClient = m.auteur === "client";
+    return '<div style="display:flex;flex-direction:column;align-items:' + (estClient ? "flex-end" : "flex-start") + '">' +
+      '<div style="max-width:85%;background:' + (estClient ? "var(--brand)" : "white") + ';color:' + (estClient ? "white" : "var(--ink)") + ';border-radius:' + (estClient ? "18px 18px 4px 18px" : "18px 18px 18px 4px") + ';padding:12px 16px;border:' + (estClient ? "none" : "1px solid rgba(140,117,97,.12)") + ';box-shadow:0 2px 8px rgba(0,0,0,.06)">' +
+      '<p style="font-size:13px;line-height:1.6;margin:0">' + m.texte + '</p>' +
+      '</div>' +
+      '<span style="font-size:10px;color:var(--muted);margin-top:4px;padding:0 4px">' + (m.date || "") + (m.auteur === "tee" ? " — Tee" : "") + '</span>' +
+      '</div>';
+  }).join("");
+
+  // Scroll en bas
+  setTimeout(function() { fil.scrollTop = fil.scrollHeight; }, 50);
+}
+
+async function envoyerMessage() {
+  var slug = new URLSearchParams(window.location.search).get("client");
+  if (!slug || !sb) { alert("Impossible d'envoyer — contacte ton coach directement."); return; }
+  var input = document.getElementById("message-input");
+  var texte = input.value.trim();
+  if (!texte) return;
+
+  var { data, error } = await sb.from("mt_clients").select("programme").eq("slug", slug).single();
+  if (error || !data) { alert("Erreur — réessaie."); return; }
+
+  var prog = data.programme || {};
+  if (!prog.messages) prog.messages = [];
+  prog.messages.push({
+    auteur: "client",
+    texte: texte,
+    date: new Date().toLocaleDateString("fr-FR", {day:"numeric", month:"short", hour:"2-digit", minute:"2-digit"}),
+    lu: false
+  });
+
+  var { error: err2 } = await sb.from("mt_clients").update({ programme: prog }).eq("slug", slug);
+  if (err2) { alert("Erreur — réessaie."); return; }
+
+  input.value = "";
+  _currentProg = prog;
+  renderMessages(prog);
+}
+
+function renderMessagesAdmin(prog) {
+  var messages = prog.messages || [];
+  var fil = document.getElementById("messages-admin-fil");
+  var badge = document.getElementById("messages-admin-badge");
+  if (!fil) return;
+
+  var nonLus = messages.filter(function(m) { return m.auteur === "client" && !m.lu; }).length;
+  if (badge) {
+    badge.style.display = nonLus > 0 ? "block" : "none";
+    badge.textContent = nonLus + " nouveau" + (nonLus > 1 ? "x" : "");
+  }
+
+  if (!messages.length) {
+    fil.innerHTML = '<p style="font-size:12px;color:var(--muted);font-style:italic">Aucun message.</p>';
+    return;
+  }
+
+  fil.innerHTML = messages.map(function(m) {
+    var estClient = m.auteur === "client";
+    return '<div style="display:flex;flex-direction:column;align-items:' + (estClient ? "flex-start" : "flex-end") + '">' +
+      '<div style="max-width:90%;background:' + (estClient ? "#f8f4ee" : "var(--brand)") + ';color:' + (estClient ? "var(--ink)" : "white") + ';border-radius:14px;padding:10px 14px">' +
+      '<p style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:' + (estClient ? "var(--brand)" : "rgba(255,255,255,.7)") + ';margin:0 0 4px">' + (estClient ? "Client" : "Tee") + '</p>' +
+      '<p style="font-size:13px;line-height:1.6;margin:0">' + m.texte + '</p>' +
+      '</div>' +
+      '<span style="font-size:10px;color:var(--muted);margin-top:3px;padding:0 4px">' + (m.date || "") + '</span>' +
+      '</div>';
+  }).join("");
+
+  setTimeout(function() { fil.scrollTop = fil.scrollHeight; }, 50);
+}
+
+async function repondreMessage() {
+  if (!sb || !currentSlug) return;
+  var input = document.getElementById("messages-admin-input");
+  var texte = input.value.trim();
+  if (!texte) return;
+
+  var { data, error } = await sb.from("mt_clients").select("programme").eq("slug", currentSlug).single();
+  if (error || !data) return;
+
+  var prog = data.programme || {};
+  if (!prog.messages) prog.messages = [];
+
+  // Marquer les messages client comme lus
+  prog.messages.forEach(function(m) {
+    if (m.auteur === "client") m.lu = true;
+  });
+
+  prog.messages.push({
+    auteur: "tee",
+    texte: texte,
+    date: new Date().toLocaleDateString("fr-FR", {day:"numeric", month:"short", hour:"2-digit", minute:"2-digit"}),
+    lu: true
+  });
+
+  await sb.from("mt_clients").update({ programme: prog }).eq("slug", currentSlug);
+  input.value = "";
+  renderMessagesAdmin(prog);
+  log("✅ Réponse envoyée à " + currentSlug);
+}
 
   /* ══════════════════════════════════════════════
    SUIVI ADMIN
@@ -2555,6 +2720,7 @@ function fillAdmin(prenom, prog) {
   document.getElementById("f-nb-semaines").value = tl.nbSemaines || 4;
   renderTimelineAdmin(tl);
   renderSuiviAdmin(prog);
+  renderMessagesAdmin(prog);
   renderAdminDaysNav(prog.days || {});
   renderProductEditors(prog.products || []);
     var phytoBlock = document.getElementById("phyto-admin-block");
