@@ -1,3 +1,4 @@
+HTMLEOF'
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -36,7 +37,6 @@
 
     h1, h2, h3, h4, .serif { font-family: 'Playfair Display', serif; }
 
-    /* ── App shell ── */
     .app-shell {
       width: 100%; max-width: 430px;
       height: 100vh;
@@ -53,7 +53,6 @@
       }
     }
 
-    /* ── Scrollable main ── */
     .main-scroll {
       flex: 1; overflow-y: auto;
       -webkit-overflow-scrolling: touch;
@@ -61,7 +60,6 @@
     }
     .main-scroll::-webkit-scrollbar { display: none; }
 
-    /* ── Tabs ── */
     .tab-section { display: none; padding: 0 20px 120px; animation: fadeUp .25s ease; }
     .tab-section.active { display: block; }
     @keyframes fadeUp {
@@ -69,62 +67,57 @@
       to   { opacity: 1; transform: translateY(0); }
     }
 
- /* ── Bottom nav ── */
-.bottom-nav {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: white;
-  border-top: 1px solid rgba(0,0,0,0.06);
-  padding: 10px 8px calc(10px + env(safe-area-inset-bottom));
-  display: flex;
-  align-items: flex-start;
-  gap: 4px;
-  overflow-x: auto;
-  overflow-y: hidden;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-  z-index: 30;
-}
+    .bottom-nav {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: white;
+      border-top: 1px solid rgba(0,0,0,0.06);
+      padding: 10px 8px calc(10px + env(safe-area-inset-bottom));
+      display: flex;
+      align-items: flex-start;
+      gap: 4px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      z-index: 30;
+    }
 
-.bottom-nav::-webkit-scrollbar {
-  display: none;
-}
+    .bottom-nav::-webkit-scrollbar { display: none; }
 
-.nav-btn {
-  flex: 0 0 auto;
-  min-width: 72px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 3px;
-  padding: 4px 8px;
-  border: none;
-  background: none;
-  cursor: pointer;
-  color: #b5aca3;
-  transition: color .2s;
-}
+    .nav-btn {
+      flex: 0 0 auto;
+      min-width: 72px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 3px;
+      padding: 4px 8px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      color: #b5aca3;
+      transition: color .2s;
+    }
 
-.nav-btn.active {
-  color: var(--brand);
-}
+    .nav-btn.active { color: var(--brand); }
 
-.nav-btn span {
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: .07em;
-  text-transform: uppercase;
-  white-space: nowrap;
-}
+    .nav-btn span {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
 
     .bottom-nav::after {
-  content: "";
-  flex: 0 0 8px;
-}
-    /* ── Cards ── */
+      content: "";
+      flex: 0 0 8px;
+    }
+
     .card {
       background: white; border-radius: 22px;
       border: 1px solid rgba(140,117,97,.10);
@@ -146,7 +139,6 @@
       box-shadow: 0 0 0 28px rgba(255,255,255,.05), 0 0 0 56px rgba(255,255,255,.03);
     }
 
-    /* ── Day pills ── */
     .day-pill {
       flex-shrink: 0; padding: 8px 18px;
       border-radius: 999px; border: 1.5px solid #e2ddd7;
@@ -160,7 +152,6 @@
       box-shadow: 0 6px 18px rgba(83,100,74,.22);
     }
 
-    /* ── Task checkbox ── */
     .task-item {
       display: flex; align-items: center; gap: 14px;
       background: white; border-radius: 16px; padding: 14px 16px;
@@ -179,7 +170,6 @@
       background: var(--brand); border-color: var(--brand);
     }
 
-    /* ── Products grid ── */
     .products-grid {
       display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
     }
@@ -205,7 +195,6 @@
     }
     .product-btn:active { opacity: .8; }
 
-    /* ── Method rules ── */
     .method-rule {
       background: white; border-radius: 20px; padding: 20px;
       border-left: 4px solid var(--brand);
@@ -213,7 +202,6 @@
     }
     .method-rule.accent { border-left-color: var(--accent); }
 
-    /* ── Admin overlay ── */
     .admin-overlay {
       position: absolute; inset: 0; z-index: 50;
       background: rgba(45,36,30,.3); backdrop-filter: blur(8px);
@@ -314,7 +302,6 @@
       text-transform: uppercase;
     }
 
-    /* ── Loading screen ── */
     #loading-screen {
       position: absolute; inset: 0; background: var(--bg);
       display: flex; flex-direction: column;
@@ -329,7 +316,6 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* ── Error screen ── */
     #error-screen {
       position: absolute; inset: 0; background: var(--bg);
       display: none; flex-direction: column;
@@ -343,20 +329,17 @@
 <body>
 <div class="app-shell" id="app">
 
-  <!-- Loading -->
   <div id="loading-screen">
     <div class="spinner"></div>
     <p style="font-size:13px;color:var(--muted);font-weight:600;">Chargement…</p>
   </div>
 
-  <!-- Error -->
   <div id="error-screen">
     <div style="font-size:48px">🌿</div>
     <h2 class="serif" style="color:var(--ink);font-size:22px">Fiche introuvable</h2>
     <p id="error-msg" style="font-size:13px;color:var(--muted);line-height:1.6"></p>
   </div>
 
-  <!-- ── HEADER ── -->
   <header style="background:rgba(253,251,247,.92);backdrop-filter:blur(12px);padding:18px 20px 14px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:20;border-bottom:1px solid rgba(0,0,0,0.04);">
     <div>
       <p style="font-size:9px;text-transform:uppercase;letter-spacing:.18em;color:#b5aca3;font-weight:800;margin-bottom:3px">Espace Client</p>
@@ -365,15 +348,12 @@
     <div id="avatar" style="width:42px;height:42px;border-radius:50%;background:var(--brand);color:white;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-style:italic;font-weight:700;font-size:19px;box-shadow:0 4px 14px rgba(83,100,74,.28)">T</div>
   </header>
 
-  <!-- ── MAIN SCROLL ── -->
   <div class="main-scroll">
 
-    <!-- ACCUEIL -->
     <section id="tab-accueil" class="tab-section active" style="padding-top:24px">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:24px">
         <div>
           <p id="today-date" style="font-size:11px;color:var(--muted);font-weight:600;margin:0 0 4px;text-transform:capitalize"></p>
-
           <h2 class="serif" style="font-size:34px;font-weight:700;color:var(--ink);margin:0 0 6px;line-height:1.15">Bonjour <span id="display-prenom">toi</span>,</h2>
           <p style="font-size:12px;color:var(--muted)">Ton espace nutrition &amp; routines premium.</p>
         </div>
@@ -383,7 +363,6 @@
         </span>
       </div>
 
-            <!-- Notifications -->
       <div id="notif-banner" style="display:none;margin:0 0 16px;border-radius:16px;padding:14px 16px;background:#f0f9f0;border:1.5px solid rgba(83,100,74,.2);display:flex;align-items:center;justify-content:space-between;gap:12px">
         <div>
           <p style="font-size:12px;font-weight:700;color:var(--brand);margin:0 0 2px">🔔 Rappels quotidiens</p>
@@ -392,8 +371,6 @@
         <button onclick="activerNotifications()" style="border:none;border-radius:999px;background:var(--brand);color:white;font-family:inherit;font-size:11px;font-weight:700;padding:8px 14px;cursor:pointer;white-space:nowrap">Activer</button>
       </div>
 
-      
-      <!-- Banniere Maison Yanna -->
       <div id="my-banner" style="display:none;margin:0 0 20px;border-radius:18px;padding:15px 18px;background:linear-gradient(135deg,#2D241E 0%,#53644A 100%);color:white;position:relative;overflow:hidden">
         <div style="position:absolute;right:-20px;top:-20px;width:90px;height:90px;border-radius:50%;background:rgba(255,255,255,.06)"></div>
         <p style="font-size:9px;text-transform:uppercase;letter-spacing:.16em;font-weight:800;opacity:.7;margin:0 0 5px">Maison Yanna — Ton avantage</p>
@@ -401,21 +378,18 @@
         <a href="https://maisonyanna.com" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);color:white;font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:7px 14px;border-radius:999px;text-decoration:none">Voir la boutique</a>
       </div>
 
-      <!-- Objectif -->
       <div class="goal-card" style="margin-bottom:20px">
         <p style="font-size:9px;text-transform:uppercase;letter-spacing:.18em;font-weight:800;opacity:.75;margin-bottom:8px">Ton objectif principal</p>
         <h3 id="goal-title" class="serif" style="font-size:20px;font-style:italic;font-weight:700;margin:0 0 16px;line-height:1.3;position:relative;z-index:1"></h3>
         <ul id="goal-list" style="list-style:none;margin:0;padding:0;space-y:6px;position:relative;z-index:1"></ul>
       </div>
 
-      <!-- Mot du coach -->
       <div class="card" style="padding:22px;margin-bottom:20px;position:relative">
         <div style="position:absolute;top:-14px;right:14px;width:46px;height:46px;background:white;border-radius:50%;box-shadow:0 4px 14px rgba(0,0,0,0.09);display:flex;align-items:center;justify-content:center;font-size:20px">✍️</div>
         <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin-bottom:10px">Le mot de Tee</p>
         <p id="coach-msg" class="serif" style="font-size:14px;color:var(--ink);line-height:1.7;font-style:italic;margin:0"></p>
       </div>
 
-      <!-- Priorités -->
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
         <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:#b5aca3;margin:0">Tes priorités du jour</p>
         <span style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:700;color:var(--brand)">Checklist</span>
@@ -445,7 +419,6 @@
       </div>
     </section>
 
-    <!-- REPAS -->
     <section id="tab-repas" class="tab-section" style="padding-top:24px">
       <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:20px">
         <div>
@@ -475,7 +448,6 @@
       </div>
     </section>
 
-    <!-- SOINS -->
     <section id="tab-soins" class="tab-section" style="padding-top:24px">
       <h2 class="serif" style="font-size:30px;font-weight:700;color:var(--ink);margin:0 0 4px">Soins</h2>
       <p style="font-size:12px;color:var(--muted);margin:0 0 24px">Tes alliés naturels sélectionnés pour ton profil.</p>
@@ -489,9 +461,8 @@
         </div>
         <div id="protocole-card" style="display:flex;flex-direction:column;gap:10px"></div>
       </div>
-            <div id="products-grid" class="products-grid"></div>
+      <div id="products-grid" class="products-grid"></div>
 
-      <!-- Panier selection -->
       <div id="selection-panel" style="display:none;margin-top:18px">
         <div class="card" style="padding:20px">
           <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 10px">Ma sélection</p>
@@ -500,22 +471,18 @@
           <button onclick="viderSelection()" style="width:100%;padding:10px;border-radius:999px;border:none;background:#f0ece6;color:var(--muted);font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;margin-top:8px">Vider la sélection</button>
         </div>
       </div>
-
     </section>
 
-    <!-- SIGNATURE -->
     <section id="tab-signature" class="tab-section" style="padding-top:24px">
       <h2 class="serif" style="font-size:30px;font-weight:700;color:var(--ink);margin:0 0 4px">Signature Healthy</h2>
       <p style="font-size:12px;color:var(--muted);margin:0 0 24px">Ton plat signature personnalisé.</p>
       <div id="signature-card" class="card" style="padding:24px"></div>
     </section>
 
-        <!-- TRANSFORMATION -->
     <section id="tab-transformation" class="tab-section" style="padding-top:24px">
       <h2 class="serif" style="font-size:30px;font-weight:700;color:var(--ink);margin:0 0 4px">Ma Transformation</h2>
       <p style="font-size:12px;color:var(--muted);margin:0 0 24px">Ton évolution depuis le début du programme.</p>
 
-      <!-- Point de départ -->
       <div class="card" style="padding:22px;margin-bottom:16px">
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
           <div style="width:36px;height:36px;border-radius:50%;background:rgba(140,117,97,.12);display:flex;align-items:center;justify-content:center;font-size:18px">📍</div>
@@ -527,44 +494,37 @@
         <div id="transfo-depart-content"></div>
       </div>
 
-      <!-- Objectifs -->
       <div class="card" style="padding:22px;margin-bottom:16px;background:var(--brand);border:none">
         <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:rgba(255,255,255,.7);margin:0 0 12px">🎯 Mes objectifs</p>
         <div id="transfo-objectifs"></div>
       </div>
 
-      <!-- Évolution semaine par semaine -->
       <div class="card" style="padding:22px;margin-bottom:16px">
         <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 14px">📈 Évolution semaine par semaine</p>
         <div id="transfo-evolution" style="display:flex;flex-direction:column;gap:12px"></div>
       </div>
 
-      <!-- Victoires -->
       <div class="card" style="padding:22px;margin-bottom:16px">
         <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 14px">🏆 Mes victoires</p>
         <div id="transfo-victoires" style="display:flex;flex-direction:column;gap:8px"></div>
       </div>
 
-      <!-- Ressentis marquants -->
       <div class="card" style="padding:22px;margin-bottom:16px">
         <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 14px">💬 Ressentis marquants</p>
         <div id="transfo-ressentis" style="display:flex;flex-direction:column;gap:8px"></div>
       </div>
     </section>
 
-        <!-- PROGRAMME -->
     <section id="tab-programme" class="tab-section" style="padding-top:24px">
       <h2 class="serif" style="font-size:30px;font-weight:700;color:var(--ink);margin:0 0 4px">Mon Programme</h2>
       <p id="prog-subtitle" style="font-size:12px;color:var(--muted);margin:0 0 20px"></p>
 
-      <!-- Règle de la semaine -->
       <div id="regle-semaine" class="card" style="padding:20px;margin-bottom:20px;border-left:4px solid var(--brand)">
         <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 8px">📋 Ta règle cette semaine</p>
         <p id="regle-texte" class="serif" style="font-size:16px;font-weight:700;color:var(--ink);margin:0 0 8px"></p>
         <p id="regle-detail" style="font-size:12px;color:var(--muted);line-height:1.7;margin:0"></p>
       </div>
 
-      <!-- Barre de progression globale -->
       <div class="card" style="padding:20px;margin-bottom:20px">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
           <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0">Progression globale</p>
@@ -576,11 +536,9 @@
         <p id="prog-bar-label" style="font-size:12px;color:var(--muted);margin:0"></p>
       </div>
 
-      <!-- Timeline semaines -->
       <div id="timeline-container" style="display:flex;flex-direction:column;gap:16px"></div>
     </section>
 
-    <!-- SUIVI -->
     <section id="tab-suivi" class="tab-section" style="padding-top:24px">
       <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:20px">
         <div>
@@ -590,34 +548,22 @@
         <div id="score-badge" style="font-size:11px;color:white;font-weight:700;background:var(--brand);padding:5px 12px;border-radius:999px;display:none"></div>
       </div>
 
-            <!-- Historique visuel -->
       <div class="card" style="padding:20px;margin-bottom:18px">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
           <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0">📈 Mes 7 derniers jours</p>
           <span id="streak-badge" style="font-size:11px;font-weight:700;color:white;background:var(--brand);padding:4px 10px;border-radius:999px;display:none"></span>
         </div>
-
-        <!-- Streak jours -->
         <div id="streak-days" style="display:flex;justify-content:space-between;gap:4px;margin-bottom:18px"></div>
-
-        <!-- Courbe énergie -->
         <p style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:800;color:var(--muted);margin:0 0 8px">⚡ Énergie</p>
         <div style="display:flex;align-items:flex-end;gap:4px;height:50px;margin-bottom:14px" id="chart-energie"></div>
-
-        <!-- Courbe sommeil -->
         <p style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:800;color:var(--muted);margin:0 0 8px">🌙 Sommeil</p>
         <div style="display:flex;align-items:flex-end;gap:4px;height:50px;margin-bottom:14px" id="chart-sommeil"></div>
-
-        <!-- Courbe digestion -->
         <p style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:800;color:var(--muted);margin:0 0 8px">🌿 Digestion</p>
         <div style="display:flex;align-items:flex-end;gap:4px;height:50px;margin-bottom:14px" id="chart-digestion"></div>
-
-        <!-- Poids -->
         <p style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:800;color:var(--muted);margin:0 0 8px">⚖️ Poids</p>
         <div id="poids-list" style="display:flex;justify-content:space-between;gap:4px"></div>
       </div>
 
-      <!-- Score semaine -->
       <div class="card" style="padding:20px;margin-bottom:18px">
         <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 8px">Score de la semaine</p>
         <div id="score-bar-wrap" style="background:#f0ece6;border-radius:999px;height:10px;overflow:hidden;margin-bottom:8px">
@@ -626,7 +572,6 @@
         <p id="score-text" style="font-size:13px;color:var(--ink);font-weight:600;margin:0"></p>
       </div>
 
-      <!-- Checks du jour -->
       <div class="card" style="padding:20px;margin-bottom:18px">
         <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 14px">Checks du jour</p>
         <div style="display:flex;flex-direction:column;gap:12px">
@@ -649,7 +594,6 @@
         </div>
       </div>
 
-      <!-- Mesures du jour -->
       <div class="card" style="padding:20px;margin-bottom:18px">
         <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 14px">Mesures du jour</p>
         <div style="display:flex;flex-direction:column;gap:14px">
@@ -671,8 +615,7 @@
           </div>
         </div>
       </div>
-      
-      <!-- Assistant phyto -->
+
       <div class="card" style="padding:20px;margin-bottom:18px">
         <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 10px">Comment tu te sens ?</p>
         <input id="phyto-input" type="text" placeholder="Fatigué, mal au dos... / Tired, back pain..." oninput="analyserSymptome(this.value)" style="width:100%;border:1.5px solid #e8e4de;border-radius:14px;padding:12px 14px;font-size:13px;font-family:inherit;outline:none;color:var(--ink)">
@@ -687,14 +630,12 @@
         </div>
       </div>
 
-      <!-- Note libre -->
       <div class="card" style="padding:20px;margin-bottom:18px">
         <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 10px">Note du jour</p>
         <textarea id="suivi-note" placeholder="Comment tu te sens aujourd'hui ?" oninput="saveSuivi()" style="width:100%;border:1.5px solid #e8e4de;border-radius:14px;padding:12px 14px;font-size:13px;font-family:inherit;min-height:90px;resize:none;outline:none;color:var(--ink)"></textarea>
       </div>
     </section>
 
-        <!-- MESSAGES -->
     <section id="tab-messages" class="tab-section" style="padding-top:24px">
       <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:20px">
         <div>
@@ -710,17 +651,14 @@
       </div>
     </section>
 
-
-    <!-- MÉTHODE -->
     <section id="tab-methode" class="tab-section" style="padding-top:24px">
       <h2 class="serif" style="font-size:30px;font-weight:700;color:var(--ink);margin:0 0 4px">Méthode Tee</h2>
       <p style="font-size:12px;color:var(--muted);margin:0 0 24px">Tes conseils personnalisés pour réussir.</p>
       <div id="method-rules" style="display:flex;flex-direction:column;gap:14px"></div>
     </section>
 
-  </div><!-- /main-scroll -->
+  </div>
 
-  <!-- ── BOTTOM NAV ── -->
   <nav class="bottom-nav">
     <button class="nav-btn active" onclick="switchTab('accueil',this)" id="nav-accueil">
       <i data-lucide="layout-dashboard" style="width:20px;height:20px"></i>
@@ -738,43 +676,35 @@
       <i data-lucide="salad" style="width:20px;height:20px"></i>
       <span>Signature</span>
     </button>
-        <button class="nav-btn" onclick="switchTab('transformation',this)" id="nav-transformation">
+    <button class="nav-btn" onclick="switchTab('transformation',this)" id="nav-transformation">
       <i data-lucide="sparkles" style="width:20px;height:20px"></i>
       <span>Bilan</span>
     </button>
-        <button class="nav-btn" onclick="switchTab('programme',this)" id="nav-programme">
+    <button class="nav-btn" onclick="switchTab('programme',this)" id="nav-programme">
       <i data-lucide="trending-up" style="width:20px;height:20px"></i>
       <span>Programme</span>
     </button>
-
-        <button class="nav-btn" onclick="switchTab('suivi',this)" id="nav-suivi">
+    <button class="nav-btn" onclick="switchTab('suivi',this)" id="nav-suivi">
       <i data-lucide="bar-chart-2" style="width:20px;height:20px"></i>
       <span>Suivi</span>
     </button>
-
-        <button class="nav-btn" onclick="switchTab('messages',this)" id="nav-messages">
+    <button class="nav-btn" onclick="switchTab('messages',this)" id="nav-messages">
       <i data-lucide="message-circle" style="width:20px;height:20px"></i>
       <span>Messages</span>
     </button>
-
     <button class="nav-btn" onclick="switchTab('methode',this)" id="nav-methode">
       <i data-lucide="book-open" style="width:20px;height:20px"></i>
       <span>Méthode</span>
     </button>
   </nav>
 
-  <!-- ── FAB ADMIN (masqué côté client) ── -->
   <button class="fab" id="fab-admin" onclick="openAdmin()" type="button" aria-label="Admin">
     <i data-lucide="sliders-horizontal" style="width:20px;height:20px"></i>
   </button>
 
-  <!-- ══════════════════════════════════════
-       ADMIN OVERLAY
-  ═══════════════════════════════════════ -->
   <div id="admin-overlay" class="admin-overlay" onclick="if(event.target===this)closeAdmin()">
     <div class="admin-panel">
 
-      <!-- Header admin -->
       <div style="background:var(--ink);padding:28px 20px 22px;position:sticky;top:0;z-index:10">
         <div style="display:flex;justify-content:space-between;align-items:flex-start">
           <div>
@@ -787,7 +717,6 @@
         </div>
       </div>
 
-      <!-- Supabase config -->
       <div class="admin-section">
         <h3 class="serif" style="font-size:20px;color:var(--ink);margin:0 0 14px">Connexion Supabase</h3>
         <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px">
@@ -807,7 +736,6 @@
         <div id="sb-log" class="log-box" style="margin-top:12px">En attente de configuration…</div>
       </div>
 
-            <!-- Vue globale suivi du jour -->
       <div class="admin-section">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
           <h3 class="serif" style="font-size:20px;color:var(--ink);margin:0">Suivi du jour</h3>
@@ -818,8 +746,6 @@
         </div>
       </div>
 
-
-      <!-- Liste clients -->
       <div class="admin-section">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
           <h3 class="serif" style="font-size:20px;color:var(--ink);margin:0">Clients</h3>
@@ -828,7 +754,7 @@
             <button class="chip" onclick="createClient()">+ Nouveau</button>
           </div>
         </div>
-               <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px">
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px">
           <button class="chip" onclick="filtrerClients('')" id="filtre-tous">Tous</button>
           <button class="chip" onclick="filtrerClients('nouveau')" id="filtre-nouveau">🟢 Nouveaux</button>
           <button class="chip" onclick="filtrerClients('actif')" id="filtre-actif">🔵 Actifs</button>
@@ -838,12 +764,10 @@
           <button class="chip" onclick="filtrerClients('vip')" id="filtre-vip">👑 VIP</button>
         </div>
         <div id="clients-list" style="display:flex;flex-direction:column;gap:8px">
-
           <p style="font-size:12px;color:var(--muted)">Connecte Supabase pour voir les clients.</p>
         </div>
       </div>
 
-      <!-- Profil client -->
       <div class="admin-section">
         <h3 class="serif" style="font-size:20px;color:var(--ink);margin:0 0 16px">Profil client</h3>
         <div style="display:flex;flex-direction:column;gap:12px">
@@ -859,7 +783,7 @@
             <label class="field-label">Semaine</label>
             <input id="f-semaine" class="admin-input" placeholder="Semaine 2" />
           </div>
-                    <div>
+          <div>
             <label class="field-label">Statut du client</label>
             <select id="f-statut" class="admin-input" style="cursor:pointer">
               <option value="nouveau">🟢 Nouveau</option>
@@ -870,8 +794,7 @@
               <option value="vip">👑 VIP / Premium</option>
             </select>
           </div>
-
-                    <div>
+          <div>
             <label class="field-label">Offre client</label>
             <select id="f-offre" class="admin-input" style="cursor:pointer">
               <option value="">— Aucune offre —</option>
@@ -880,7 +803,6 @@
               <option value="elite">Elite — 400€/mois</option>
             </select>
           </div>
-
           <div>
             <label class="field-label">Objectif principal</label>
             <input id="f-objectif" class="admin-input" placeholder="Recomposition corporelle…" />
@@ -900,7 +822,6 @@
         </div>
       </div>
 
-      <!-- Repas -->
       <div class="admin-section">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
           <h3 class="serif" style="font-size:20px;color:var(--ink);margin:0">Repas</h3>
@@ -920,7 +841,6 @@
         </div>
       </div>
 
-      <!-- Produits / Soins -->
       <div class="admin-section">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
           <h3 class="serif" style="font-size:20px;color:var(--ink);margin:0">Soins / Produits</h3>
@@ -929,7 +849,6 @@
         <div id="product-editors"></div>
       </div>
 
-      <!-- Signature -->
       <div class="admin-section">
         <h3 class="serif" style="font-size:20px;color:var(--ink);margin:0 0 14px">Plat Signature Healthy</h3>
         <div style="display:flex;flex-direction:column;gap:10px">
@@ -939,8 +858,6 @@
         </div>
       </div>
 
-      
-      <!-- Rituel du jour -->
       <div class="admin-section">
         <h3 class="serif" style="font-size:20px;color:var(--ink);margin:0 0 14px">Rituel du jour</h3>
         <div style="display:flex;flex-direction:column;gap:10px">
@@ -951,7 +868,6 @@
         </div>
       </div>
 
-      <!-- Terrain naturel -->
       <div class="admin-section">
         <h3 class="serif" style="font-size:20px;color:var(--ink);margin:0 0 14px">Analyse du terrain</h3>
         <div style="display:flex;flex-direction:column;gap:10px">
@@ -961,7 +877,6 @@
         </div>
       </div>
 
-      <!-- Protocole végétal -->
       <div class="admin-section">
         <h3 class="serif" style="font-size:20px;color:var(--ink);margin:0 0 14px">Protocole végétal</h3>
         <div style="display:flex;flex-direction:column;gap:10px">
@@ -971,15 +886,13 @@
           <div><label class="field-label">Durée / conseil</label><input id="f-protocole-duree" class="admin-input" placeholder="Ex : 7 jours / 21 jours" /></div>
         </div>
       </div>
-    
 
-<!-- Méthode -->
       <div class="admin-section">
         <h3 class="serif" style="font-size:20px;color:var(--ink);margin:0 0 8px">Méthode Tee</h3>
         <p style="font-size:11px;color:var(--muted);margin:0 0 14px;line-height:1.5">Format JSON. Chaque règle : <code style="background:#f0ece6;padding:1px 5px;border-radius:4px">{"titre":"...","items":["...","..."],"accent":"brand"}</code></p>
         <textarea id="f-method" class="admin-textarea" style="min-height:140px;font-family:monospace;font-size:12px"></textarea>
       </div>
-      <!-- Selection client -->
+
       <div class="admin-section" id="selection-admin-block" style="display:none">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
           <h3 class="serif" style="font-size:20px;color:var(--ink);margin:0">Sélection Maison Yanna</h3>
@@ -990,7 +903,6 @@
         <button onclick="marquerSelectionTraitee()" class="btn btn-brand" style="width:100%">Marquer comme traité</button>
       </div>
 
-            <!-- Demande phyto client -->
       <div class="admin-section" id="phyto-admin-block" style="display:none">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
           <h3 class="serif" style="font-size:20px;color:var(--ink);margin:0">Demande phyto</h3>
@@ -1003,45 +915,35 @@
         <button onclick="marquerPhytoTraite()" class="btn btn-brand" style="width:100%">Marquer comme traité</button>
       </div>
 
-            <!-- Suivi client -->
       <div class="admin-section" id="suivi-admin-block">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
           <h3 class="serif" style="font-size:20px;color:var(--ink);margin:0">Suivi client</h3>
           <span id="suivi-admin-derniere" style="font-size:11px;color:var(--muted)"></span>
         </div>
-
-        <!-- Résumé dernière entrée -->
         <div id="suivi-admin-resume" style="background:#f8f4ee;border-radius:16px;padding:16px;margin-bottom:14px;display:none">
           <p style="font-size:10px;text-transform:uppercase;letter-spacing:.12em;font-weight:800;color:var(--brand);margin:0 0 10px">Dernière entrée</p>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px" id="suivi-admin-derniere-data"></div>
         </div>
-
-        <!-- Historique 7 jours -->
         <p style="font-size:10px;text-transform:uppercase;letter-spacing:.12em;font-weight:800;color:var(--muted);margin:0 0 10px">Historique 7 jours</p>
         <div id="suivi-admin-historique" style="display:flex;flex-direction:column;gap:8px"></div>
       </div>
 
-      <!-- Messagerie client -->
       <div class="admin-section" id="messages-admin-block">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
           <h3 class="serif" style="font-size:20px;color:var(--ink);margin:0">Messages</h3>
           <span id="messages-admin-badge" style="display:none;font-size:10px;font-weight:800;text-transform:uppercase;padding:4px 10px;border-radius:999px;background:#fee2e2;color:#dc2626">Nouveau</span>
         </div>
-        <!-- Fil admin -->
         <div id="messages-admin-fil" style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px;max-height:300px;overflow-y:auto"></div>
-        <!-- Réponse Tee -->
         <textarea id="messages-admin-input" placeholder="Ta réponse…" style="width:100%;border:1.5px solid #e8e4de;border-radius:14px;padding:11px 14px;font-size:13px;font-family:inherit;min-height:80px;resize:none;outline:none;color:var(--ink);margin-bottom:10px"></textarea>
         <button onclick="repondreMessage()" class="btn btn-brand" style="width:100%">Répondre</button>
       </div>
 
-            <!-- Notes privées coach -->
       <div class="admin-section">
         <h3 class="serif" style="font-size:20px;color:var(--ink);margin:0 0 6px">Notes privées</h3>
         <p style="font-size:11px;color:var(--muted);margin:0 0 14px">Visible uniquement dans l'admin — jamais affiché au client.</p>
         <textarea id="f-notes-priv" class="admin-textarea" placeholder="Sensible au gluten, stress élevé semaine 2, progression rapide..."></textarea>
       </div>
 
-            <!-- Fiche transformation -->
       <div class="admin-section">
         <h3 class="serif" style="font-size:20px;color:var(--ink);margin:0 0 6px">Fiche Transformation</h3>
         <p style="font-size:11px;color:var(--muted);margin:0 0 14px">Visible par le client dans l'onglet "Bilan".</p>
@@ -1061,7 +963,6 @@
         </div>
       </div>
 
-      <!-- Timeline / Programme -->
       <div class="admin-section">
         <h3 class="serif" style="font-size:20px;color:var(--ink);margin:0 0 6px">Programme & Timeline</h3>
         <p style="font-size:11px;color:var(--muted);margin:0 0 14px">La semaine en cours est calculée automatiquement depuis la date de début.</p>
@@ -1079,7 +980,6 @@
         <button class="chip" onclick="ajouterSemaineTimeline()" style="margin-top:12px">+ Ajouter une semaine</button>
       </div>
 
-            <!-- Bibliothèque protocoles -->
       <div class="admin-section">
         <h3 class="serif" style="font-size:20px;color:var(--ink);margin:0 0 6px">Bibliothèque de protocoles</h3>
         <p style="font-size:11px;color:var(--muted);margin:0 0 14px">Applique un protocole type en un clic.</p>
@@ -1094,8 +994,6 @@
         <p id="protocole-applied" style="font-size:12px;color:var(--brand);margin:10px 0 0;display:none">✅ Protocole appliqué — pense à sauvegarder le client.</p>
       </div>
 
-
-            <!-- Actions -->
       <div class="admin-section">
         <h3 class="serif" style="font-size:20px;color:var(--ink);margin:0 0 14px">Actions</h3>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
@@ -1106,7 +1004,7 @@
           <button class="btn btn-danger" onclick="deleteClient()" style="grid-column:1/-1">🗑️ Supprimer ce client</button>
         </div>
       </div>
-      <!-- Rapport hebdomadaire -->
+
       <div class="admin-section" id="rapport-block" style="display:none">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
           <h3 class="serif" style="font-size:20px;color:var(--ink);margin:0">📊 Rapport hebdomadaire</h3>
@@ -1115,49 +1013,65 @@
         <div id="rapport-contenu" style="background:#f8f4ee;border-radius:16px;padding:18px;font-size:12px;line-height:1.8;color:var(--ink);white-space:pre-wrap;font-family:monospace"></div>
       </div>
 
-    </div><!-- /admin-panel -->
-  </div><!-- /admin-overlay -->
+    </div>
+  </div>
 
-</div><!-- /app-shell -->
+</div>
 
 <script>
 /* ══════════════════════════════════════════════
    CONFIGURATION
 ══════════════════════════════════════════════ */
-// ▼ Colle tes credentials ici pour ne pas les retaper dans l'admin à chaque fois
 const DEFAULT_SB_URL = "https://tskwtxstajenhyzvrece.supabase.co";
 const DEFAULT_SB_KEY = "sb_publishable_YldvpG7h1_3TUha6Q2-ZBw_8PLuPCo0";
 const SB_TABLE = "mt_clients";
 const SETTINGS_KEY = "mt_sb_settings";
 
+// ── CORRECTION 1 : Hash SHA-256 du mot de passe admin ──
+// Le mot de passe "OUTITA" n'est plus stocké en clair dans le code
+const ADMIN_HASH = "20ca1fc5ac568dedf781a3bc75dab254ee51c84f0675895d88ef0903401d0ec5";
+
+async function hashPassword(pwd) {
+  const buf = await crypto.subtle.digest(
+    "SHA-256",
+    new TextEncoder().encode(pwd)
+  );
+  return Array.from(new Uint8Array(buf))
+    .map(b => b.toString(16).padStart(2, "0"))
+    .join("");
+}
+
+async function checkAdminAuth() {
+  const stored = localStorage.getItem("mt_admin_hash");
+  if (stored === ADMIN_HASH) return true;
+  const saisie = prompt("Mot de passe admin :");
+  if (!saisie) return false;
+  const hash = await hashPassword(saisie);
+  if (hash === ADMIN_HASH) {
+    localStorage.setItem("mt_admin_hash", hash);
+    return true;
+  }
+  return false;
+}
+
 /* ══════════════════════════════════════════════
    ÉTAT GLOBAL
 ══════════════════════════════════════════════ */
-let sb = null;          // client Supabase
-let currentSlug = null; // slug admin en cours d'édition
-let currentDay = null;  // jour actif dans l'onglet repas
-let adminDay = null;    // jour actif dans l'admin repas
-let isClientMode = false; // true = accès via ?client=, cacher admin
+let sb = null;
+let currentSlug = null;
+let currentDay = null;
+let adminDay = null;
+let isClientMode = false;
 
-// Programme en cours d'édition (côté admin)
 function emptyProgramme() {
   return {
-    semaine: "",
-    objectif: "",
-    coach: "",
-    goals: [],
-    tasks: [],
-    days: {},
-    products: [],
+    semaine: "", objectif: "", coach: "", goals: [], tasks: [],
+    days: {}, products: [],
     signature: { titre: "", ingredients: [], description: "" },
     rituel: { matin: "", midi: "", soir: "", note: "" },
     terrain: { dominant: "", axes: [], note: "" },
     protocole: { matin: "", midi: "", soir: "", duree: "" },
     methode: [], offre: "", notes_priv: "", timeline: {}, transformation: {}, statut: "nouveau"
-
-
-
-
   };
 }
 
@@ -1253,15 +1167,21 @@ async function loadClientFromURL() {
 /* ══════════════════════════════════════════════
    RENDU CÔTÉ CLIENT
 ══════════════════════════════════════════════ */
+
+// ── CORRECTION 2 : safeRender + requestAnimationFrame ──
+function safeRender(fn, label) {
+  try { fn(); }
+  catch(e) { console.warn("[Méthode Tee] " + label + " :", e.message); }
+}
+
 function renderClientView(prenom, prog) {
   _currentProg = prog || {};
-  // Prénom
+
   const p = (prenom || "toi").trim();
   document.getElementById("display-prenom").textContent = p;
   document.getElementById("avatar").textContent = p.charAt(0).toUpperCase();
   document.title = "Méthode Tee — " + p;
 
-  // Objectif
   document.getElementById("goal-title").textContent = prog.objectif || "";
   document.getElementById("goal-list").innerHTML = (prog.goals || []).map(g =>
     `<li style="display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:6px">
@@ -1269,13 +1189,9 @@ function renderClientView(prenom, prog) {
     </li>`
   ).join("");
 
-  // Coach
   document.getElementById("coach-msg").textContent = prog.coach ? `"${prog.coach}"` : "";
-
-  // Semaine badge
   document.getElementById("week-badge").textContent = prog.semaine || "";
 
-  // Tâches
   document.getElementById("tasks-list").innerHTML = (prog.tasks || []).map((t, i) =>
     `<div class="task-item" id="task-${i}" onclick="toggleTask(${i})">
       <div class="task-check" id="check-${i}">
@@ -1285,68 +1201,67 @@ function renderClientView(prenom, prog) {
     </div>`
   ).join("");
 
-  // Repas / jours
   const days = Object.keys(prog.days || {});
   currentDay = days[0] || null;
   renderDaysNav(prog.days || {});
   renderMeals(prog.days || {});
 
-  // Accueil enrichi
   renderRituel(prog.rituel || {});
   renderTerrain(prog.terrain || {});
-
-  // Soins enrichi
   renderProtocole(prog.protocole || {});
   renderProducts(prog.products || []);
-
-  // Signature
   renderSignature(prog.signature || {});
-
-  // Méthode
   renderMethodRules(prog.methode || []);
+  renderProgramme(prog);
+  renderTransformation(prog);
 
-    renderProgramme(prog);
-      renderTransformation(prog);
-  setTimeout(function() { renderMessages(prog); }, 50);
-
-
-
-
-  // Icônes Lucide
-    var d = document.getElementById("today-date");
+  const d = document.getElementById("today-date");
   if (d) d.textContent = new Date().toLocaleDateString("fr-FR", {weekday:"long", day:"numeric", month:"long"});
-  
-    // Forcer l'affichage de la zone de saisie messages
-  var msgInput = document.getElementById("message-input");
-  var msgBtn = msgInput ? msgInput.closest(".card") : null;
+
+  const msgInput = document.getElementById("message-input");
+  const msgBtn = msgInput ? msgInput.closest(".card") : null;
   if (msgBtn) msgBtn.style.display = "block";
 
-  var slugR = new URLSearchParams(window.location.search).get("client");
-  setTimeout(function() { restoreTasks(slugR); }, 80);
-   setTimeout(function() { renderHistorique(slugR); }, 120);
-
-  setTimeout(function() { initSuivi(); }, 100);
-  setTimeout(function() { initNotifications(slugR); }, 150);
-
-  var offreVal = prog.offre || "";
-  var bannerDiv = document.getElementById("my-banner");
-  var bannerTxt = document.getElementById("my-banner-text");
-  var offresMap = {"signature":"Offre Signature : -15% sur toute la boutique Maison Yanna","privilege":"Offre Privilege : Selectionne 5 produits offerts et envoie ta selection par message","elite":"Offre Elite : 10 produits offerts a la quantite souhaitee, envoie ta selection par message"};
-  if (bannerDiv && bannerTxt && offresMap[offreVal]) { bannerTxt.textContent = offresMap[offreVal]; bannerDiv.style.display = "block"; } else if (bannerDiv) { bannerDiv.style.display = "none"; }
-
-    var messagesNonLus = (prog.messages || []).filter(function(m) { return m.auteur === "tee" && !m.lu; }).length;
-  var msgBadge = document.getElementById("messages-badge");
-  if (msgBadge) {
-    if (messagesNonLus > 0) {
-      msgBadge.style.display = "flex";
-      msgBadge.textContent = messagesNonLus;
-    } else {
-      msgBadge.style.display = "none";
-    }
+  const offreVal = prog.offre || "";
+  const bannerDiv = document.getElementById("my-banner");
+  const bannerTxt = document.getElementById("my-banner-text");
+  const offresMap = {
+    "signature": "Offre Signature : -15% sur toute la boutique Maison Yanna",
+    "privilege": "Offre Privilege : Selectionne 5 produits offerts et envoie ta selection par message",
+    "elite": "Offre Elite : 10 produits offerts a la quantite souhaitee, envoie ta selection par message"
+  };
+  if (bannerDiv && bannerTxt && offresMap[offreVal]) {
+    bannerTxt.textContent = offresMap[offreVal];
+    bannerDiv.style.display = "block";
+  } else if (bannerDiv) {
+    bannerDiv.style.display = "none";
   }
 
-  lucide.createIcons();
+  const messagesNonLus = (prog.messages || []).filter(m => m.auteur === "tee" && !m.lu).length;
+  const msgBadge = document.getElementById("messages-badge");
+  if (msgBadge) {
+    msgBadge.style.display = messagesNonLus > 0 ? "flex" : "none";
+    if (messagesNonLus > 0) msgBadge.textContent = messagesNonLus;
+  }
 
+  // Messages rendu synchrone
+  safeRender(function() { renderMessages(prog); }, "renderMessages");
+
+  const slugR = new URLSearchParams(window.location.search).get("client");
+
+  // ── Toutes les initialisations post-rendu via requestAnimationFrame ──
+  // Garantit que le DOM est peint avant d'accéder aux éléments
+  requestAnimationFrame(function() {
+    safeRender(function() { restoreTasks(slugR); },     "restoreTasks");
+    safeRender(function() { renderHistorique(slugR); }, "renderHistorique");
+    safeRender(function() { initSuivi(); },             "initSuivi");
+    // Notifications après délai car la permission API peut être lente
+    setTimeout(function() {
+      safeRender(function() { initNotifications(slugR); }, "initNotifications");
+    }, 300);
+  });
+
+  lucide.createIcons();
 }
 
 function toggleTask(i) {
@@ -1385,7 +1300,6 @@ function restoreTasks(slug) {
   } catch(e) {}
 }
 
-
 function renderDaysNav(days) {
   const keys = Object.keys(days);
   document.getElementById("days-nav").innerHTML = keys.map(day =>
@@ -1398,12 +1312,11 @@ function selectDay(day, btn) {
   currentDay = day;
   document.querySelectorAll(".day-pill").forEach(b => b.classList.remove("active"));
   btn.classList.add("active");
-  // récupère programme actuel (mode client : depuis prog global)
   const prog = _currentProg;
   if (prog) renderMeals(prog.days || {});
 }
 
-let _currentProg = null; // référence pour selectDay en mode client
+let _currentProg = null;
 
 function renderMeals(days) {
   const d = days[currentDay] || {};
@@ -1430,7 +1343,6 @@ function renderProducts(products) {
   ).join("");
   restoreSelection();
 }
-
 
 function renderSignature(sig) {
   document.getElementById("signature-card").innerHTML = `
@@ -1463,7 +1375,6 @@ function renderMethodRules(rules) {
   ).join("");
 }
 
-
 function renderRituel(rituel) {
   const el = document.getElementById("rituel-card");
   const rows = [
@@ -1491,6 +1402,7 @@ function renderTerrain(terrain) {
     ${!terrain.dominant && !(terrain.axes||[]).length && !terrain.note ? `<p style="font-size:12px;color:var(--muted);margin:0">Aucune analyse ajoutée.</p>` : ""}
   `;
 }
+
 /* ══════════════════════════════════════════════
    SUIVI QUOTIDIEN
 ══════════════════════════════════════════════ */
@@ -1516,6 +1428,7 @@ function initSuivi() {
   } catch(e) {}
   updateScore(slug);
 }
+
 /* ══════════════════════════════════════════════
    SELECTION PRODUITS
 ══════════════════════════════════════════════ */
@@ -1541,15 +1454,14 @@ function updateSelectionUI() {
     panel.style.display = "block";
     list.innerHTML = _selection.map(function(s) {
       return '<div style="display:flex;flex-direction:column;gap:4px;padding:8px 0;border-bottom:1px solid #f0ece6">' +
-  '<div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink)">' +
-  '<span>' + s.emoji + '</span><span style="flex:1">' + s.titre + '</span>' +
-  '<span onclick="toggleSelection(' + s.idx + ',\'' + s.titre.replace(/'/g,"\\'") + '\',\'' + s.emoji + '\')" style="color:#dc2626;font-size:16px;cursor:pointer">×</span>' +
-  '</div>' +
-  '<input placeholder="Format souhaité (ex: 100g, 10 sachets...)" value="' + (s.format||'') + '" onchange="_selection[' + _selection.indexOf(s) + '].format=this.value" style="width:100%;border:1px solid #e8e4de;border-radius:10px;padding:7px 12px;font-size:12px;font-family:inherit;outline:none;color:var(--ink)">' +
-  '</div>';
+        '<div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink)">' +
+        '<span>' + s.emoji + '</span><span style="flex:1">' + s.titre + '</span>' +
+        '<span onclick="toggleSelection(' + s.idx + ',\'' + s.titre.replace(/'/g,"\\'") + '\',\'' + s.emoji + '\')" style="color:#dc2626;font-size:16px;cursor:pointer">×</span>' +
+        '</div>' +
+        '<input placeholder="Format souhaité (ex: 100g, 10 sachets...)" value="' + (s.format||'') + '" onchange="_selection[' + _selection.indexOf(s) + '].format=this.value" style="width:100%;border:1px solid #e8e4de;border-radius:10px;padding:7px 12px;font-size:12px;font-family:inherit;outline:none;color:var(--ink)">' +
+        '</div>';
     }).join("");
   }
-
   document.querySelectorAll("[id^='selbtn-']").forEach(function(btn) {
     var i = parseInt(btn.id.replace("selbtn-",""));
     var selected = _selection.some(function(s) { return s.idx === i; });
@@ -1569,27 +1481,44 @@ function viderSelection() {
   updateSelectionUI();
 }
 
+// ── CORRECTION 3 : envoyerSelection avec merge propre ──
 async function envoyerSelection() {
   if (_selection.length === 0) return;
   var slug = new URLSearchParams(window.location.search).get("client");
   if (!slug || !sb) { alert("Impossible d'envoyer — contacte ton coach directement."); return; }
-  var selectionData = {
-    produits: _selection.map(function(s) { return s.emoji + " " + s.titre + (s.format ? " — " + s.format : ""); }),
 
+  var selectionData = {
+    produits: _selection.map(function(s) {
+      return s.emoji + " " + s.titre + (s.format ? " — " + s.format : "");
+    }),
     date: new Date().toLocaleDateString("fr-FR"),
     statut: "en_attente"
   };
-  var { data, error } = await sb.from("mt_clients").select("programme").eq("slug", slug).single();
-  if (error || !data) { alert("Erreur — réessaie."); return; }
-  var prog = data.programme || {};
-  prog.selection = selectionData;
-  var { error: err2 } = await sb.from("mt_clients").update({ programme: prog }).eq("slug", slug);
-  if (err2) { alert("Erreur — réessaie."); return; }
-  alert("Sélection envoyée ! Ton coach la recevra très vite.");
-  viderSelection();
+
+  try {
+    // Lecture fraîche depuis Supabase
+    var res = await sb.from("mt_clients").select("programme").eq("slug", slug).single();
+    if (res.error || !res.data) throw new Error("Client introuvable");
+
+    // Merge : on ne touche qu'à la clé "selection", le reste est préservé
+    var progFrais = Object.assign({}, res.data.programme || {});
+    progFrais.selection = selectionData;
+
+    var res2 = await sb.from("mt_clients").update({ programme: progFrais }).eq("slug", slug);
+    if (res2.error) throw new Error(res2.error.message);
+
+    // Mettre à jour la référence locale sans écraser le suivi en mémoire
+    if (_currentProg) _currentProg.selection = selectionData;
+
+    alert("Sélection envoyée ! Ton coach la recevra très vite.");
+    viderSelection();
+  } catch(e) {
+    console.error("[envoyerSelection]", e);
+    alert("Erreur — réessaie. (" + e.message + ")");
+  }
 }
 
-  /* ══════════════════════════════════════════════
+/* ══════════════════════════════════════════════
    ASSISTANT PHYTO
 ══════════════════════════════════════════════ */
 var _phytoSymptome = "";
@@ -1690,7 +1619,7 @@ function analyserSymptome(texte) {
     }
     if (trouve) break;
   }
-    if (!trouve) { document.getElementById("phyto-result").style.display = "none"; return; }
+  if (!trouve) { document.getElementById("phyto-result").style.display = "none"; return; }
   document.getElementById("phyto-result").style.display = "block";
   _phytoProduits = trouve.suggestions;
   document.getElementById("phyto-suggestions").innerHTML = trouve.suggestions.map(function(s) {
@@ -1725,16 +1654,20 @@ async function envoyerPhyto() {
     date: new Date().toLocaleDateString("fr-FR"),
     statut: "en_attente"
   };
-  var { data, error } = await sb.from("mt_clients").select("programme").eq("slug", slug).single();
-  if (error || !data) { alert("Erreur — réessaie."); return; }
-  var prog = data.programme || {};
-  prog.phyto_demande = payload;
-  await sb.from("mt_clients").update({ programme: prog }).eq("slug", slug);
-  alert("Envoyé à Tee ! Elle te répondra très vite.");
-  document.getElementById("phyto-input").value = "";
-  document.getElementById("phyto-result").style.display = "none";
+  try {
+    var res = await sb.from("mt_clients").select("programme").eq("slug", slug).single();
+    if (res.error || !res.data) throw new Error("Client introuvable");
+    var prog = Object.assign({}, res.data.programme || {});
+    prog.phyto_demande = payload;
+    var res2 = await sb.from("mt_clients").update({ programme: prog }).eq("slug", slug);
+    if (res2.error) throw new Error(res2.error.message);
+    alert("Envoyé à Tee ! Elle te répondra très vite.");
+    document.getElementById("phyto-input").value = "";
+    document.getElementById("phyto-result").style.display = "none";
+  } catch(e) {
+    alert("Erreur — réessaie. (" + e.message + ")");
+  }
 }
-
 
 function saveSuivi() {
   var slug = new URLSearchParams(window.location.search).get("client") || "admin";
@@ -1756,18 +1689,13 @@ function saveSuivi() {
   try { localStorage.setItem(key, JSON.stringify(data)); } catch(e) {}
   updateScore(slug);
 
-  // Remontée automatique dans Supabase
   if (sb && slug && slug !== "admin") {
     clearTimeout(saveSuivi._timer);
     saveSuivi._timer = setTimeout(async function() {
       try {
-        var { data: clientData, error } = await sb
-          .from("mt_clients")
-          .select("programme")
-          .eq("slug", slug)
-          .single();
-        if (error || !clientData) return;
-        var prog = clientData.programme || {};
+        var res = await sb.from("mt_clients").select("programme").eq("slug", slug).single();
+        if (res.error || !res.data) return;
+        var prog = Object.assign({}, res.data.programme || {});
         if (!prog.suivi) prog.suivi = {};
         prog.suivi[today] = data;
         await sb.from("mt_clients").update({ programme: prog }).eq("slug", slug);
@@ -1775,7 +1703,6 @@ function saveSuivi() {
     }, 2000);
   }
 }
-
 
 function updateScore(slug) {
   var total = 0; var filled = 0;
@@ -1793,26 +1720,14 @@ function updateScore(slug) {
   if (txt) txt.textContent = "Tu as rempli " + filled + " jour" + (filled > 1 ? "s" : "") + " sur 7 — Score : " + pct + "%";
 }
 
-  /* ══════════════════════════════════════════════
+/* ══════════════════════════════════════════════
    TIMELINE / PROGRAMME
 ══════════════════════════════════════════════ */
 var REGLES_SEMAINES = {
-  1: {
-    titre: "1 aliment par moment de la journée",
-    detail: "Tu as 4 moments dans ta journée : Éveil & Matin, Déjeuner, Collation, Dîner & Soir. Pour chaque moment, choisis 1 aliment parmi ta liste. Soit 4 choix au total dans la journée — pas 1 seul pour toute la journée !"
-  },
-  2: {
-    titre: "2 aliments minimum par moment",
-    detail: "Pour chaque moment de la journée (Éveil & Matin, Déjeuner, Collation, Dîner & Soir), tu choisis maintenant 2 aliments parmi ta liste. Soit 8 choix minimum dans la journée."
-  },
-  3: {
-    titre: "3 aliments par moment",
-    detail: "On monte en puissance ! Pour chaque moment (Éveil & Matin, Déjeuner, Collation, Dîner & Soir), tu choisis 3 aliments parmi ta liste. Soit 12 choix dans la journée."
-  },
-  default: {
-    titre: "Respecte toute ta sélection",
-    detail: "Tu es en phase de consolidation. Pour chaque moment de la journée, tu consommes l'ensemble de ta liste personnalisée. C'est le rythme cible de ta Méthode Tee !"
-  }
+  1: { titre: "1 aliment par moment de la journée", detail: "Tu as 4 moments dans ta journée : Éveil & Matin, Déjeuner, Collation, Dîner & Soir. Pour chaque moment, choisis 1 aliment parmi ta liste. Soit 4 choix au total dans la journée — pas 1 seul pour toute la journée !" },
+  2: { titre: "2 aliments minimum par moment", detail: "Pour chaque moment de la journée (Éveil & Matin, Déjeuner, Collation, Dîner & Soir), tu choisis maintenant 2 aliments parmi ta liste. Soit 8 choix minimum dans la journée." },
+  3: { titre: "3 aliments par moment", detail: "On monte en puissance ! Pour chaque moment (Éveil & Matin, Déjeuner, Collation, Dîner & Soir), tu choisis 3 aliments parmi ta liste. Soit 12 choix dans la journée." },
+  default: { titre: "Respecte toute ta sélection", detail: "Tu es en phase de consolidation. Pour chaque moment de la journée, tu consommes l'ensemble de ta liste personnalisée. C'est le rythme cible de ta Méthode Tee !" }
 };
 
 function getSemaineEnCours(dateDebut, nbSemaines) {
@@ -1833,22 +1748,18 @@ function renderProgramme(prog) {
   var semaines = timeline.semaines || [];
   var semaineEnCours = getSemaineEnCours(dateDebut, nbSemaines);
 
-  // Sous-titre
   var sub = document.getElementById("prog-subtitle");
   if (sub) sub.textContent = dateDebut
     ? "Programme de " + nbSemaines + " semaines — démarré le " + new Date(dateDebut).toLocaleDateString("fr-FR", {day:"numeric", month:"long", year:"numeric"})
     : "Programme personnalisé Méthode Tee";
 
-  // Règle de la semaine
   var regle = REGLES_SEMAINES[semaineEnCours] || REGLES_SEMAINES.default;
   var regleTxt = document.getElementById("regle-texte");
   var regleDetail = document.getElementById("regle-detail");
   if (regleTxt) regleTxt.textContent = regle.titre;
   if (regleDetail) regleDetail.textContent = regle.detail;
 
-  // Barre progression
-  var pct = Math.round((semaineEnCours / nbSemaines) * 100);
-  if (pct > 100) pct = 100;
+  var pct = Math.min(Math.round((semaineEnCours / nbSemaines) * 100), 100);
   var bar = document.getElementById("prog-bar");
   var barLabel = document.getElementById("prog-bar-label");
   var semaineLabel = document.getElementById("prog-semaine-label");
@@ -1856,7 +1767,6 @@ function renderProgramme(prog) {
   if (barLabel) barLabel.textContent = "Semaine " + semaineEnCours + " sur " + nbSemaines;
   if (semaineLabel) semaineLabel.textContent = "S" + semaineEnCours + " / S" + nbSemaines;
 
-  // Timeline
   var container = document.getElementById("timeline-container");
   if (!container) return;
   var html = "";
@@ -1879,43 +1789,33 @@ function renderProgramme(prog) {
       '<div style="background:' + bgCarte + ';border:1px solid rgba(140,117,97,.12);border-radius:18px;padding:18px">' +
       '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">' +
       '<h4 class="serif" style="font-size:16px;font-weight:700;color:var(--ink);margin:0">Semaine ' + s + '</h4>' +
-      statutBadge +
-      '</div>' +
+      statutBadge + '</div>' +
       '<p style="font-size:11px;color:var(--brand);font-weight:700;margin:0 0 8px">📋 ' + regleS.titre + '</p>';
 
     if (data.terrain) {
       html += '<div style="margin-bottom:10px"><p style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:800;color:var(--muted);margin:0 0 6px">Terrain de départ</p>' +
         '<div style="display:flex;flex-wrap:wrap;gap:6px">' +
-        data.terrain.split(",").map(function(t) {
-          return '<span style="padding:5px 10px;border-radius:999px;background:rgba(140,117,97,.1);font-size:11px;color:var(--ink)">' + t.trim() + '</span>';
-        }).join("") +
+        data.terrain.split(",").map(function(t) { return '<span style="padding:5px 10px;border-radius:999px;background:rgba(140,117,97,.1);font-size:11px;color:var(--ink)">' + t.trim() + '</span>'; }).join("") +
         '</div></div>';
     }
-
     if (data.ameliorations) {
       html += '<div style="margin-bottom:10px"><p style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:800;color:var(--muted);margin:0 0 6px">✨ Améliorations observées</p>' +
         '<div style="display:flex;flex-direction:column;gap:4px">' +
-        data.ameliorations.split("\n").filter(Boolean).map(function(a) {
-          return '<div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--ink)"><span style="color:#34d399;font-weight:700">+</span>' + a.trim() + '</div>';
-        }).join("") +
+        data.ameliorations.split("\n").filter(Boolean).map(function(a) { return '<div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--ink)"><span style="color:#34d399;font-weight:700">+</span>' + a.trim() + '</div>'; }).join("") +
         '</div></div>';
     }
-
     if (data.notesCoach) {
       html += '<div style="background:#f8f4ee;border-radius:12px;padding:10px 12px"><p style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:800;color:var(--brand);margin:0 0 4px">Note de Tee</p>' +
         '<p style="font-size:12px;color:var(--ink);font-style:italic;margin:0">"' + data.notesCoach + '"</p></div>';
     }
-
     if (!data.terrain && !data.ameliorations && !data.notesCoach && !estEnCours) {
       html += '<p style="font-size:12px;color:var(--muted);font-style:italic;margin:0">Données à venir…</p>';
     }
-
     html += '</div></div>';
   }
   container.innerHTML = html;
 }
 
-/* ══ ADMIN TIMELINE ══ */
 function renderTimelineAdmin(timeline) {
   var nb = parseInt(document.getElementById("f-nb-semaines").value) || 4;
   var semaines = (timeline && timeline.semaines) || [];
@@ -1961,14 +1861,23 @@ function syncTimeline() {
   }
   return { dateDebut: dateDebut, nbSemaines: nbSemaines, semaines: semaines };
 }
+
 /* ══════════════════════════════════════════════
-   NOTIFICATIONS / RAPPELS
+   NOTIFICATIONS — CORRECTION 4 : timers trackés
 ══════════════════════════════════════════════ */
+var _notifTimers = { timeouts: [], intervals: [] };
+
+function clearNotifTimers() {
+  _notifTimers.timeouts.forEach(clearTimeout);
+  _notifTimers.intervals.forEach(clearInterval);
+  _notifTimers.timeouts = [];
+  _notifTimers.intervals = [];
+}
+
 function initNotifications(slug) {
   if (!("Notification" in window)) return;
   var banner = document.getElementById("notif-banner");
   if (!banner) return;
-
   if (Notification.permission === "granted") {
     banner.style.display = "none";
     planifierRappels(slug);
@@ -1980,20 +1889,14 @@ function initNotifications(slug) {
 }
 
 async function activerNotifications() {
-  if (!("Notification" in window)) {
-    alert("Ton navigateur ne supporte pas les notifications.");
-    return;
-  }
+  if (!("Notification" in window)) { alert("Ton navigateur ne supporte pas les notifications."); return; }
   var perm = await Notification.requestPermission();
   var banner = document.getElementById("notif-banner");
   if (perm === "granted") {
     if (banner) banner.style.display = "none";
     var slug = new URLSearchParams(window.location.search).get("client") || "admin";
     planifierRappels(slug);
-    new Notification("Méthode Tee 🌿", {
-      body: "Rappels activés ! Tu seras notifié chaque jour.",
-      icon: "/nutrition/icon-192.PNG"
-    });
+    new Notification("Méthode Tee 🌿", { body: "Rappels activés ! Tu seras notifié chaque jour.", icon: "/nutrition/icon-192.PNG" });
   } else {
     if (banner) banner.style.display = "none";
     alert("Notifications refusées. Tu peux les activer dans les réglages de ton navigateur.");
@@ -2003,475 +1906,69 @@ async function activerNotifications() {
 function planifierRappels(slug) {
   if (Notification.permission !== "granted") return;
 
+  // Annuler tous les timers existants avant d'en créer de nouveaux
+  clearNotifTimers();
+
   var maintenant = new Date();
-  var heure = maintenant.getHours();
-  var minute = maintenant.getMinutes();
 
-  // Rappel matin 8h00
-  var rappelMatin = new Date();
-  rappelMatin.setHours(8, 0, 0, 0);
-  if (rappelMatin <= maintenant) rappelMatin.setDate(rappelMatin.getDate() + 1);
-  var delaiMatin = rappelMatin - maintenant;
+  function prochainHeure(h, m) {
+    var d = new Date();
+    d.setHours(h, m, 0, 0);
+    if (d <= maintenant) d.setDate(d.getDate() + 1);
+    return d - maintenant;
+  }
 
-  setTimeout(function() {
-    new Notification("🌅 Méthode Tee — Rituel du matin", {
-      body: "C'est l'heure de ton rituel du matin. Eau chaude, infusion, et bonne journée !",
-      icon: "/nutrition/icon-192.PNG"
-    });
-    setInterval(function() {
-      new Notification("🌅 Méthode Tee — Rituel du matin", {
-        body: "C'est l'heure de ton rituel du matin. Eau chaude, infusion, et bonne journée !",
-        icon: "/nutrition/icon-192.PNG"
-      });
-    }, 24 * 60 * 60 * 1000);
-  }, delaiMatin);
+  function creerRappelQuotidien(delai, titre, body) {
+    var t = setTimeout(function() {
+      new Notification(titre, { body: body, icon: "/nutrition/icon-192.PNG" });
+      var iv = setInterval(function() {
+        new Notification(titre, { body: body, icon: "/nutrition/icon-192.PNG" });
+      }, 24 * 60 * 60 * 1000);
+      _notifTimers.intervals.push(iv);
+    }, delai);
+    _notifTimers.timeouts.push(t);
+  }
 
-  // Rappel infusion soir 20h00
-  var rappelSoir = new Date();
-  rappelSoir.setHours(20, 0, 0, 0);
-  if (rappelSoir <= maintenant) rappelSoir.setDate(rappelSoir.getDate() + 1);
-  var delaiSoir = rappelSoir - maintenant;
+  // Rappel matin 8h
+  creerRappelQuotidien(
+    prochainHeure(8, 0),
+    "🌅 Méthode Tee — Rituel du matin",
+    "C'est l'heure de ton rituel du matin. Eau chaude, infusion, et bonne journée !"
+  );
 
-  setTimeout(function() {
-    new Notification("🍵 Méthode Tee — Infusion du soir", {
-      body: "Pense à ton infusion du soir pour préparer ton corps au repos.",
-      icon: "/nutrition/icon-192.PNG"
-    });
-    setInterval(function() {
-      new Notification("🍵 Méthode Tee — Infusion du soir", {
-        body: "Pense à ton infusion du soir pour préparer ton corps au repos.",
-        icon: "/nutrition/icon-192.PNG"
-      });
-    }, 24 * 60 * 60 * 1000);
-  }, delaiSoir);
+  // Rappel infusion soir 20h
+  creerRappelQuotidien(
+    prochainHeure(20, 0),
+    "🍵 Méthode Tee — Infusion du soir",
+    "Pense à ton infusion du soir pour préparer ton corps au repos."
+  );
 
-  // Rappel suivi 21h00
-  var rappelSuivi = new Date();
-  rappelSuivi.setHours(21, 0, 0, 0);
-  if (rappelSuivi <= maintenant) rappelSuivi.setDate(rappelSuivi.getDate() + 1);
-  var delaiSuivi = rappelSuivi - maintenant;
-
-  setTimeout(function() {
-    var today = new Date().toISOString().slice(0, 10);
-    var key = "mt_suivi_" + (slug || "admin") + "_" + today;
-    try {
-      var saved = JSON.parse(localStorage.getItem(key) || "{}");
-      if (!saved.filled) {
-        new Notification("✅ Méthode Tee — Suivi du jour", {
-          body: "Tu n'as pas encore rempli ton suivi aujourd'hui. 2 minutes suffisent !",
-          icon: "/nutrition/icon-192.PNG"
-        });
-      }
-    } catch(e) {}
-    setInterval(function() {
-      var today2 = new Date().toISOString().slice(0, 10);
-      var key2 = "mt_suivi_" + (slug || "admin") + "_" + today2;
+  // Rappel suivi 21h — conditionnel si pas encore rempli
+  var tSuivi = setTimeout(function() {
+    function verifierEtNotifier() {
+      var today = new Date().toISOString().slice(0, 10);
+      var key = "mt_suivi_" + (slug || "admin") + "_" + today;
       try {
-        var saved2 = JSON.parse(localStorage.getItem(key2) || "{}");
-        if (!saved2.filled) {
+        var saved = JSON.parse(localStorage.getItem(key) || "{}");
+        if (!saved.filled) {
           new Notification("✅ Méthode Tee — Suivi du jour", {
             body: "Tu n'as pas encore rempli ton suivi aujourd'hui. 2 minutes suffisent !",
             icon: "/nutrition/icon-192.PNG"
           });
         }
       } catch(e) {}
-    }, 24 * 60 * 60 * 1000);
-  }, delaiSuivi);
+    }
+    verifierEtNotifier();
+    var iv = setInterval(verifierEtNotifier, 24 * 60 * 60 * 1000);
+    _notifTimers.intervals.push(iv);
+  }, prochainHeure(21, 0));
+  _notifTimers.timeouts.push(tSuivi);
 }
 
-  /* ══════════════════════════════════════════════
+/* ══════════════════════════════════════════════
    HISTORIQUE VISUEL
 ══════════════════════════════════════════════ */
-/* ══════════════════════════════════════════════
-   FICHE TRANSFORMATION
-══════════════════════════════════════════════ */
-function renderTransformation(prog) {
-  var transfo = prog.transformation || {};
-  var timeline = prog.timeline || {};
-  var semaines = timeline.semaines || [];
-
-  // Point de départ
-  var departTitre = document.getElementById("transfo-depart-titre");
-  var departContent = document.getElementById("transfo-depart-content");
-  if (departTitre) departTitre.textContent = "Semaine 1 — " + (new Date(timeline.dateDebut || Date.now()).toLocaleDateString("fr-FR", {month:"long", year:"numeric"}));
-  if (departContent) {
-    var depart = transfo.depart || "";
-    if (depart) {
-      departContent.innerHTML = depart.split("\n").filter(Boolean).map(function(d) {
-        return '<div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);margin-bottom:6px">' +
-          '<span style="color:var(--accent);font-weight:700">•</span>' + d.trim() + '</div>';
-      }).join("");
-    } else {
-      departContent.innerHTML = '<p style="font-size:12px;color:var(--muted);font-style:italic;margin:0">Bilan de départ à venir…</p>';
-    }
-  }
-
-  // Objectifs
-  var objEl = document.getElementById("transfo-objectifs");
-  if (objEl) {
-    var goals = prog.goals || [];
-    if (goals.length) {
-      objEl.innerHTML = goals.map(function(g) {
-        return '<div style="display:flex;align-items:center;gap:8px;font-size:13px;color:white;margin-bottom:6px">' +
-          '<span style="font-size:16px">→</span>' + g + '</div>';
-      }).join("");
-    } else {
-      objEl.innerHTML = '<p style="font-size:12px;color:rgba(255,255,255,.7);font-style:italic;margin:0">Objectifs à définir…</p>';
-    }
-  }
-
-  // Évolution semaine par semaine
-  var evoEl = document.getElementById("transfo-evolution");
-  if (evoEl) {
-    if (semaines.length) {
-      evoEl.innerHTML = semaines.map(function(s, i) {
-        if (!s.ameliorations && !s.notesCoach && !s.terrain) return "";
-        return '<div style="border-left:3px solid var(--brand);padding-left:14px">' +
-          '<p style="font-size:11px;font-weight:800;color:var(--brand);text-transform:uppercase;letter-spacing:.08em;margin:0 0 6px">Semaine ' + (i+1) + '</p>' +
-          (s.ameliorations ? s.ameliorations.split("\n").filter(Boolean).map(function(a) {
-            return '<div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--ink);margin-bottom:4px">' +
-              '<span style="color:#34d399;font-weight:700">+</span>' + a.trim() + '</div>';
-          }).join("") : "") +
-          (s.notesCoach ? '<p style="font-size:11px;color:var(--muted);font-style:italic;margin:6px 0 0">"' + s.notesCoach + '"</p>' : "") +
-          '</div>';
-      }).filter(Boolean).join("") || '<p style="font-size:12px;color:var(--muted);font-style:italic;margin:0">Évolution en cours…</p>';
-    } else {
-      evoEl.innerHTML = '<p style="font-size:12px;color:var(--muted);font-style:italic;margin:0">Évolution en cours…</p>';
-    }
-  }
-
-  // Victoires
-  var vicEl = document.getElementById("transfo-victoires");
-  if (vicEl) {
-    var victoires = transfo.victoires || "";
-    if (victoires) {
-      vicEl.innerHTML = victoires.split("\n").filter(Boolean).map(function(v) {
-        return '<div style="display:flex;align-items:center;gap:10px;background:#f8f4ee;border-radius:14px;padding:12px 14px">' +
-          '<span style="font-size:20px">🏆</span>' +
-          '<span style="font-size:13px;font-weight:600;color:var(--ink)">' + v.trim() + '</span>' +
-          '</div>';
-      }).join("");
-    } else {
-      vicEl.innerHTML = '<p style="font-size:12px;color:var(--muted);font-style:italic;margin:0">Tes victoires apparaîtront ici au fil du programme…</p>';
-    }
-  }
-
-  // Ressentis
-  var ressEl = document.getElementById("transfo-ressentis");
-  if (ressEl) {
-    var ressentis = transfo.ressentis || "";
-    if (ressentis) {
-      ressEl.innerHTML = ressentis.split("\n").filter(Boolean).map(function(r) {
-        return '<div style="background:rgba(83,100,74,.06);border-radius:14px;padding:12px 14px">' +
-          '<p class="serif" style="font-size:13px;color:var(--ink);font-style:italic;margin:0">"' + r.trim() + '"</p>' +
-          '</div>';
-      }).join("");
-    } else {
-      ressEl.innerHTML = '<p style="font-size:12px;color:var(--muted);font-style:italic;margin:0">Tes ressentis apparaîtront ici…</p>';
-    }
-  }
-}
-async function renderSuiviGlobal() {
-  if (!sb) return;
-  var today = new Date().toISOString().slice(0, 10);
-  var dateEl = document.getElementById("suivi-global-date");
-  var listEl = document.getElementById("suivi-global-list");
-  if (dateEl) dateEl.textContent = new Date().toLocaleDateString("fr-FR", {weekday:"long", day:"numeric", month:"long"});
-  if (!listEl) return;
-
-  listEl.innerHTML = '<p style="font-size:12px;color:var(--muted)">Chargement…</p>';
-
-  try {
-    var { data, error } = await sb.from("mt_clients").select("slug, prenom, programme");
-    if (error || !data) { listEl.innerHTML = '<p style="font-size:12px;color:var(--muted)">Erreur de chargement.</p>'; return; }
-
-    var remplis = [];
-    var nonRemplis = [];
-
-    data.forEach(function(c) {
-      var suivi = (c.programme && c.programme.suivi && c.programme.suivi[today]) || null;
-      if (suivi && suivi.filled) {
-        remplis.push({ prenom: c.prenom, slug: c.slug, suivi: suivi });
-      } else {
-        nonRemplis.push({ prenom: c.prenom, slug: c.slug });
-      }
-    });
-
-    var html = "";
-
-    // Résumé
-    html += '<div style="display:flex;gap:8px;margin-bottom:12px">' +
-      '<div style="flex:1;background:#dcfce7;border-radius:12px;padding:10px 12px;text-align:center">' +
-      '<p style="font-size:22px;font-weight:800;color:#16a34a;margin:0">' + remplis.length + '</p>' +
-      '<p style="font-size:10px;text-transform:uppercase;font-weight:700;color:#16a34a;margin:0">Remplis</p>' +
-      '</div>' +
-      '<div style="flex:1;background:#f0ece6;border-radius:12px;padding:10px 12px;text-align:center">' +
-      '<p style="font-size:22px;font-weight:800;color:var(--muted);margin:0">' + nonRemplis.length + '</p>' +
-      '<p style="font-size:10px;text-transform:uppercase;font-weight:700;color:var(--muted);margin:0">En attente</p>' +
-      '</div>' +
-      '</div>';
-
-    // Clients qui ont rempli
-    if (remplis.length) {
-      html += '<p style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:800;color:var(--brand);margin:0 0 8px">✅ Ont rempli leur suivi</p>';
-      remplis.forEach(function(c) {
-        var s = c.suivi;
-        var checks = [s.eau, s.repas, s.infusion, s.sport].filter(Boolean).length;
-        html += '<div style="background:#f8f4ee;border-radius:14px;padding:12px 14px;cursor:pointer" onclick="selectClient(\'' + c.slug + '\')">' +
-          '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">' +
-          '<span style="font-size:13px;font-weight:700;color:var(--ink)">' + (c.prenom || c.slug) + '</span>' +
-          '<span style="font-size:10px;font-weight:800;padding:2px 8px;border-radius:999px;background:' + (checks === 4 ? "#dcfce7" : "#fef3c7") + ';color:' + (checks === 4 ? "#16a34a" : "#92400e") + '">' + checks + '/4 checks</span>' +
-          '</div>' +
-          '<div style="display:flex;gap:10px">' +
-          '<span style="font-size:11px;color:#f59e0b">⚡ ' + (s.energie || "—") + '/5</span>' +
-          '<span style="font-size:11px;color:#6366f1">🌙 ' + (s.sommeil || "—") + '/5</span>' +
-          '<span style="font-size:11px;color:var(--brand)">🌿 ' + (s.digestion || "—") + '/5</span>' +
-          (s.poids ? '<span style="font-size:11px;color:var(--muted)">⚖️ ' + s.poids + ' kg</span>' : "") +
-          '</div>' +
-          (s.note ? '<p style="font-size:11px;color:var(--muted);font-style:italic;margin:6px 0 0;border-top:1px solid #ede9e3;padding-top:6px">"' + s.note + '"</p>' : "") +
-          '</div>';
-      });
-    }
-
-    // Clients qui n'ont pas rempli
-    if (nonRemplis.length) {
-      html += '<p style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:800;color:var(--muted);margin:12px 0 8px">⏳ N\'ont pas encore rempli</p>';
-      html += '<div style="display:flex;flex-wrap:wrap;gap:6px">';
-      nonRemplis.forEach(function(c) {
-        html += '<span style="background:#f0ece6;border-radius:999px;padding:5px 12px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer" onclick="selectClient(\'' + c.slug + '\')">' + (c.prenom || c.slug) + '</span>';
-      });
-      html += '</div>';
-    }
-
-    listEl.innerHTML = html;
-    lucide.createIcons();
-
-  } catch(e) {
-    listEl.innerHTML = '<p style="font-size:12px;color:var(--muted)">Erreur : ' + e.message + '</p>';
-  }
-}
-/* ══════════════════════════════════════════════
-   MESSAGERIE
-══════════════════════════════════════════════ */
-function renderMessages(prog) {
-  var messages = prog.messages || [];
-  var fil = document.getElementById("messages-fil");
-  if (!fil) return;
-
-  if (!messages.length) {
-    fil.innerHTML = '<div style="text-align:center;padding:40px 20px"><p style="font-size:13px;color:var(--muted)">Aucun message pour le moment.</p><p style="font-size:12px;color:var(--muted)">Écris à Tee, elle te répondra très vite 🌿</p></div>';
-    return;
-  }
-
-  fil.innerHTML = messages.map(function(m) {
-    var estClient = m.auteur === "client";
-    return '<div style="display:flex;flex-direction:column;align-items:' + (estClient ? "flex-end" : "flex-start") + '">' +
-      '<div style="max-width:85%;background:' + (estClient ? "var(--brand)" : "white") + ';color:' + (estClient ? "white" : "var(--ink)") + ';border-radius:' + (estClient ? "18px 18px 4px 18px" : "18px 18px 18px 4px") + ';padding:12px 16px;border:' + (estClient ? "none" : "1px solid rgba(140,117,97,.12)") + ';box-shadow:0 2px 8px rgba(0,0,0,.06)">' +
-      '<p style="font-size:13px;line-height:1.6;margin:0">' + m.texte + '</p>' +
-      '</div>' +
-      '<span style="font-size:10px;color:var(--muted);margin-top:4px;padding:0 4px">' + (m.date || "") + (m.auteur === "tee" ? " — Tee" : "") + '</span>' +
-      '</div>';
-  }).join("");
-
-  // Scroll en bas
-  setTimeout(function() { fil.scrollTop = fil.scrollHeight; }, 50);
-}
-
-async function envoyerMessage() {
-  var slug = new URLSearchParams(window.location.search).get("client");
-  if (!slug || !sb) { alert("Impossible d'envoyer — contacte ton coach directement."); return; }
-  var input = document.getElementById("message-input");
-  var texte = input.value.trim();
-  if (!texte) return;
-
-  var { data, error } = await sb.from("mt_clients").select("programme").eq("slug", slug).single();
-  if (error || !data) { alert("Erreur — réessaie."); return; }
-
-  var prog = data.programme || {};
-  if (!prog.messages) prog.messages = [];
-  prog.messages.push({
-    auteur: "client",
-    texte: texte,
-    date: new Date().toLocaleDateString("fr-FR", {day:"numeric", month:"short", hour:"2-digit", minute:"2-digit"}),
-    lu: false
-  });
-
-  var { error: err2 } = await sb.from("mt_clients").update({ programme: prog }).eq("slug", slug);
-  if (err2) { alert("Erreur — réessaie."); return; }
-
-  input.value = "";
-  _currentProg = prog;
-  renderMessages(prog);
-}
-
-function renderMessagesAdmin(prog) {
-  var messages = prog.messages || [];
-  var fil = document.getElementById("messages-admin-fil");
-  var badge = document.getElementById("messages-admin-badge");
-  if (!fil) return;
-
-  var nonLus = messages.filter(function(m) { return m.auteur === "client" && !m.lu; }).length;
-  if (badge) {
-    badge.style.display = nonLus > 0 ? "block" : "none";
-    badge.textContent = nonLus + " nouveau" + (nonLus > 1 ? "x" : "");
-  }
-
-  if (!messages.length) {
-    fil.innerHTML = '<p style="font-size:12px;color:var(--muted);font-style:italic">Aucun message.</p>';
-    return;
-  }
-
-  fil.innerHTML = messages.map(function(m) {
-    var estClient = m.auteur === "client";
-    return '<div style="display:flex;flex-direction:column;align-items:' + (estClient ? "flex-start" : "flex-end") + '">' +
-      '<div style="max-width:90%;background:' + (estClient ? "#f8f4ee" : "var(--brand)") + ';color:' + (estClient ? "var(--ink)" : "white") + ';border-radius:14px;padding:10px 14px">' +
-      '<p style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:' + (estClient ? "var(--brand)" : "rgba(255,255,255,.7)") + ';margin:0 0 4px">' + (estClient ? "Client" : "Tee") + '</p>' +
-      '<p style="font-size:13px;line-height:1.6;margin:0">' + m.texte + '</p>' +
-      '</div>' +
-      '<span style="font-size:10px;color:var(--muted);margin-top:3px;padding:0 4px">' + (m.date || "") + '</span>' +
-      '</div>';
-  }).join("");
-
-  setTimeout(function() { fil.scrollTop = fil.scrollHeight; }, 50);
-}
-
-async function repondreMessage() {
-  if (!sb || !currentSlug) return;
-  var input = document.getElementById("messages-admin-input");
-  var texte = input.value.trim();
-  if (!texte) return;
-
-  var { data, error } = await sb.from("mt_clients").select("programme").eq("slug", currentSlug).single();
-  if (error || !data) return;
-
-  var prog = data.programme || {};
-  if (!prog.messages) prog.messages = [];
-
-  // Marquer les messages client comme lus
-  prog.messages.forEach(function(m) {
-    if (m.auteur === "client") m.lu = true;
-  });
-
-  prog.messages.push({
-    auteur: "tee",
-    texte: texte,
-    date: new Date().toLocaleDateString("fr-FR", {day:"numeric", month:"short", hour:"2-digit", minute:"2-digit"}),
-    lu: true
-  });
-
-  await sb.from("mt_clients").update({ programme: prog }).eq("slug", currentSlug);
-  input.value = "";
-  renderMessagesAdmin(prog);
-  log("✅ Réponse envoyée à " + currentSlug);
-}
-
-  /* ══════════════════════════════════════════════
-   SUIVI ADMIN
-══════════════════════════════════════════════ */
-function renderSuiviAdmin(prog) {
-  var suivi = prog.suivi || {};
-  var dates = Object.keys(suivi).sort().reverse();
-
-  var derniereEl = document.getElementById("suivi-admin-derniere");
-  var resumeEl = document.getElementById("suivi-admin-resume");
-  var dataEl = document.getElementById("suivi-admin-derniere-data");
-  var histoEl = document.getElementById("suivi-admin-historique");
-
-  if (!dates.length) {
-    if (derniereEl) derniereEl.textContent = "Aucune donnée";
-    if (resumeEl) resumeEl.style.display = "none";
-    if (histoEl) histoEl.innerHTML = '<p style="font-size:12px;color:var(--muted);font-style:italic">Aucun suivi enregistré pour ce client.</p>';
-    return;
-  }
-
-  // Dernière entrée
-  var derniere = dates[0];
-  var d = suivi[derniere];
-  if (derniereEl) derniereEl.textContent = "Dernière : " + new Date(derniere).toLocaleDateString("fr-FR", {weekday:"long", day:"numeric", month:"long"});
-  if (resumeEl) resumeEl.style.display = "block";
-
-  function stat(label, value, unit) {
-    return '<div style="background:white;border-radius:12px;padding:10px 12px">' +
-      '<p style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;font-weight:800;color:var(--muted);margin:0 0 4px">' + label + '</p>' +
-      '<p style="font-size:16px;font-weight:700;color:var(--ink);margin:0">' + (value || "—") + '<span style="font-size:11px;color:var(--muted)">' + (unit || "") + '</span></p>' +
-      '</div>';
-  }
-
-  function check(label, val) {
-    return '<div style="display:flex;align-items:center;gap:6px;font-size:12px;color:' + (val ? "var(--brand)" : "var(--muted)") + '">' +
-      '<span style="font-size:14px">' + (val ? "✅" : "⬜") + '</span>' + label + '</div>';
-  }
-
-  if (dataEl) {
-    dataEl.innerHTML =
-      stat("Poids", d.poids, " kg") +
-      stat("Énergie", d.energie ? d.energie + "/5" : "—", "") +
-      stat("Sommeil", d.sommeil ? d.sommeil + "/5" : "—", "") +
-      stat("Digestion", d.digestion ? d.digestion + "/5" : "—", "");
-  }
-
-  // Checks de la dernière entrée
-  var checksEl = document.getElementById("suivi-admin-resume");
-  if (checksEl && d) {
-    var checksDiv = document.createElement("div");
-    checksDiv.style.cssText = "display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px";
-    checksDiv.innerHTML =
-      check("Eau", d.eau) +
-      check("Repas", d.repas) +
-      check("Infusion", d.infusion) +
-      check("Sport", d.sport);
-    var existing = checksEl.querySelector(".checks-grid");
-    if (existing) existing.remove();
-    checksDiv.className = "checks-grid";
-    checksEl.appendChild(checksDiv);
-
-    if (d.note) {
-      var noteDiv = document.createElement("div");
-      noteDiv.style.cssText = "margin-top:10px;padding:10px 12px;background:white;border-radius:12px";
-      noteDiv.innerHTML = '<p style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;font-weight:800;color:var(--muted);margin:0 0 4px">Note du jour</p>' +
-        '<p style="font-size:12px;color:var(--ink);font-style:italic;margin:0">"' + d.note + '"</p>';
-      var existingNote = checksEl.querySelector(".note-div");
-      if (existingNote) existingNote.remove();
-      noteDiv.className = "note-div";
-      checksEl.appendChild(noteDiv);
-    }
-  }
-
-  // Historique 7 derniers jours
-  if (histoEl) {
-    var joursLabels = ["Dim","Lun","Mar","Mer","Jeu","Ven","Sam"];
-    var html = "";
-    for (var i = 0; i < Math.min(7, dates.length); i++) {
-      var date = dates[i];
-      var entry = suivi[date];
-      var jsDate = new Date(date);
-      var label = joursLabels[jsDate.getDay()] + " " + jsDate.getDate();
-      var score = [entry.eau, entry.repas, entry.infusion, entry.sport].filter(Boolean).length;
-      var scorePct = Math.round(score / 4 * 100);
-      var couleur = scorePct === 100 ? "var(--brand)" : scorePct >= 50 ? "#8C7561" : "#e8e4de";
-
-
-      html += '<div style="border:1.5px solid #ede9e3;border-radius:14px;padding:12px 14px">' +
-        '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">' +
-        '<span style="font-size:12px;font-weight:700;color:var(--ink)">' + label + '</span>' +
-        '<div style="display:flex;align-items:center;gap:8px">' +
-        (entry.poids ? '<span style="font-size:11px;color:var(--muted)">' + entry.poids + ' kg</span>' : "") +
-        '<span style="font-size:10px;font-weight:800;padding:2px 8px;border-radius:999px;background:' + (scorePct === 100 ? "#dcfce7" : "#f0ece6") + ';color:' + (scorePct === 100 ? "#16a34a" : "var(--muted)") + '">' + score + '/4 checks</span>' +
-        '</div></div>' +
-        '<div style="display:flex;gap:10px">' +
-        '<span style="font-size:11px;color:#f59e0b">⚡ ' + (entry.energie || "—") + '/5</span>' +
-        '<span style="font-size:11px;color:#6366f1">🌙 ' + (entry.sommeil || "—") + '/5</span>' +
-        '<span style="font-size:11px;color:var(--brand)">🌿 ' + (entry.digestion || "—") + '/5</span>' +
-        '</div>' +
-        (entry.note ? '<p style="font-size:11px;color:var(--muted);font-style:italic;margin:8px 0 0;border-top:1px solid #f0ece6;padding-top:8px">"' + entry.note + '"</p>' : "") +
-        '</div>';
-    }
-    histoEl.innerHTML = html || '<p style="font-size:12px;color:var(--muted);font-style:italic">Aucun suivi enregistré.</p>';
-  }
-}
-
-
-  function renderHistorique(slug) {
+function renderHistorique(slug) {
   var jours = [];
   var joursLabels = ["D","L","M","M","J","V","S"];
   for (var i = 6; i >= 0; i--) {
@@ -2482,21 +1979,12 @@ function renderSuiviAdmin(prog) {
     var label = joursLabels[d.getDay()];
     try {
       var saved = JSON.parse(localStorage.getItem(key) || "{}");
-      jours.push({
-        date: dateStr,
-        label: label,
-        filled: saved.filled || false,
-        energie: parseInt(saved.energie) || 0,
-        sommeil: parseInt(saved.sommeil) || 0,
-        digestion: parseInt(saved.digestion) || 0,
-        poids: saved.poids || ""
-      });
+      jours.push({ date: dateStr, label: label, filled: saved.filled || false, energie: parseInt(saved.energie) || 0, sommeil: parseInt(saved.sommeil) || 0, digestion: parseInt(saved.digestion) || 0, poids: saved.poids || "" });
     } catch(e) {
       jours.push({ date: dateStr, label: label, filled: false, energie: 0, sommeil: 0, digestion: 0, poids: "" });
     }
   }
 
-  // Streak
   var streak = 0;
   for (var s = jours.length - 1; s >= 0; s--) {
     if (jours[s].filled) streak++;
@@ -2504,15 +1992,10 @@ function renderSuiviAdmin(prog) {
   }
   var streakBadge = document.getElementById("streak-badge");
   if (streakBadge) {
-    if (streak > 0) {
-      streakBadge.style.display = "block";
-      streakBadge.textContent = "🔥 " + streak + " jour" + (streak > 1 ? "s" : "") + " de suite";
-    } else {
-      streakBadge.style.display = "none";
-    }
+    if (streak > 0) { streakBadge.style.display = "block"; streakBadge.textContent = "🔥 " + streak + " jour" + (streak > 1 ? "s" : "") + " de suite"; }
+    else { streakBadge.style.display = "none"; }
   }
 
-  // Jours streak
   var streakEl = document.getElementById("streak-days");
   if (streakEl) {
     streakEl.innerHTML = jours.map(function(j) {
@@ -2523,25 +2006,20 @@ function renderSuiviAdmin(prog) {
       return '<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">' +
         '<div style="width:32px;height:32px;border-radius:50%;background:' + bg + ';display:flex;align-items:center;justify-content:center;font-size:14px;border:' + border + '">' +
         (j.filled ? "✓" : '<span style="color:' + color + ';font-size:10px;font-weight:700">' + j.label + '</span>') +
-        '</div>' +
-        '<span style="font-size:9px;color:var(--muted);font-weight:600">' + j.label + '</span>' +
-        '</div>';
+        '</div><span style="font-size:9px;color:var(--muted);font-weight:600">' + j.label + '</span></div>';
     }).join("");
   }
 
-  // Courbes barres
   function renderCourbe(id, key, couleur) {
     var el = document.getElementById(id);
     if (!el) return;
-    var max = 5;
     el.innerHTML = jours.map(function(j) {
       var val = j[key];
-      var hauteur = val > 0 ? Math.round((val / max) * 50) : 3;
+      var hauteur = val > 0 ? Math.round((val / 5) * 50) : 3;
       var bg = val > 0 ? couleur : "#f0ece6";
-      var opacity = val > 0 ? "1" : "0.5";
       return '<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:3px">' +
         '<span style="font-size:9px;color:var(--muted);font-weight:700">' + (val > 0 ? val : "") + '</span>' +
-        '<div style="width:100%;height:' + hauteur + 'px;background:' + bg + ';border-radius:4px;opacity:' + opacity + ';transition:height .3s"></div>' +
+        '<div style="width:100%;height:' + hauteur + 'px;background:' + bg + ';border-radius:4px;opacity:' + (val > 0 ? "1" : "0.5") + ';transition:height .3s"></div>' +
         '</div>';
     }).join("");
   }
@@ -2550,7 +2028,6 @@ function renderSuiviAdmin(prog) {
   renderCourbe("chart-sommeil", "sommeil", "#6366f1");
   renderCourbe("chart-digestion", "digestion", "var(--brand)");
 
-  // Poids
   var poidsEl = document.getElementById("poids-list");
   if (poidsEl) {
     poidsEl.innerHTML = jours.map(function(j) {
@@ -2581,6 +2058,267 @@ function renderProtocole(protocole) {
 }
 
 /* ══════════════════════════════════════════════
+   FICHE TRANSFORMATION
+══════════════════════════════════════════════ */
+function renderTransformation(prog) {
+  var transfo = prog.transformation || {};
+  var timeline = prog.timeline || {};
+  var semaines = timeline.semaines || [];
+
+  var departTitre = document.getElementById("transfo-depart-titre");
+  var departContent = document.getElementById("transfo-depart-content");
+  if (departTitre) departTitre.textContent = "Semaine 1 — " + (new Date(timeline.dateDebut || Date.now()).toLocaleDateString("fr-FR", {month:"long", year:"numeric"}));
+  if (departContent) {
+    var depart = transfo.depart || "";
+    if (depart) {
+      departContent.innerHTML = depart.split("\n").filter(Boolean).map(function(d) {
+        return '<div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);margin-bottom:6px"><span style="color:var(--accent);font-weight:700">•</span>' + d.trim() + '</div>';
+      }).join("");
+    } else {
+      departContent.innerHTML = '<p style="font-size:12px;color:var(--muted);font-style:italic;margin:0">Bilan de départ à venir…</p>';
+    }
+  }
+
+  var objEl = document.getElementById("transfo-objectifs");
+  if (objEl) {
+    var goals = prog.goals || [];
+    if (goals.length) {
+      objEl.innerHTML = goals.map(function(g) { return '<div style="display:flex;align-items:center;gap:8px;font-size:13px;color:white;margin-bottom:6px"><span style="font-size:16px">→</span>' + g + '</div>'; }).join("");
+    } else {
+      objEl.innerHTML = '<p style="font-size:12px;color:rgba(255,255,255,.7);font-style:italic;margin:0">Objectifs à définir…</p>';
+    }
+  }
+
+  var evoEl = document.getElementById("transfo-evolution");
+  if (evoEl) {
+    if (semaines.length) {
+      evoEl.innerHTML = semaines.map(function(s, i) {
+        if (!s.ameliorations && !s.notesCoach && !s.terrain) return "";
+        return '<div style="border-left:3px solid var(--brand);padding-left:14px">' +
+          '<p style="font-size:11px;font-weight:800;color:var(--brand);text-transform:uppercase;letter-spacing:.08em;margin:0 0 6px">Semaine ' + (i+1) + '</p>' +
+          (s.ameliorations ? s.ameliorations.split("\n").filter(Boolean).map(function(a) { return '<div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--ink);margin-bottom:4px"><span style="color:#34d399;font-weight:700">+</span>' + a.trim() + '</div>'; }).join("") : "") +
+          (s.notesCoach ? '<p style="font-size:11px;color:var(--muted);font-style:italic;margin:6px 0 0">"' + s.notesCoach + '"</p>' : "") +
+          '</div>';
+      }).filter(Boolean).join("") || '<p style="font-size:12px;color:var(--muted);font-style:italic;margin:0">Évolution en cours…</p>';
+    } else {
+      evoEl.innerHTML = '<p style="font-size:12px;color:var(--muted);font-style:italic;margin:0">Évolution en cours…</p>';
+    }
+  }
+
+  var vicEl = document.getElementById("transfo-victoires");
+  if (vicEl) {
+    var victoires = transfo.victoires || "";
+    vicEl.innerHTML = victoires
+      ? victoires.split("\n").filter(Boolean).map(function(v) { return '<div style="display:flex;align-items:center;gap:10px;background:#f8f4ee;border-radius:14px;padding:12px 14px"><span style="font-size:20px">🏆</span><span style="font-size:13px;font-weight:600;color:var(--ink)">' + v.trim() + '</span></div>'; }).join("")
+      : '<p style="font-size:12px;color:var(--muted);font-style:italic;margin:0">Tes victoires apparaîtront ici au fil du programme…</p>';
+  }
+
+  var ressEl = document.getElementById("transfo-ressentis");
+  if (ressEl) {
+    var ressentis = transfo.ressentis || "";
+    ressEl.innerHTML = ressentis
+      ? ressentis.split("\n").filter(Boolean).map(function(r) { return '<div style="background:rgba(83,100,74,.06);border-radius:14px;padding:12px 14px"><p class="serif" style="font-size:13px;color:var(--ink);font-style:italic;margin:0">"' + r.trim() + '"</p></div>'; }).join("")
+      : '<p style="font-size:12px;color:var(--muted);font-style:italic;margin:0">Tes ressentis apparaîtront ici…</p>';
+  }
+}
+
+/* ══════════════════════════════════════════════
+   SUIVI GLOBAL ADMIN
+══════════════════════════════════════════════ */
+async function renderSuiviGlobal() {
+  if (!sb) return;
+  var today = new Date().toISOString().slice(0, 10);
+  var dateEl = document.getElementById("suivi-global-date");
+  var listEl = document.getElementById("suivi-global-list");
+  if (dateEl) dateEl.textContent = new Date().toLocaleDateString("fr-FR", {weekday:"long", day:"numeric", month:"long"});
+  if (!listEl) return;
+  listEl.innerHTML = '<p style="font-size:12px;color:var(--muted)">Chargement…</p>';
+  try {
+    var res = await sb.from("mt_clients").select("slug, prenom, programme");
+    if (res.error || !res.data) { listEl.innerHTML = '<p style="font-size:12px;color:var(--muted)">Erreur de chargement.</p>'; return; }
+    var remplis = [];
+    var nonRemplis = [];
+    res.data.forEach(function(c) {
+      var suivi = (c.programme && c.programme.suivi && c.programme.suivi[today]) || null;
+      if (suivi && suivi.filled) remplis.push({ prenom: c.prenom, slug: c.slug, suivi: suivi });
+      else nonRemplis.push({ prenom: c.prenom, slug: c.slug });
+    });
+    var html = '<div style="display:flex;gap:8px;margin-bottom:12px">' +
+      '<div style="flex:1;background:#dcfce7;border-radius:12px;padding:10px 12px;text-align:center"><p style="font-size:22px;font-weight:800;color:#16a34a;margin:0">' + remplis.length + '</p><p style="font-size:10px;text-transform:uppercase;font-weight:700;color:#16a34a;margin:0">Remplis</p></div>' +
+      '<div style="flex:1;background:#f0ece6;border-radius:12px;padding:10px 12px;text-align:center"><p style="font-size:22px;font-weight:800;color:var(--muted);margin:0">' + nonRemplis.length + '</p><p style="font-size:10px;text-transform:uppercase;font-weight:700;color:var(--muted);margin:0">En attente</p></div>' +
+      '</div>';
+    if (remplis.length) {
+      html += '<p style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:800;color:var(--brand);margin:0 0 8px">✅ Ont rempli leur suivi</p>';
+      remplis.forEach(function(c) {
+        var s = c.suivi;
+        var checks = [s.eau, s.repas, s.infusion, s.sport].filter(Boolean).length;
+        html += '<div style="background:#f8f4ee;border-radius:14px;padding:12px 14px;cursor:pointer" onclick="selectClient(\'' + c.slug + '\')">' +
+          '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><span style="font-size:13px;font-weight:700;color:var(--ink)">' + (c.prenom || c.slug) + '</span>' +
+          '<span style="font-size:10px;font-weight:800;padding:2px 8px;border-radius:999px;background:' + (checks === 4 ? "#dcfce7" : "#fef3c7") + ';color:' + (checks === 4 ? "#16a34a" : "#92400e") + '">' + checks + '/4 checks</span></div>' +
+          '<div style="display:flex;gap:10px"><span style="font-size:11px;color:#f59e0b">⚡ ' + (s.energie || "—") + '/5</span><span style="font-size:11px;color:#6366f1">🌙 ' + (s.sommeil || "—") + '/5</span><span style="font-size:11px;color:var(--brand)">🌿 ' + (s.digestion || "—") + '/5</span>' + (s.poids ? '<span style="font-size:11px;color:var(--muted)">⚖️ ' + s.poids + ' kg</span>' : "") + '</div>' +
+          (s.note ? '<p style="font-size:11px;color:var(--muted);font-style:italic;margin:6px 0 0;border-top:1px solid #ede9e3;padding-top:6px">"' + s.note + '"</p>' : "") + '</div>';
+      });
+    }
+    if (nonRemplis.length) {
+      html += '<p style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:800;color:var(--muted);margin:12px 0 8px">⏳ N\'ont pas encore rempli</p><div style="display:flex;flex-wrap:wrap;gap:6px">';
+      nonRemplis.forEach(function(c) { html += '<span style="background:#f0ece6;border-radius:999px;padding:5px 12px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer" onclick="selectClient(\'' + c.slug + '\')">' + (c.prenom || c.slug) + '</span>'; });
+      html += '</div>';
+    }
+    listEl.innerHTML = html;
+    lucide.createIcons();
+  } catch(e) {
+    listEl.innerHTML = '<p style="font-size:12px;color:var(--muted)">Erreur : ' + e.message + '</p>';
+  }
+}
+
+/* ══════════════════════════════════════════════
+   MESSAGERIE
+══════════════════════════════════════════════ */
+function renderMessages(prog) {
+  var messages = prog.messages || [];
+  var fil = document.getElementById("messages-fil");
+  if (!fil) return;
+  if (!messages.length) {
+    fil.innerHTML = '<div style="text-align:center;padding:40px 20px"><p style="font-size:13px;color:var(--muted)">Aucun message pour le moment.</p><p style="font-size:12px;color:var(--muted)">Écris à Tee, elle te répondra très vite 🌿</p></div>';
+    return;
+  }
+  fil.innerHTML = messages.map(function(m) {
+    var estClient = m.auteur === "client";
+    return '<div style="display:flex;flex-direction:column;align-items:' + (estClient ? "flex-end" : "flex-start") + '">' +
+      '<div style="max-width:85%;background:' + (estClient ? "var(--brand)" : "white") + ';color:' + (estClient ? "white" : "var(--ink)") + ';border-radius:' + (estClient ? "18px 18px 4px 18px" : "18px 18px 18px 4px") + ';padding:12px 16px;border:' + (estClient ? "none" : "1px solid rgba(140,117,97,.12)") + ';box-shadow:0 2px 8px rgba(0,0,0,.06)">' +
+      '<p style="font-size:13px;line-height:1.6;margin:0">' + m.texte + '</p></div>' +
+      '<span style="font-size:10px;color:var(--muted);margin-top:4px;padding:0 4px">' + (m.date || "") + (m.auteur === "tee" ? " — Tee" : "") + '</span></div>';
+  }).join("");
+  setTimeout(function() { fil.scrollTop = fil.scrollHeight; }, 50);
+}
+
+async function envoyerMessage() {
+  var slug = new URLSearchParams(window.location.search).get("client");
+  if (!slug || !sb) { alert("Impossible d'envoyer — contacte ton coach directement."); return; }
+  var input = document.getElementById("message-input");
+  var texte = input.value.trim();
+  if (!texte) return;
+  try {
+    var res = await sb.from("mt_clients").select("programme").eq("slug", slug).single();
+    if (res.error || !res.data) throw new Error("Client introuvable");
+    var prog = Object.assign({}, res.data.programme || {});
+    if (!prog.messages) prog.messages = [];
+    prog.messages.push({ auteur: "client", texte: texte, date: new Date().toLocaleDateString("fr-FR", {day:"numeric", month:"short", hour:"2-digit", minute:"2-digit"}), lu: false });
+    var res2 = await sb.from("mt_clients").update({ programme: prog }).eq("slug", slug);
+    if (res2.error) throw new Error(res2.error.message);
+    input.value = "";
+    _currentProg = prog;
+    renderMessages(prog);
+  } catch(e) {
+    alert("Erreur — réessaie. (" + e.message + ")");
+  }
+}
+
+function renderMessagesAdmin(prog) {
+  var messages = prog.messages || [];
+  var fil = document.getElementById("messages-admin-fil");
+  var badge = document.getElementById("messages-admin-badge");
+  if (!fil) return;
+  var nonLus = messages.filter(function(m) { return m.auteur === "client" && !m.lu; }).length;
+  if (badge) { badge.style.display = nonLus > 0 ? "block" : "none"; badge.textContent = nonLus + " nouveau" + (nonLus > 1 ? "x" : ""); }
+  if (!messages.length) { fil.innerHTML = '<p style="font-size:12px;color:var(--muted);font-style:italic">Aucun message.</p>'; return; }
+  fil.innerHTML = messages.map(function(m) {
+    var estClient = m.auteur === "client";
+    return '<div style="display:flex;flex-direction:column;align-items:' + (estClient ? "flex-start" : "flex-end") + '">' +
+      '<div style="max-width:90%;background:' + (estClient ? "#f8f4ee" : "var(--brand)") + ';color:' + (estClient ? "var(--ink)" : "white") + ';border-radius:14px;padding:10px 14px">' +
+      '<p style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:' + (estClient ? "var(--brand)" : "rgba(255,255,255,.7)") + ';margin:0 0 4px">' + (estClient ? "Client" : "Tee") + '</p>' +
+      '<p style="font-size:13px;line-height:1.6;margin:0">' + m.texte + '</p></div>' +
+      '<span style="font-size:10px;color:var(--muted);margin-top:3px;padding:0 4px">' + (m.date || "") + '</span></div>';
+  }).join("");
+  setTimeout(function() { fil.scrollTop = fil.scrollHeight; }, 50);
+}
+
+async function repondreMessage() {
+  if (!sb || !currentSlug) return;
+  var input = document.getElementById("messages-admin-input");
+  var texte = input.value.trim();
+  if (!texte) return;
+  try {
+    var res = await sb.from("mt_clients").select("programme").eq("slug", currentSlug).single();
+    if (res.error || !res.data) return;
+    var prog = Object.assign({}, res.data.programme || {});
+    if (!prog.messages) prog.messages = [];
+    prog.messages.forEach(function(m) { if (m.auteur === "client") m.lu = true; });
+    prog.messages.push({ auteur: "tee", texte: texte, date: new Date().toLocaleDateString("fr-FR", {day:"numeric", month:"short", hour:"2-digit", minute:"2-digit"}), lu: true });
+    await sb.from("mt_clients").update({ programme: prog }).eq("slug", currentSlug);
+    input.value = "";
+    renderMessagesAdmin(prog);
+    log("✅ Réponse envoyée à " + currentSlug);
+  } catch(e) { log("❌ Erreur : " + e.message); }
+}
+
+/* ══════════════════════════════════════════════
+   SUIVI ADMIN
+══════════════════════════════════════════════ */
+function renderSuiviAdmin(prog) {
+  var suivi = prog.suivi || {};
+  var dates = Object.keys(suivi).sort().reverse();
+  var derniereEl = document.getElementById("suivi-admin-derniere");
+  var resumeEl = document.getElementById("suivi-admin-resume");
+  var dataEl = document.getElementById("suivi-admin-derniere-data");
+  var histoEl = document.getElementById("suivi-admin-historique");
+  if (!dates.length) {
+    if (derniereEl) derniereEl.textContent = "Aucune donnée";
+    if (resumeEl) resumeEl.style.display = "none";
+    if (histoEl) histoEl.innerHTML = '<p style="font-size:12px;color:var(--muted);font-style:italic">Aucun suivi enregistré pour ce client.</p>';
+    return;
+  }
+  var derniere = dates[0];
+  var d = suivi[derniere];
+  if (derniereEl) derniereEl.textContent = "Dernière : " + new Date(derniere).toLocaleDateString("fr-FR", {weekday:"long", day:"numeric", month:"long"});
+  if (resumeEl) resumeEl.style.display = "block";
+  function stat(label, value, unit) {
+    return '<div style="background:white;border-radius:12px;padding:10px 12px"><p style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;font-weight:800;color:var(--muted);margin:0 0 4px">' + label + '</p><p style="font-size:16px;font-weight:700;color:var(--ink);margin:0">' + (value || "—") + '<span style="font-size:11px;color:var(--muted)">' + (unit || "") + '</span></p></div>';
+  }
+  if (dataEl) {
+    dataEl.innerHTML = stat("Poids", d.poids, " kg") + stat("Énergie", d.energie ? d.energie + "/5" : "—", "") + stat("Sommeil", d.sommeil ? d.sommeil + "/5" : "—", "") + stat("Digestion", d.digestion ? d.digestion + "/5" : "—", "");
+  }
+  if (resumeEl && d) {
+    var checksDiv = document.createElement("div");
+    checksDiv.style.cssText = "display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px";
+    function check(label, val) { return '<div style="display:flex;align-items:center;gap:6px;font-size:12px;color:' + (val ? "var(--brand)" : "var(--muted)") + '"><span style="font-size:14px">' + (val ? "✅" : "⬜") + '</span>' + label + '</div>'; }
+    checksDiv.innerHTML = check("Eau", d.eau) + check("Repas", d.repas) + check("Infusion", d.infusion) + check("Sport", d.sport);
+    var existing = resumeEl.querySelector(".checks-grid");
+    if (existing) existing.remove();
+    checksDiv.className = "checks-grid";
+    resumeEl.appendChild(checksDiv);
+    if (d.note) {
+      var noteDiv = document.createElement("div");
+      noteDiv.style.cssText = "margin-top:10px;padding:10px 12px;background:white;border-radius:12px";
+      noteDiv.innerHTML = '<p style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;font-weight:800;color:var(--muted);margin:0 0 4px">Note du jour</p><p style="font-size:12px;color:var(--ink);font-style:italic;margin:0">"' + d.note + '"</p>';
+      var existingNote = resumeEl.querySelector(".note-div");
+      if (existingNote) existingNote.remove();
+      noteDiv.className = "note-div";
+      resumeEl.appendChild(noteDiv);
+    }
+  }
+  if (histoEl) {
+    var joursLabels = ["Dim","Lun","Mar","Mer","Jeu","Ven","Sam"];
+    var html = "";
+    for (var i = 0; i < Math.min(7, dates.length); i++) {
+      var date = dates[i];
+      var entry = suivi[date];
+      var jsDate = new Date(date);
+      var label = joursLabels[jsDate.getDay()] + " " + jsDate.getDate();
+      var score = [entry.eau, entry.repas, entry.infusion, entry.sport].filter(Boolean).length;
+      var scorePct = Math.round(score / 4 * 100);
+      html += '<div style="border:1.5px solid #ede9e3;border-radius:14px;padding:12px 14px">' +
+        '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><span style="font-size:12px;font-weight:700;color:var(--ink)">' + label + '</span>' +
+        '<div style="display:flex;align-items:center;gap:8px">' + (entry.poids ? '<span style="font-size:11px;color:var(--muted)">' + entry.poids + ' kg</span>' : "") +
+        '<span style="font-size:10px;font-weight:800;padding:2px 8px;border-radius:999px;background:' + (scorePct === 100 ? "#dcfce7" : "#f0ece6") + ';color:' + (scorePct === 100 ? "#16a34a" : "var(--muted)") + '">' + score + '/4 checks</span></div></div>' +
+        '<div style="display:flex;gap:10px"><span style="font-size:11px;color:#f59e0b">⚡ ' + (entry.energie || "—") + '/5</span><span style="font-size:11px;color:#6366f1">🌙 ' + (entry.sommeil || "—") + '/5</span><span style="font-size:11px;color:var(--brand)">🌿 ' + (entry.digestion || "—") + '/5</span></div>' +
+        (entry.note ? '<p style="font-size:11px;color:var(--muted);font-style:italic;margin:8px 0 0;border-top:1px solid #f0ece6;padding-top:8px">"' + entry.note + '"</p>' : "") + '</div>';
+    }
+    histoEl.innerHTML = html || '<p style="font-size:12px;color:var(--muted);font-style:italic">Aucun suivi enregistré.</p>';
+  }
+}
+
+/* ══════════════════════════════════════════════
    NAVIGATION ONGLETS
 ══════════════════════════════════════════════ */
 function switchTab(name, btn) {
@@ -2596,8 +2334,7 @@ function switchTab(name, btn) {
 ══════════════════════════════════════════════ */
 async function loadAllClients() {
   if (!sb) { log("❌ Connecte Supabase d'abord."); return; }
-    const { data, error } = await sb.from(SB_TABLE).select("slug, prenom, programme");
-
+  const { data, error } = await sb.from(SB_TABLE).select("slug, prenom, programme");
   if (error) { log("❌ " + error.message); return; }
   log("✅ " + (data.length) + " client(s) chargé(s).");
   renderClientsList(data);
@@ -2610,10 +2347,7 @@ function filtrerClients(statut) {
   var btnId = statut ? "filtre-" + statut : "filtre-tous";
   var btn = document.getElementById(btnId);
   if (btn) btn.classList.add("active");
-
-  var liste = statut
-    ? _allClients.filter(function(c) { return (c.programme && c.programme.statut) === statut; })
-    : _allClients;
+  var liste = statut ? _allClients.filter(function(c) { return (c.programme && c.programme.statut) === statut; }) : _allClients;
   afficherClients(liste);
 }
 
@@ -2628,24 +2362,14 @@ var STATUT_MAP = {
 
 function afficherClients(list) {
   var el = document.getElementById("clients-list");
-  if (!list || !list.length) {
-    el.innerHTML = '<p style="font-size:12px;color:var(--muted)">Aucun client.</p>';
-    return;
-  }
+  if (!list || !list.length) { el.innerHTML = '<p style="font-size:12px;color:var(--muted)">Aucun client.</p>'; return; }
   el.innerHTML = list.map(function(c) {
     var statut = (c.programme && c.programme.statut) || "nouveau";
     var s = STATUT_MAP[statut] || STATUT_MAP.nouveau;
     return '<div class="client-row ' + (c.slug === currentSlug ? "active" : "") + '" onclick="selectClient(\'' + c.slug + '\')">' +
-      '<div style="display:flex;align-items:center;gap:10px;min-width:0">' +
-      '<div class="mini-avatar">' + (c.prenom || c.slug).charAt(0).toUpperCase() + '</div>' +
-      '<div style="min-width:0">' +
-      '<div style="font-size:13px;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + (c.prenom || "—") + '</div>' +
-      '<div style="font-size:11px;color:var(--muted)">' + c.slug + '</div>' +
-      '</div></div>' +
-      '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">' +
-      '<span style="font-size:9px;font-weight:800;text-transform:uppercase;padding:3px 8px;border-radius:999px;background:' + s.bg + ';color:' + s.color + '">' + s.label + '</span>' +
-      '<span style="font-size:11px;color:var(--muted)">Ouvrir →</span>' +
-      '</div></div>';
+      '<div style="display:flex;align-items:center;gap:10px;min-width:0"><div class="mini-avatar">' + (c.prenom || c.slug).charAt(0).toUpperCase() + '</div>' +
+      '<div style="min-width:0"><div style="font-size:13px;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + (c.prenom || "—") + '</div><div style="font-size:11px;color:var(--muted)">' + c.slug + '</div></div></div>' +
+      '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px"><span style="font-size:9px;font-weight:800;text-transform:uppercase;padding:3px 8px;border-radius:999px;background:' + s.bg + ';color:' + s.color + '">' + s.label + '</span><span style="font-size:11px;color:var(--muted)">Ouvrir →</span></div></div>';
   }).join("");
 }
 
@@ -2654,7 +2378,6 @@ function renderClientsList(list) {
   document.getElementById("filtre-tous").classList.add("active");
   afficherClients(_allClients);
 }
-
 
 async function selectClient(slug) {
   if (!sb) { log("❌ Connecte Supabase d'abord."); return; }
@@ -2725,7 +2448,7 @@ function fillAdmin(prenom, prog) {
   document.getElementById("f-offre").value = prog.offre || "";
   document.getElementById("f-statut").value = prog.statut || "nouveau";
   document.getElementById("f-notes-priv").value = prog.notes_priv || "";
-    var tr = prog.transformation || {};
+  var tr = prog.transformation || {};
   document.getElementById("f-transfo-depart").value = tr.depart || "";
   document.getElementById("f-transfo-victoires").value = tr.victoires || "";
   document.getElementById("f-transfo-ressentis").value = tr.ressentis || "";
@@ -2737,13 +2460,11 @@ function fillAdmin(prenom, prog) {
   renderMessagesAdmin(prog);
   renderAdminDaysNav(prog.days || {});
   renderProductEditors(prog.products || []);
-    var phytoBlock = document.getElementById("phyto-admin-block");
+  var phytoBlock = document.getElementById("phyto-admin-block");
   if (prog.phyto_demande && prog.phyto_demande.symptome) {
     phytoBlock.style.display = "block";
     document.getElementById("phyto-admin-symptome").textContent = "Ressenti : " + prog.phyto_demande.symptome;
-    document.getElementById("phyto-admin-list").innerHTML = (prog.phyto_demande.suggestions || []).map(function(s) {
-      return '<div style="font-size:13px;color:var(--ink);padding:8px 12px;background:#f8f4ee;border-radius:10px">' + s + '</div>';
-    }).join("");
+    document.getElementById("phyto-admin-list").innerHTML = (prog.phyto_demande.suggestions || []).map(function(s) { return '<div style="font-size:13px;color:var(--ink);padding:8px 12px;background:#f8f4ee;border-radius:10px">' + s + '</div>'; }).join("");
     var poss = prog.phyto_demande.possession || [];
     document.getElementById("phyto-admin-possession").textContent = poss.length > 0 ? "Déjà en possession : " + poss.join(", ") : "Aucun produit en possession";
     document.getElementById("phyto-admin-date").textContent = "Envoyé le " + (prog.phyto_demande.date || "");
@@ -2751,27 +2472,17 @@ function fillAdmin(prenom, prog) {
     statut.textContent = prog.phyto_demande.statut === "traite" ? "Traité" : "En attente";
     statut.style.background = prog.phyto_demande.statut === "traite" ? "#d1fae5" : "#fef3c7";
     statut.style.color = prog.phyto_demande.statut === "traite" ? "#065f46" : "#92400e";
-  } else if (phytoBlock) {
-    phytoBlock.style.display = "none";
-  }
-
+  } else if (phytoBlock) { phytoBlock.style.display = "none"; }
   var selBlock = document.getElementById("selection-admin-block");
-  var selList = document.getElementById("selection-admin-list");
-  var selDate = document.getElementById("selection-admin-date");
-  var selStatut = document.getElementById("selection-statut");
   if (prog.selection && prog.selection.produits && prog.selection.produits.length > 0) {
     selBlock.style.display = "block";
-    selList.innerHTML = prog.selection.produits.map(function(p) {
-      return '<div style="font-size:13px;color:var(--ink);padding:8px 12px;background:#f8f4ee;border-radius:10px">' + p + '</div>';
-    }).join("");
-    selDate.textContent = "Envoyée le " + (prog.selection.date || "");
+    document.getElementById("selection-admin-list").innerHTML = prog.selection.produits.map(function(p) { return '<div style="font-size:13px;color:var(--ink);padding:8px 12px;background:#f8f4ee;border-radius:10px">' + p + '</div>'; }).join("");
+    document.getElementById("selection-admin-date").textContent = "Envoyée le " + (prog.selection.date || "");
+    var selStatut = document.getElementById("selection-statut");
     selStatut.textContent = prog.selection.statut === "traite" ? "Traité" : "En attente";
     selStatut.style.background = prog.selection.statut === "traite" ? "#d1fae5" : "#fef3c7";
     selStatut.style.color = prog.selection.statut === "traite" ? "#065f46" : "#92400e";
-  } else {
-    selBlock.style.display = "none";
-  }
-
+  } else { selBlock.style.display = "none"; }
 }
 
 /* ══════════════════════════════════════════════
@@ -2893,13 +2604,9 @@ function removeProduct(i) {
 ══════════════════════════════════════════════ */
 async function saveClient() {
   if (!sb) { log("❌ Connecte Supabase d'abord."); return; }
-
   const slug = document.getElementById("f-slug").value.trim().toLowerCase().replace(/[^a-z0-9-]/g, "-").replace(/^-+|-+$/g, "") || "client";
   const prenom = document.getElementById("f-prenom").value.trim() || "Client";
-
-  // Synchronise tout avant sauvegarde
   syncProducts();
-  // Sauvegarde le jour actif si modifié
   if (adminDay) {
     programme.days[document.getElementById("f-day-name").value.trim() || adminDay] = {
       morning: textToHtml(document.getElementById("f-morning").value),
@@ -2912,83 +2619,37 @@ async function saveClient() {
       adminDay = document.getElementById("f-day-name").value.trim();
     }
   }
-
   programme.semaine = document.getElementById("f-semaine").value.trim();
   programme.offre = document.getElementById("f-offre").value;
   programme.statut = document.getElementById("f-statut").value;
-
-
   programme.notes_priv = document.getElementById("f-notes-priv").value.trim();
   programme.transformation = {
     depart: document.getElementById("f-transfo-depart").value.trim(),
     victoires: document.getElementById("f-transfo-victoires").value.trim(),
     ressentis: document.getElementById("f-transfo-ressentis").value.trim()
   };
-
   programme.timeline = syncTimeline();
-
   programme.objectif = document.getElementById("f-objectif").value.trim();
   programme.coach = document.getElementById("f-coach").value.trim();
   programme.goals = lines(document.getElementById("f-goals").value);
   programme.tasks = lines(document.getElementById("f-tasks").value);
-  programme.signature = {
-    titre: document.getElementById("f-sig-title").value.trim(),
-    ingredients: lines(document.getElementById("f-sig-ingredients").value),
-    description: document.getElementById("f-sig-desc").value.trim()
-  };
-  programme.rituel = {
-    matin: document.getElementById("f-rituel-matin").value.trim(),
-    midi: document.getElementById("f-rituel-midi").value.trim(),
-    soir: document.getElementById("f-rituel-soir").value.trim(),
-    note: document.getElementById("f-rituel-note").value.trim()
-  };
-  programme.terrain = {
-    dominant: document.getElementById("f-terrain-dominant").value.trim(),
-    axes: lines(document.getElementById("f-terrain-axes").value),
-    note: document.getElementById("f-terrain-note").value.trim()
-  };
-  programme.protocole = {
-    matin: document.getElementById("f-protocole-matin").value.trim(),
-    midi: document.getElementById("f-protocole-midi").value.trim(),
-    soir: document.getElementById("f-protocole-soir").value.trim(),
-    duree: document.getElementById("f-protocole-duree").value.trim()
-  };
-
-  try {
-    programme.methode = JSON.parse(document.getElementById("f-method").value || "[]");
-  } catch(e) {
-    log("❌ JSON Méthode invalide — corrige avant de sauvegarder."); return;
-  }
-
+  programme.signature = { titre: document.getElementById("f-sig-title").value.trim(), ingredients: lines(document.getElementById("f-sig-ingredients").value), description: document.getElementById("f-sig-desc").value.trim() };
+  programme.rituel = { matin: document.getElementById("f-rituel-matin").value.trim(), midi: document.getElementById("f-rituel-midi").value.trim(), soir: document.getElementById("f-rituel-soir").value.trim(), note: document.getElementById("f-rituel-note").value.trim() };
+  programme.terrain = { dominant: document.getElementById("f-terrain-dominant").value.trim(), axes: lines(document.getElementById("f-terrain-axes").value), note: document.getElementById("f-terrain-note").value.trim() };
+  programme.protocole = { matin: document.getElementById("f-protocole-matin").value.trim(), midi: document.getElementById("f-protocole-midi").value.trim(), soir: document.getElementById("f-protocole-soir").value.trim(), duree: document.getElementById("f-protocole-duree").value.trim() };
+  try { programme.methode = JSON.parse(document.getElementById("f-method").value || "[]"); }
+  catch(e) { log("❌ JSON Méthode invalide — corrige avant de sauvegarder."); return; }
   log("⏳ Sauvegarde en cours…");
-
-  // Upsert sur la vraie table (slug, prenom, programme)
-  const { error } = await sb.from(SB_TABLE).upsert(
-    { slug, prenom, programme },
-    { onConflict: "slug" }
-  );
-
-  if (error) {
-    log("❌ Erreur Supabase : " + error.message +
-      "\n\nVérifie que :\n1. La table a les colonnes slug, prenom, programme\n2. RLS est désactivé\n3. La clé a les droits INSERT/UPDATE");
-    return;
-  }
-
+  const { error } = await sb.from(SB_TABLE).upsert({ slug, prenom, programme }, { onConflict: "slug" });
+  if (error) { log("❌ Erreur Supabase : " + error.message); return; }
   currentSlug = slug;
   document.getElementById("f-slug").value = slug;
   log("✅ Client « " + prenom + " » (slug: " + slug + ") sauvegardé !\n\nLien client :\n" + buildLink(slug));
-
-  // Rafraîchir la liste
   loadAllClients();
-
-  // Prévisualiser en direct
   _currentProg = programme;
   renderClientView(prenom, programme);
 }
 
-/* ══════════════════════════════════════════════
-   ADMIN : COPIER LIEN
-══════════════════════════════════════════════ */
 function buildLink(slug) {
   return window.location.origin + window.location.pathname + "?client=" + encodeURIComponent(slug);
 }
@@ -2999,77 +2660,47 @@ function copyLink() {
   const link = buildLink(slug);
   if (navigator.clipboard && window.isSecureContext) {
     navigator.clipboard.writeText(link).then(() => log("✅ Lien copié !\n" + link));
-  } else {
-    prompt("Copie ce lien :", link);
-  }
+  } else { prompt("Copie ce lien :", link); }
 }
 
-/* ══════════════════════════════════════════════
-   ADMIN : OUVERTURE / FERMETURE
-══════════════════════════════════════════════ */
 async function marquerPhytoTraite() {
   if (!sb || !currentSlug) return;
-  var { data, error } = await sb.from("mt_clients").select("programme").eq("slug", currentSlug).single();
-  if (error || !data) return;
-  var prog = data.programme || {};
-  if (prog.phyto_demande) prog.phyto_demande.statut = "traite";
-  await sb.from("mt_clients").update({ programme: prog }).eq("slug", currentSlug);
-  document.getElementById("phyto-admin-statut").textContent = "Traité";
-  document.getElementById("phyto-admin-statut").style.background = "#d1fae5";
-  document.getElementById("phyto-admin-statut").style.color = "#065f46";
-  log("✅ Demande phyto marquée comme traitée.");
+  try {
+    var res = await sb.from("mt_clients").select("programme").eq("slug", currentSlug).single();
+    if (res.error || !res.data) return;
+    var prog = Object.assign({}, res.data.programme || {});
+    if (prog.phyto_demande) prog.phyto_demande.statut = "traite";
+    await sb.from("mt_clients").update({ programme: prog }).eq("slug", currentSlug);
+    document.getElementById("phyto-admin-statut").textContent = "Traité";
+    document.getElementById("phyto-admin-statut").style.background = "#d1fae5";
+    document.getElementById("phyto-admin-statut").style.color = "#065f46";
+    log("✅ Demande phyto marquée comme traitée.");
+  } catch(e) { log("❌ Erreur : " + e.message); }
 }
 
-  async function marquerSelectionTraitee() {
+async function marquerSelectionTraitee() {
   if (!sb || !currentSlug) return;
-  var { data, error } = await sb.from("mt_clients").select("programme").eq("slug", currentSlug).single();
-  if (error || !data) return;
-  var prog = data.programme || {};
-  if (prog.selection) prog.selection.statut = "traite";
-  await sb.from("mt_clients").update({ programme: prog }).eq("slug", currentSlug);
-  document.getElementById("selection-statut").textContent = "Traité";
-  document.getElementById("selection-statut").style.background = "#d1fae5";
-  document.getElementById("selection-statut").style.color = "#065f46";
-  log("✅ Sélection marquée comme traitée.");
+  try {
+    var res = await sb.from("mt_clients").select("programme").eq("slug", currentSlug).single();
+    if (res.error || !res.data) return;
+    var prog = Object.assign({}, res.data.programme || {});
+    if (prog.selection) prog.selection.statut = "traite";
+    await sb.from("mt_clients").update({ programme: prog }).eq("slug", slug);
+    document.getElementById("selection-statut").textContent = "Traité";
+    document.getElementById("selection-statut").style.background = "#d1fae5";
+    document.getElementById("selection-statut").style.color = "#065f46";
+    log("✅ Sélection marquée comme traitée.");
+  } catch(e) { log("❌ Erreur : " + e.message); }
 }
+
 function appliquerProtocole(type) {
   var protocoles = {
-    digestion: {
-      matin: "Eau chaude + citron à jeun. Infusion fenouil ou menthe poivrée.",
-      midi: "Tisane digestive après repas (romarin, thym).",
-      soir: "Infusion camomille ou mélisse. Éviter de manger après 21h.",
-      duree: "21 jours"
-    },
-    energie: {
-      matin: "Maté vert ou matcha. Petit-déjeuner protéiné.",
-      midi: "Infusion gingembre + citron. Éviter les sucres rapides.",
-      soir: "Infusion adaptogène (ashwagandha). Coucher avant minuit.",
-      duree: "14 jours"
-    },
-    recomposition: {
-      matin: "Protéines au réveil. Eau + citron. Infusion thé vert.",
-      midi: "Repas équilibré. Infusion brûle-graisses (thé vert, cannelle).",
-      soir: "Dîner léger avant 20h. Infusion detox.",
-      duree: "30 jours"
-    },
-    inflammation: {
-      matin: "Eau chaude + curcuma + poivre noir. Infusion gingembre.",
-      midi: "Éviter gluten et sucres raffinés. Infusion curcuma.",
-      soir: "Infusion anti-inflammatoire (curcuma, gingembre, cannelle).",
-      duree: "21 jours"
-    },
-    detox: {
-      matin: "Eau chaude + citron + chlorophylle. Infusion ortie.",
-      midi: "Infusion romarin + pissenlit après repas.",
-      soir: "Infusion drainante (queues de cerise, pissenlit, bouleau).",
-      duree: "7 jours"
-    },
-    sommeil: {
-      matin: "Éviter café après 15h. Infusion énergisante douce le matin.",
-      midi: "Magnésium marin au déjeuner.",
-      soir: "Infusion Nirvana ou valériane + passiflore 1h avant coucher.",
-      duree: "14 jours"
-    }
+    digestion: { matin: "Eau chaude + citron à jeun. Infusion fenouil ou menthe poivrée.", midi: "Tisane digestive après repas (romarin, thym).", soir: "Infusion camomille ou mélisse. Éviter de manger après 21h.", duree: "21 jours" },
+    energie: { matin: "Maté vert ou matcha. Petit-déjeuner protéiné.", midi: "Infusion gingembre + citron. Éviter les sucres rapides.", soir: "Infusion adaptogène (ashwagandha). Coucher avant minuit.", duree: "14 jours" },
+    recomposition: { matin: "Protéines au réveil. Eau + citron. Infusion thé vert.", midi: "Repas équilibré. Infusion brûle-graisses (thé vert, cannelle).", soir: "Dîner léger avant 20h. Infusion detox.", duree: "30 jours" },
+    inflammation: { matin: "Eau chaude + curcuma + poivre noir. Infusion gingembre.", midi: "Éviter gluten et sucres raffinés. Infusion curcuma.", soir: "Infusion anti-inflammatoire (curcuma, gingembre, cannelle).", duree: "21 jours" },
+    detox: { matin: "Eau chaude + citron + chlorophylle. Infusion ortie.", midi: "Infusion romarin + pissenlit après repas.", soir: "Infusion drainante (queues de cerise, pissenlit, bouleau).", duree: "7 jours" },
+    sommeil: { matin: "Éviter café après 15h. Infusion énergisante douce le matin.", midi: "Magnésium marin au déjeuner.", soir: "Infusion Nirvana ou valériane + passiflore 1h avant coucher.", duree: "14 jours" }
   };
   var p = protocoles[type];
   if (!p) return;
@@ -3080,180 +2711,89 @@ function appliquerProtocole(type) {
   var msg = document.getElementById("protocole-applied");
   if (msg) { msg.style.display = "block"; setTimeout(function(){ msg.style.display = "none"; }, 3000); }
 }
+
 /* ══════════════════════════════════════════════
    RAPPORT HEBDOMADAIRE
 ══════════════════════════════════════════════ */
 async function genererRapport() {
   if (!sb || !currentSlug) { log("❌ Sélectionne un client d'abord."); return; }
-
-  var { data, error } = await sb.from("mt_clients").select("prenom, programme").eq("slug", currentSlug).single();
-  if (error || !data) { log("❌ Erreur chargement client."); return; }
-
-  var prenom = data.prenom || currentSlug;
-  var prog = data.programme || {};
+  var res = await sb.from("mt_clients").select("prenom, programme").eq("slug", currentSlug).single();
+  if (res.error || !res.data) { log("❌ Erreur chargement client."); return; }
+  var prenom = res.data.prenom || currentSlug;
+  var prog = res.data.programme || {};
   var suivi = prog.suivi || {};
   var timeline = prog.timeline || {};
   var semaineEnCours = getSemaineEnCours(timeline.dateDebut, timeline.nbSemaines || 4);
-
-  // Récupérer les 7 derniers jours
   var jours = [];
   for (var i = 6; i >= 0; i--) {
-    var d = new Date();
-    d.setDate(d.getDate() - i);
+    var d = new Date(); d.setDate(d.getDate() - i);
     var dateStr = d.toISOString().slice(0, 10);
-    var entry = suivi[dateStr] || null;
-    jours.push({ date: dateStr, entry: entry });
+    jours.push({ date: dateStr, entry: suivi[dateStr] || null });
   }
-
   var joursRemplis = jours.filter(function(j) { return j.entry && j.entry.filled; }).length;
   var score = Math.round(joursRemplis / 7 * 100);
-
-  // Moyennes
   var energies = jours.filter(function(j) { return j.entry && j.entry.energie; }).map(function(j) { return parseFloat(j.entry.energie); });
   var sommeils = jours.filter(function(j) { return j.entry && j.entry.sommeil; }).map(function(j) { return parseFloat(j.entry.sommeil); });
   var digestions = jours.filter(function(j) { return j.entry && j.entry.digestion; }).map(function(j) { return parseFloat(j.entry.digestion); });
   var poids = jours.filter(function(j) { return j.entry && j.entry.poids; }).map(function(j) { return parseFloat(j.entry.poids); });
-
-  function moyenne(arr) {
-    if (!arr.length) return null;
-    return (arr.reduce(function(a, b) { return a + b; }, 0) / arr.length).toFixed(1);
-  }
-
-  function tendance(arr) {
-    if (arr.length < 2) return "";
-    var debut = arr.slice(0, Math.ceil(arr.length / 2));
-    var fin = arr.slice(Math.floor(arr.length / 2));
-    var moyDebut = debut.reduce(function(a,b){return a+b;},0)/debut.length;
-    var moyFin = fin.reduce(function(a,b){return a+b;},0)/fin.length;
-    if (moyFin > moyDebut + 0.2) return " ↑";
-    if (moyFin < moyDebut - 0.2) return " ↓";
-    return " →";
-  }
-
-  var moyEnergie = moyenne(energies);
-  var moySommeil = moyenne(sommeils);
-  var moyDigestion = moyenne(digestions);
-  var premierPoids = poids.length ? poids[0] : null;
-  var dernierPoids = poids.length ? poids[poids.length - 1] : null;
-  var diffPoids = (premierPoids && dernierPoids && premierPoids !== dernierPoids)
-    ? (dernierPoids - premierPoids).toFixed(1)
-    : null;
-
-  // Notes de la semaine
-  var notes = jours.filter(function(j) { return j.entry && j.entry.note; }).map(function(j) {
-    return "• " + new Date(j.date).toLocaleDateString("fr-FR", {weekday:"short", day:"numeric"}) + " : " + j.entry.note;
-  });
-
-  // Messages de la semaine
-  var messages = (prog.messages || []).filter(function(m) {
-    var dateMsg = m.date || "";
-    return m.auteur === "client";
-  }).slice(-3);
-
-  // Construction du rapport
-  var dateDebut = jours[0].date;
-  var dateFin = jours[6].date;
-  var dateDebutFr = new Date(dateDebut).toLocaleDateString("fr-FR", {day:"numeric", month:"long"});
-  var dateFinFr = new Date(dateFin).toLocaleDateString("fr-FR", {day:"numeric", month:"long"});
-
-  var rapport = "";
-  rapport += "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
-  rapport += "📊 RAPPORT HEBDOMADAIRE — MÉTHODE TEE\n";
-  rapport += "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n";
-  rapport += "👤 Client : " + prenom + "\n";
-  rapport += "📅 Semaine : " + dateDebutFr + " → " + dateFinFr + "\n";
-  rapport += "🗓️ Semaine " + semaineEnCours + " du programme\n\n";
-
-  rapport += "━━━ RÉGULARITÉ ━━━\n";
-  rapport += "Jours remplis : " + joursRemplis + "/7\n";
-  rapport += "Score : " + score + "%  " + (score >= 80 ? "🌟 Excellent" : score >= 60 ? "✅ Bien" : score >= 40 ? "⚠️ À améliorer" : "❌ Insuffisant") + "\n\n";
-
+  function moyenne(arr) { if (!arr.length) return null; return (arr.reduce(function(a,b){return a+b;},0)/arr.length).toFixed(1); }
+  function tendance(arr) { if (arr.length < 2) return ""; var debut = arr.slice(0, Math.ceil(arr.length/2)); var fin = arr.slice(Math.floor(arr.length/2)); var md = debut.reduce(function(a,b){return a+b;},0)/debut.length; var mf = fin.reduce(function(a,b){return a+b;},0)/fin.length; if (mf > md+0.2) return " ↑"; if (mf < md-0.2) return " ↓"; return " →"; }
+  var moyEnergie = moyenne(energies); var moySommeil = moyenne(sommeils); var moyDigestion = moyenne(digestions);
+  var premierPoids = poids.length ? poids[0] : null; var dernierPoids = poids.length ? poids[poids.length-1] : null;
+  var diffPoids = (premierPoids && dernierPoids && premierPoids !== dernierPoids) ? (dernierPoids - premierPoids).toFixed(1) : null;
+  var notes = jours.filter(function(j){return j.entry&&j.entry.note;}).map(function(j){return "• "+new Date(j.date).toLocaleDateString("fr-FR",{weekday:"short",day:"numeric"})+" : "+j.entry.note;});
+  var dateDebutFr = new Date(jours[0].date).toLocaleDateString("fr-FR",{day:"numeric",month:"long"});
+  var dateFinFr = new Date(jours[6].date).toLocaleDateString("fr-FR",{day:"numeric",month:"long"});
+  var totalEau = jours.filter(function(j){return j.entry&&j.entry.eau;}).length;
+  var totalRepas = jours.filter(function(j){return j.entry&&j.entry.repas;}).length;
+  var totalInfusion = jours.filter(function(j){return j.entry&&j.entry.infusion;}).length;
+  var totalSport = jours.filter(function(j){return j.entry&&j.entry.sport;}).length;
+  var rapport = "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📊 RAPPORT HEBDOMADAIRE — MÉTHODE TEE\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n";
+  rapport += "👤 Client : "+prenom+"\n📅 Semaine : "+dateDebutFr+" → "+dateFinFr+"\n🗓️ Semaine "+semaineEnCours+" du programme\n\n";
+  rapport += "━━━ RÉGULARITÉ ━━━\nJours remplis : "+joursRemplis+"/7\nScore : "+score+"% "+(score>=80?"🌟 Excellent":score>=60?"✅ Bien":score>=40?"⚠️ À améliorer":"❌ Insuffisant")+"\n\n";
   rapport += "━━━ MESURES ━━━\n";
-  if (moyEnergie) rapport += "⚡ Énergie moyenne : " + moyEnergie + "/5" + tendance(energies) + "\n";
-  if (moySommeil) rapport += "🌙 Sommeil moyen : " + moySommeil + "/5" + tendance(sommeils) + "\n";
-  if (moyDigestion) rapport += "🌿 Digestion moyenne : " + moyDigestion + "/5" + tendance(digestions) + "\n";
-  if (premierPoids && dernierPoids) {
-    rapport += "⚖️ Poids : " + premierPoids + " kg → " + dernierPoids + " kg";
-    if (diffPoids) rapport += "  (" + (parseFloat(diffPoids) > 0 ? "+" : "") + diffPoids + " kg)";
-    rapport += "\n";
-  }
-  rapport += "\n";
-
-  // Checks moyens
-  var totalEau = jours.filter(function(j) { return j.entry && j.entry.eau; }).length;
-  var totalRepas = jours.filter(function(j) { return j.entry && j.entry.repas; }).length;
-  var totalInfusion = jours.filter(function(j) { return j.entry && j.entry.infusion; }).length;
-  var totalSport = jours.filter(function(j) { return j.entry && j.entry.sport; }).length;
-
-  rapport += "━━━ HABITUDES ━━━\n";
-  rapport += "💧 Hydratation : " + totalEau + "/7 jours\n";
-  rapport += "🥗 Repas respectés : " + totalRepas + "/7 jours\n";
-  rapport += "🍵 Infusions prises : " + totalInfusion + "/7 jours\n";
-  rapport += "🏃 Sport / marche : " + totalSport + "/7 jours\n\n";
-
-  if (notes.length) {
-    rapport += "━━━ NOTES DU CLIENT ━━━\n";
-    rapport += notes.join("\n") + "\n\n";
-  }
-
-  rapport += "━━━ OBJECTIFS ━━━\n";
-  rapport += (prog.objectif || "Non défini") + "\n";
-  if (prog.goals && prog.goals.length) {
-    prog.goals.forEach(function(g) { rapport += "→ " + g + "\n"; });
-  }
-  rapport += "\n";
-
-  rapport += "━━━ RECOMMANDATIONS ━━━\n";
-  if (score < 60) rapport += "⚠️ Régularité à améliorer — encourager le client à remplir son suivi chaque soir.\n";
-  if (moyEnergie && parseFloat(moyEnergie) < 3) rapport += "⚡ Énergie basse — revoir le protocole énergisant.\n";
-  if (moySommeil && parseFloat(moySommeil) < 3) rapport += "🌙 Sommeil insuffisant — renforcer le rituel du soir.\n";
-  if (moyDigestion && parseFloat(moyDigestion) < 3) rapport += "🌿 Digestion difficile — adapter le protocole digestif.\n";
-  if (totalInfusion < 4) rapport += "🍵 Protocole végétal peu suivi — rappeler l'importance des infusions.\n";
-  if (score >= 80 && moyEnergie && parseFloat(moyEnergie) >= 4) rapport += "🌟 Excellente semaine — féliciter le client et envisager de passer à la semaine suivante.\n";
-  rapport += "\n";
-
-  rapport += "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
-  rapport += "Généré par Méthode Tee — " + new Date().toLocaleDateString("fr-FR") + "\n";
-
-  // Afficher
+  if (moyEnergie) rapport += "⚡ Énergie moyenne : "+moyEnergie+"/5"+tendance(energies)+"\n";
+  if (moySommeil) rapport += "🌙 Sommeil moyen : "+moySommeil+"/5"+tendance(sommeils)+"\n";
+  if (moyDigestion) rapport += "🌿 Digestion moyenne : "+moyDigestion+"/5"+tendance(digestions)+"\n";
+  if (premierPoids && dernierPoids) { rapport += "⚖️ Poids : "+premierPoids+" kg → "+dernierPoids+" kg"+(diffPoids?" ("+(parseFloat(diffPoids)>0?"+":"")+diffPoids+" kg)":"")+"\n"; }
+  rapport += "\n━━━ HABITUDES ━━━\n💧 Hydratation : "+totalEau+"/7 jours\n🥗 Repas respectés : "+totalRepas+"/7 jours\n🍵 Infusions prises : "+totalInfusion+"/7 jours\n🏃 Sport / marche : "+totalSport+"/7 jours\n\n";
+  if (notes.length) rapport += "━━━ NOTES DU CLIENT ━━━\n"+notes.join("\n")+"\n\n";
+  rapport += "━━━ OBJECTIFS ━━━\n"+(prog.objectif||"Non défini")+"\n";
+  if (prog.goals && prog.goals.length) prog.goals.forEach(function(g){rapport+="→ "+g+"\n";});
+  rapport += "\n━━━ RECOMMANDATIONS ━━━\n";
+  if (score<60) rapport += "⚠️ Régularité à améliorer — encourager le client à remplir son suivi chaque soir.\n";
+  if (moyEnergie && parseFloat(moyEnergie)<3) rapport += "⚡ Énergie basse — revoir le protocole énergisant.\n";
+  if (moySommeil && parseFloat(moySommeil)<3) rapport += "🌙 Sommeil insuffisant — renforcer le rituel du soir.\n";
+  if (moyDigestion && parseFloat(moyDigestion)<3) rapport += "🌿 Digestion difficile — adapter le protocole digestif.\n";
+  if (totalInfusion<4) rapport += "🍵 Protocole végétal peu suivi — rappeler l'importance des infusions.\n";
+  if (score>=80 && moyEnergie && parseFloat(moyEnergie)>=4) rapport += "🌟 Excellente semaine — féliciter le client et envisager de passer à la semaine suivante.\n";
+  rapport += "\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nGénéré par Méthode Tee — "+new Date().toLocaleDateString("fr-FR")+"\n";
   var block = document.getElementById("rapport-block");
   var contenu = document.getElementById("rapport-contenu");
   if (block) block.style.display = "block";
   if (contenu) contenu.textContent = rapport;
-
-  // Scroll vers le rapport
-  setTimeout(function() {
-    if (block) block.scrollIntoView({ behavior: "smooth", block: "start" });
-  }, 100);
-
-  log("✅ Rapport généré pour " + prenom);
+  setTimeout(function() { if (block) block.scrollIntoView({behavior:"smooth",block:"start"}); }, 100);
+  log("✅ Rapport généré pour "+prenom);
 }
 
 function copierRapport() {
   var contenu = document.getElementById("rapport-contenu");
   if (!contenu) return;
   if (navigator.clipboard && window.isSecureContext) {
-    navigator.clipboard.writeText(contenu.textContent).then(function() {
-      log("✅ Rapport copié ! Tu peux le coller dans WhatsApp ou par email.");
-    });
+    navigator.clipboard.writeText(contenu.textContent).then(function() { log("✅ Rapport copié !"); });
   } else {
     var ta = document.createElement("textarea");
     ta.value = contenu.textContent;
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand("copy");
-    document.body.removeChild(ta);
+    document.body.appendChild(ta); ta.select(); document.execCommand("copy"); document.body.removeChild(ta);
     log("✅ Rapport copié !");
   }
 }
 
-  
-  function openAdmin() {
+function openAdmin() {
   document.getElementById("admin-overlay").classList.add("open");
   lucide.createIcons();
   renderSuiviGlobal();
 }
-
 
 function closeAdmin() {
   document.getElementById("admin-overlay").classList.remove("open");
@@ -3262,65 +2802,40 @@ function closeAdmin() {
 /* ══════════════════════════════════════════════
    UTILITAIRES
 ══════════════════════════════════════════════ */
-function lines(text) {
-  return String(text || "").split("\n").map(s => s.trim()).filter(Boolean);
-}
-function textToHtml(text) {
-  return String(text || "").trim().replace(/\n/g, "<br>");
-}
-function htmlToText(html) {
-  return String(html || "").replace(/<br\s*\/?>/gi, "\n").replace(/<[^>]+>/g, "");
-}
-function log(msg) {
-  document.getElementById("sb-log").textContent = msg;
-}
-function hideLoading() {
-  document.getElementById("loading-screen").style.display = "none";
-}
-function showError(msg) {
-  hideLoading();
-  const s = document.getElementById("error-screen");
-  document.getElementById("error-msg").textContent = msg;
-  s.style.display = "flex";
-}
+function lines(text) { return String(text||"").split("\n").map(s=>s.trim()).filter(Boolean); }
+function textToHtml(text) { return String(text||"").trim().replace(/\n/g,"<br>"); }
+function htmlToText(html) { return String(html||"").replace(/<br\s*\/?>/gi,"\n").replace(/<[^>]+>/g,""); }
+function log(msg) { document.getElementById("sb-log").textContent = msg; }
+function hideLoading() { document.getElementById("loading-screen").style.display = "none"; }
+function showError(msg) { hideLoading(); document.getElementById("error-msg").textContent = msg; document.getElementById("error-screen").style.display = "flex"; }
 
 /* ══════════════════════════════════════════════
-   INIT
+   INIT — CORRECTION 1 : auth hash
 ══════════════════════════════════════════════ */
 (async function init() {
-  // Charger settings Supabase dans les champs admin
   const settings = loadSettings();
   document.getElementById("sb-url").value = settings.url || "";
   document.getElementById("sb-key").value = settings.key || "";
-
-  // Si credentials disponibles, initialiser Supabase silencieusement
-   hideLoading();
 
   if (settings.url && settings.key) {
     try { sb = getFactory()(settings.url, settings.key); } catch(e) {}
   }
 
-  // Mode client (via ?client=slug) : charger depuis Supabase SANS localStorage
   const slug = new URLSearchParams(window.location.search).get("client");
   if (slug) {
+    // Mode client : pas d'auth
     await loadClientFromURL();
-    } else {
+  } else {
+    // Mode admin : vérification par hash SHA-256
     hideLoading();
-    var pwd = localStorage.getItem("mt_admin_auth");
-    if (pwd !== "OUTITA") {
-      var saisie = prompt("Mot de passe admin :");
-      if (saisie === "OUTITA") {
-        localStorage.setItem("mt_admin_auth", "OUTITA");
-        renderClientView("toi", emptyProgramme());
-      } else {
-        document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:sans-serif;color:#888">Accès refusé</div>';
-        return;
-      }
-    } else {
+    const ok = await checkAdminAuth();
+    if (ok) {
       renderClientView("toi", emptyProgramme());
+    } else {
+      document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:sans-serif;color:#888">Accès refusé</div>';
+      return;
     }
   }
-
 
   lucide.createIcons();
 })();
