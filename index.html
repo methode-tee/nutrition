@@ -3,357 +3,703 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>Methode Tee</title>
-  <link rel="apple-touch-icon" href="/nutrition/icon-192.PNG">
+  <title>Méthode Tee</title>
+<link rel="apple-touch-icon" href="/nutrition/icon-192.PNG">
+
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
   <style>
-    :root{--brand:#53644A;--brand-light:#6a7f5f;--accent:#8C7561;--paper:#F4F1EA;--bg:#FDFBF7;--outer:#EFEBE3;--ink:#2D241E;--muted:#7a7068;}
-    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-    body{font-family:"DM Sans",sans-serif;background:var(--outer);margin:0;padding:0;display:flex;justify-content:center;align-items:center;min-height:100vh;-webkit-font-smoothing:antialiased;}
-    h1,h2,h3,h4,.serif{font-family:"Playfair Display",serif;}
-    .app-shell{width:100%;max-width:430px;height:100vh;background:var(--bg);display:flex;flex-direction:column;position:relative;overflow:hidden;box-shadow:0 32px 80px rgba(0,0,0,0.22);}
-    @media(min-width:640px){.app-shell{height:min(900px,95vh);border-radius:44px;border:7px solid var(--ink);}}
-    .main-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
-    .main-scroll::-webkit-scrollbar{display:none;}
-    .tab-section{display:none;padding:0 20px 120px;animation:fadeUp .25s ease;}
-    .tab-section.active{display:block;}
-    @keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
-    .bottom-nav{position:absolute;bottom:0;left:0;right:0;background:white;border-top:1px solid rgba(0,0,0,0.06);padding:10px 8px calc(10px + env(safe-area-inset-bottom));display:flex;align-items:flex-start;gap:2px;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none;z-index:30;}
-    .bottom-nav::-webkit-scrollbar{display:none;}
-    .bottom-nav::after{content:"";flex:0 0 8px;}
-    .nav-btn{flex:0 0 auto;min-width:60px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:3px;padding:4px 3px;border:none;background:none;cursor:pointer;color:#b5aca3;transition:color .2s;}
-    .nav-btn.active{color:var(--brand);}
-    .nav-btn span{font-size:8px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;}
-    .card{background:white;border-radius:22px;border:1px solid rgba(140,117,97,.10);box-shadow:0 4px 24px rgba(0,0,0,0.035);}
-    .goal-card{background:var(--brand);color:white;border-radius:26px;padding:24px;position:relative;overflow:hidden;box-shadow:0 12px 40px rgba(83,100,74,.28);}
-    .goal-card::after{content:"";position:absolute;right:-24px;bottom:-24px;width:140px;height:140px;border-radius:50%;border:2px solid rgba(255,255,255,.12);box-shadow:0 0 0 28px rgba(255,255,255,.05),0 0 0 56px rgba(255,255,255,.03);}
-    .day-pill{flex-shrink:0;padding:8px 18px;border-radius:999px;border:1.5px solid #e2ddd7;background:white;color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap;}
-    .day-pill.active{background:var(--brand);color:white;border-color:var(--brand);box-shadow:0 6px 18px rgba(83,100,74,.22);}
-    .task-item{display:flex;align-items:center;gap:14px;background:white;border-radius:16px;padding:14px 16px;border:1px solid rgba(140,117,97,.10);cursor:pointer;transition:opacity .2s;}
-    .task-item.done{opacity:.6;}
-    .task-item.done .task-text{text-decoration:line-through;}
-    .task-check{width:22px;height:22px;border-radius:8px;border:2px solid #ddd8d0;background:white;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;}
-    .task-item.done .task-check{background:var(--brand);border-color:var(--brand);}
-    .products-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
-    .product-card{background:white;border-radius:22px;padding:18px;border:1px solid rgba(140,117,97,.10);display:flex;flex-direction:column;box-shadow:0 4px 20px rgba(0,0,0,0.03);}
-    .product-card.featured{border-color:rgba(83,100,74,.3);}
-    .product-emoji-wrap{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 12px;}
-    .product-btn{display:block;width:100%;padding:9px 4px;border-radius:999px;border:none;cursor:pointer;font:inherit;font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;text-decoration:none;text-align:center;margin-top:auto;transition:opacity .15s;}
-    .product-btn:active{opacity:.8;}
-    .method-rule{background:white;border-radius:20px;padding:20px;border-left:4px solid var(--brand);box-shadow:0 4px 20px rgba(0,0,0,0.03);}
-    .method-rule.accent{border-left-color:var(--accent);}
-    .admin-overlay{position:absolute;inset:0;z-index:50;background:rgba(45,36,30,.3);backdrop-filter:blur(8px);display:none;}
-    .admin-overlay.open{display:block;}
-    .admin-panel{position:absolute;inset:0;background:#FCFAF7;overflow-y:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:0 0 100px;}
-    .admin-panel::-webkit-scrollbar{display:none;}
-    .admin-section{background:white;margin:12px 16px 0;border-radius:22px;padding:20px;border:1px solid rgba(140,117,97,.10);box-shadow:0 4px 20px rgba(0,0,0,0.025);}
-    .admin-input,.admin-textarea{width:100%;border:1.5px solid #e8e4de;border-radius:14px;padding:11px 14px;font:inherit;color:var(--ink);background:#fdfcfa;outline:none;transition:border-color .2s;font-size:14px;}
-    .admin-input:focus,.admin-textarea:focus{border-color:var(--brand);}
-    .admin-textarea{min-height:90px;resize:vertical;}
-    label.field-label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:6px;}
-    .btn{border:none;border-radius:999px;padding:11px 16px;font:inherit;font-size:12px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;cursor:pointer;transition:opacity .15s;}
-    .btn:active{opacity:.8;}
-    .btn-brand{background:var(--brand);color:white;}
-    .btn-ink{background:var(--ink);color:white;}
-    .btn-ghost{background:#f0ece6;color:var(--ink);}
-    .btn-danger{background:#fee2e2;color:#dc2626;}
-    .chip{border:1.5px solid rgba(83,100,74,.2);background:white;color:var(--brand);border-radius:999px;padding:7px 14px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;white-space:nowrap;}
-    .chip.active{background:var(--brand);color:white;border-color:var(--brand);}
-    .log-box{background:#f8f4ee;border:1px solid #ede6db;border-radius:14px;padding:14px;font-size:12px;line-height:1.6;color:var(--ink);white-space:pre-wrap;word-break:break-all;}
-    .client-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border-radius:16px;border:1.5px solid #ede9e3;cursor:pointer;transition:background .15s;}
-    .client-row:hover,.client-row.active{background:#f7f5f0;border-color:rgba(83,100,74,.25);}
-    .mini-avatar{width:36px;height:36px;border-radius:50%;background:var(--brand);color:white;display:flex;align-items:center;justify-content:center;font-family:"Playfair Display",serif;font-style:italic;font-weight:700;font-size:16px;flex-shrink:0;}
-    .product-editor{border:1.5px solid #ede9e3;border-radius:18px;padding:14px;background:white;margin-bottom:10px;}
-    .fab{position:absolute;right:16px;bottom:calc(74px + env(safe-area-inset-bottom));z-index:25;width:52px;height:52px;border:none;border-radius:50%;background:var(--ink);color:white;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 28px rgba(0,0,0,.22);cursor:pointer;}
-    .badge{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:999px;font-size:9px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;}
-    /* Journal photo */
-    .journal-entry{position:relative;padding-left:28px;margin-bottom:0;}
-    .journal-entry::before{content:"";position:absolute;left:10px;top:0;bottom:0;width:2px;background:linear-gradient(to bottom,var(--brand),rgba(83,100,74,.1));}
-    .journal-dot{position:absolute;left:4px;top:22px;width:14px;height:14px;border-radius:50%;background:var(--brand);border:2px solid white;box-shadow:0 0 0 2px var(--brand);}
-    .journal-card{background:white;border-radius:20px;border:1px solid rgba(140,117,97,.12);overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.04);margin-bottom:20px;}
-    .journal-photo{width:100%;aspect-ratio:4/3;object-fit:cover;}
-    .metric-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
-    .metric-bar-bg{flex:1;height:5px;background:#f0ece6;border-radius:999px;overflow:hidden;}
-    .metric-bar-fill{height:100%;border-radius:999px;}
-    /* Placard */
-    .ingredient-chip{border:1.5px solid #e2ddd7;background:white;color:var(--muted);border-radius:12px;padding:8px 12px;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap;display:inline-flex;align-items:center;gap:5px;}
-    .ingredient-chip.selected{background:var(--brand);color:white;border-color:var(--brand);}
-    .mood-tag{border:1.5px solid rgba(83,100,74,.2);background:white;color:var(--brand);border-radius:14px;padding:10px;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;text-align:center;}
-    .mood-tag.active{background:var(--brand);color:white;border-color:var(--brand);}
-    .recette-card{background:white;border-radius:20px;padding:20px;border:1px solid rgba(140,117,97,.10);box-shadow:0 4px 16px rgba(0,0,0,0.03);}
-    /* Loading */
-    #loading-screen{position:absolute;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:100;gap:16px;}
-    .spinner{width:36px;height:36px;border-radius:50%;border:3px solid rgba(83,100,74,.15);border-top-color:var(--brand);animation:spin .8s linear infinite;}
-    @keyframes spin{to{transform:rotate(360deg);}}
-    #error-screen{position:absolute;inset:0;background:var(--bg);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:100;padding:32px;text-align:center;gap:12px;}
-    .hidden{display:none!important;}
+    :root {
+      --brand: #53644A;
+      --brand-light: #6a7f5f;
+      --accent: #8C7561;
+      --paper: #F4F1EA;
+      --bg: #FDFBF7;
+      --outer: #EFEBE3;
+      --ink: #2D241E;
+      --muted: #7a7068;
+    }
+
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--outer);
+      margin: 0; padding: 0;
+      display: flex; justify-content: center; align-items: center;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    h1, h2, h3, h4, .serif { font-family: 'Playfair Display', serif; }
+
+    .app-shell {
+      width: 100%; max-width: 430px;
+      height: 100vh;
+      background: var(--bg);
+      display: flex; flex-direction: column;
+      position: relative; overflow: hidden;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.22);
+    }
+    @media (min-width: 640px) {
+      .app-shell {
+        height: min(900px, 95vh);
+        border-radius: 44px;
+        border: 7px solid var(--ink);
+      }
+    }
+
+    .main-scroll {
+      flex: 1; overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .main-scroll::-webkit-scrollbar { display: none; }
+
+    .tab-section { display: none; padding: 0 20px 120px; animation: fadeUp .25s ease; }
+    .tab-section.active { display: block; }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .bottom-nav {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: white;
+      border-top: 1px solid rgba(0,0,0,0.06);
+      padding: 10px 8px calc(10px + env(safe-area-inset-bottom));
+      display: flex;
+      align-items: flex-start;
+      gap: 4px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      z-index: 30;
+    }
+
+    .bottom-nav::-webkit-scrollbar { display: none; }
+
+    .nav-btn {
+      flex: 0 0 auto;
+      min-width: 72px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 3px;
+      padding: 4px 8px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      color: #b5aca3;
+      transition: color .2s;
+    }
+
+    .nav-btn.active { color: var(--brand); }
+
+    .nav-btn span {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .bottom-nav::after {
+      content: "";
+      flex: 0 0 8px;
+    }
+
+    .card {
+      background: white; border-radius: 22px;
+      border: 1px solid rgba(140,117,97,.10);
+      box-shadow: 0 4px 24px rgba(0,0,0,0.035);
+    }
+
+    .goal-card {
+      background: var(--brand); color: white;
+      border-radius: 26px; padding: 24px;
+      position: relative; overflow: hidden;
+      box-shadow: 0 12px 40px rgba(83,100,74,.28);
+    }
+    .goal-card::after {
+      content: '';
+      position: absolute; right: -24px; bottom: -24px;
+      width: 140px; height: 140px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,.12);
+      box-shadow: 0 0 0 28px rgba(255,255,255,.05), 0 0 0 56px rgba(255,255,255,.03);
+    }
+
+    .day-pill {
+      flex-shrink: 0; padding: 8px 18px;
+      border-radius: 999px; border: 1.5px solid #e2ddd7;
+      background: white; color: var(--muted);
+      font-size: 12px; font-weight: 600; cursor: pointer;
+      transition: all .2s; white-space: nowrap;
+    }
+    .day-pill.active {
+      background: var(--brand); color: white;
+      border-color: var(--brand);
+      box-shadow: 0 6px 18px rgba(83,100,74,.22);
+    }
+
+    .task-item {
+      display: flex; align-items: center; gap: 14px;
+      background: white; border-radius: 16px; padding: 14px 16px;
+      border: 1px solid rgba(140,117,97,.10);
+      cursor: pointer; transition: opacity .2s;
+    }
+    .task-item.done { opacity: .6; }
+    .task-item.done .task-text { text-decoration: line-through; }
+    .task-check {
+      width: 22px; height: 22px; border-radius: 8px;
+      border: 2px solid #ddd8d0; background: white;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: all .2s;
+    }
+    .task-item.done .task-check {
+      background: var(--brand); border-color: var(--brand);
+    }
+
+    .products-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+    }
+    .product-card {
+      background: white; border-radius: 22px; padding: 18px;
+      border: 1px solid rgba(140,117,97,.10);
+      display: flex; flex-direction: column;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+    }
+    .product-card.featured { border-color: rgba(83,100,74,.3); }
+    .product-emoji-wrap {
+      width: 52px; height: 52px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 26px; margin: 0 auto 12px;
+    }
+    .product-btn {
+      display: block; width: 100%; padding: 9px 4px;
+      border-radius: 999px; border: none; cursor: pointer;
+      font: inherit; font-size: 10px; font-weight: 700;
+      letter-spacing: .07em; text-transform: uppercase;
+      text-decoration: none; text-align: center; margin-top: auto;
+      transition: opacity .15s;
+    }
+    .product-btn:active { opacity: .8; }
+
+    .method-rule {
+      background: white; border-radius: 20px; padding: 20px;
+      border-left: 4px solid var(--brand);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+    }
+    .method-rule.accent { border-left-color: var(--accent); }
+
+    .admin-overlay {
+      position: absolute; inset: 0; z-index: 50;
+      background: rgba(45,36,30,.3); backdrop-filter: blur(8px);
+      display: none;
+    }
+    .admin-overlay.open { display: block; }
+    .admin-panel {
+      position: absolute; inset: 0; background: #FCFAF7;
+      overflow-y: auto; -webkit-overflow-scrolling: touch;
+      scrollbar-width: none; padding: 0 0 100px;
+    }
+    .admin-panel::-webkit-scrollbar { display: none; }
+
+    .admin-section {
+      background: white; margin: 12px 16px 0;
+      border-radius: 22px; padding: 20px;
+      border: 1px solid rgba(140,117,97,.10);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.025);
+    }
+    .admin-input, .admin-textarea {
+      width: 100%; border: 1.5px solid #e8e4de;
+      border-radius: 14px; padding: 11px 14px;
+      font: inherit; color: var(--ink); background: #fdfcfa;
+      outline: none; transition: border-color .2s;
+      font-size: 14px;
+    }
+    .admin-input:focus, .admin-textarea:focus { border-color: var(--brand); }
+    .admin-textarea { min-height: 90px; resize: vertical; }
+    label.field-label {
+      display: block; font-size: 11px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .08em;
+      color: var(--muted); margin-bottom: 6px;
+    }
+
+    .btn {
+      border: none; border-radius: 999px; padding: 11px 16px;
+      font: inherit; font-size: 12px; font-weight: 700;
+      letter-spacing: .07em; text-transform: uppercase;
+      cursor: pointer; transition: opacity .15s;
+    }
+    .btn:active { opacity: .8; }
+    .btn-brand { background: var(--brand); color: white; }
+    .btn-ink { background: var(--ink); color: white; }
+    .btn-ghost { background: #f0ece6; color: var(--ink); }
+    .btn-danger { background: #fee2e2; color: #dc2626; }
+
+    .chip {
+      border: 1.5px solid rgba(83,100,74,.2);
+      background: white; color: var(--brand);
+      border-radius: 999px; padding: 7px 14px;
+      font-size: 11px; font-weight: 700;
+      letter-spacing: .06em; text-transform: uppercase;
+      cursor: pointer; white-space: nowrap;
+    }
+    .chip.active { background: var(--brand); color: white; border-color: var(--brand); }
+
+    .log-box {
+      background: #f8f4ee; border: 1px solid #ede6db;
+      border-radius: 14px; padding: 14px;
+      font-size: 12px; line-height: 1.6; color: var(--ink);
+      white-space: pre-wrap; word-break: break-all;
+    }
+
+    .client-row {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; padding: 12px 14px; border-radius: 16px;
+      border: 1.5px solid #ede9e3; cursor: pointer;
+      transition: background .15s;
+    }
+    .client-row:hover, .client-row.active { background: #f7f5f0; border-color: rgba(83,100,74,.25); }
+    .mini-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--brand); color: white;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Playfair Display', serif; font-style: italic;
+      font-weight: 700; font-size: 16px; flex-shrink: 0;
+    }
+
+    .product-editor {
+      border: 1.5px solid #ede9e3; border-radius: 18px;
+      padding: 14px; background: white; margin-bottom: 10px;
+    }
+
+    .fab {
+      position: absolute; right: 16px;
+      bottom: calc(74px + env(safe-area-inset-bottom));
+      z-index: 25; width: 52px; height: 52px;
+      border: none; border-radius: 50%;
+      background: var(--ink); color: white;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 8px 28px rgba(0,0,0,.22); cursor: pointer;
+    }
+
+    .badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 5px 10px; border-radius: 999px;
+      font-size: 9px; font-weight: 800; letter-spacing: .09em;
+      text-transform: uppercase;
+    }
+
+    #loading-screen {
+      position: absolute; inset: 0; background: var(--bg);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      z-index: 100; gap: 16px;
+    }
+    .spinner {
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 3px solid rgba(83,100,74,.15);
+      border-top-color: var(--brand);
+      animation: spin .8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    #error-screen {
+      position: absolute; inset: 0; background: var(--bg);
+      display: none; flex-direction: column;
+      align-items: center; justify-content: center;
+      z-index: 100; padding: 32px; text-align: center; gap: 12px;
+    }
+
+    .hidden { display: none !important; }
   </style>
 </head>
 <body>
 <div class="app-shell" id="app">
-  <div id="loading-screen"><div class="spinner"></div><p style="font-size:13px;color:var(--muted);font-weight:600;">Chargement</p></div>
-  <div id="error-screen"><div style="font-size:48px">🌿</div><h2 class="serif" style="color:var(--ink);font-size:22px">Fiche introuvable</h2><p id="error-msg" style="font-size:13px;color:var(--muted);line-height:1.6"></p></div>
+
+  <div id="loading-screen">
+    <div class="spinner"></div>
+    <p style="font-size:13px;color:var(--muted);font-weight:600;">Chargement…</p>
+  </div>
+
+  <div id="error-screen">
+    <div style="font-size:48px">🌿</div>
+    <h2 class="serif" style="color:var(--ink);font-size:22px">Fiche introuvable</h2>
+    <p id="error-msg" style="font-size:13px;color:var(--muted);line-height:1.6"></p>
+  </div>
 
   <header style="background:rgba(253,251,247,.92);backdrop-filter:blur(12px);padding:18px 20px 14px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:20;border-bottom:1px solid rgba(0,0,0,0.04);">
-    <div><p style="font-size:9px;text-transform:uppercase;letter-spacing:.18em;color:#b5aca3;font-weight:800;margin-bottom:3px">Espace Client</p><h1 class="serif" style="font-size:20px;font-style:italic;font-weight:700;color:var(--brand);margin:0">Methode Tee</h1></div>
-    <div id="avatar" style="width:42px;height:42px;border-radius:50%;background:var(--brand);color:white;display:flex;align-items:center;justify-content:center;font-family:Playfair Display,serif;font-style:italic;font-weight:700;font-size:19px;box-shadow:0 4px 14px rgba(83,100,74,.28)">T</div>
+    <div>
+      <p style="font-size:9px;text-transform:uppercase;letter-spacing:.18em;color:#b5aca3;font-weight:800;margin-bottom:3px">Espace Client</p>
+      <h1 class="serif" style="font-size:20px;font-style:italic;font-weight:700;color:var(--brand);margin:0">Méthode Tee</h1>
+    </div>
+    <div id="avatar" style="width:42px;height:42px;border-radius:50%;background:var(--brand);color:white;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-style:italic;font-weight:700;font-size:19px;box-shadow:0 4px 14px rgba(83,100,74,.28)">T</div>
   </header>
 
   <div class="main-scroll">
-    <!-- ACCUEIL -->
+
     <section id="tab-accueil" class="tab-section active" style="padding-top:24px">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:24px">
-        <div><p id="today-date" style="font-size:11px;color:var(--muted);font-weight:600;margin:0 0 4px;text-transform:capitalize"></p><h2 class="serif" style="font-size:34px;font-weight:700;color:var(--ink);margin:0 0 6px;line-height:1.15">Bonjour <span id="display-prenom">toi</span>,</h2><p style="font-size:12px;color:var(--muted)">Ton espace nutrition et routines premium.</p></div>
-        <span class="badge" style="background:var(--brand);color:white;margin-top:4px;flex-shrink:0"><i data-lucide="sparkles" style="width:11px;height:11px"></i> Prive</span>
+        <div>
+          <p id="today-date" style="font-size:11px;color:var(--muted);font-weight:600;margin:0 0 4px;text-transform:capitalize"></p>
+          <h2 class="serif" style="font-size:34px;font-weight:700;color:var(--ink);margin:0 0 6px;line-height:1.15">Bonjour <span id="display-prenom">toi</span>,</h2>
+          <p style="font-size:12px;color:var(--muted)">Ton espace nutrition &amp; routines premium.</p>
+        </div>
+        <span class="badge" style="background:var(--brand);color:white;margin-top:4px;flex-shrink:0">
+          <i data-lucide="sparkles" style="width:11px;height:11px"></i>
+          Privé
+        </span>
       </div>
-      <div id="notif-banner" style="display:none;margin:0 0 16px;border-radius:16px;padding:14px 16px;background:#f0f9f0;border:1.5px solid rgba(83,100,74,.2);flex-direction:row;align-items:center;justify-content:space-between;gap:12px">
-        <div><p style="font-size:12px;font-weight:700;color:var(--brand);margin:0 0 2px">Rappels quotidiens</p><p style="font-size:11px;color:var(--muted);margin:0">Rituel matin, infusion soir, suivi</p></div>
+
+      <div id="notif-banner" style="display:none;margin:0 0 16px;border-radius:16px;padding:14px 16px;background:#f0f9f0;border:1.5px solid rgba(83,100,74,.2);display:flex;align-items:center;justify-content:space-between;gap:12px">
+        <div>
+          <p style="font-size:12px;font-weight:700;color:var(--brand);margin:0 0 2px">🔔 Rappels quotidiens</p>
+          <p style="font-size:11px;color:var(--muted);margin:0">Rituel matin, infusion soir, suivi du jour</p>
+        </div>
         <button onclick="activerNotifications()" style="border:none;border-radius:999px;background:var(--brand);color:white;font-family:inherit;font-size:11px;font-weight:700;padding:8px 14px;cursor:pointer;white-space:nowrap">Activer</button>
       </div>
+
       <div id="my-banner" style="display:none;margin:0 0 20px;border-radius:18px;padding:15px 18px;background:linear-gradient(135deg,#2D241E 0%,#53644A 100%);color:white;position:relative;overflow:hidden">
         <div style="position:absolute;right:-20px;top:-20px;width:90px;height:90px;border-radius:50%;background:rgba(255,255,255,.06)"></div>
-        <p style="font-size:9px;text-transform:uppercase;letter-spacing:.16em;font-weight:800;opacity:.7;margin:0 0 5px">Maison Yanna - Ton avantage</p>
-        <p id="my-banner-text" class="serif" style="font-size:13px;font-weight:600;margin:0 0 8px;line-height:1.5;font-style:italic"></p>
-        <div id="my-promo-wrap" style="display:none;margin-bottom:10px">
-          <p style="font-size:9px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;opacity:.7;margin:0 0 4px">Ton code exclusif</p>
-          <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:10px;padding:6px 12px">
-            <span id="my-promo-code" style="font-size:16px;font-weight:800;letter-spacing:.12em;font-family:monospace"></span>
-            <button onclick="copierPromo()" style="border:none;background:none;color:white;cursor:pointer;padding:0;opacity:.8;font-size:11px">copier</button>
-          </div>
-        </div>
+        <p style="font-size:9px;text-transform:uppercase;letter-spacing:.16em;font-weight:800;opacity:.7;margin:0 0 5px">Maison Yanna — Ton avantage</p>
+        <p id="my-banner-text" class="serif" style="font-size:13px;font-weight:600;margin:0 0 10px;line-height:1.5;font-style:italic"></p>
         <a href="https://maisonyanna.com" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);color:white;font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:7px 14px;border-radius:999px;text-decoration:none">Voir la boutique</a>
       </div>
+
       <div class="goal-card" style="margin-bottom:20px">
         <p style="font-size:9px;text-transform:uppercase;letter-spacing:.18em;font-weight:800;opacity:.75;margin-bottom:8px">Ton objectif principal</p>
         <h3 id="goal-title" class="serif" style="font-size:20px;font-style:italic;font-weight:700;margin:0 0 16px;line-height:1.3;position:relative;z-index:1"></h3>
-        <ul id="goal-list" style="list-style:none;margin:0;padding:0;position:relative;z-index:1"></ul>
+        <ul id="goal-list" style="list-style:none;margin:0;padding:0;space-y:6px;position:relative;z-index:1"></ul>
       </div>
+
       <div class="card" style="padding:22px;margin-bottom:20px;position:relative">
-        <div style="position:absolute;top:-14px;right:14px;width:46px;height:46px;background:white;border-radius:50%;box-shadow:0 4px 14px rgba(0,0,0,0.09);display:flex;align-items:center;justify-content:center;font-size:20px">Note</div>
+        <div style="position:absolute;top:-14px;right:14px;width:46px;height:46px;background:white;border-radius:50%;box-shadow:0 4px 14px rgba(0,0,0,0.09);display:flex;align-items:center;justify-content:center;font-size:20px">✍️</div>
         <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin-bottom:10px">Le mot de Tee</p>
         <p id="coach-msg" class="serif" style="font-size:14px;color:var(--ink);line-height:1.7;font-style:italic;margin:0"></p>
       </div>
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:#b5aca3;margin:0">Tes priorites du jour</p><span style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:700;color:var(--brand)">Checklist</span></div>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:#b5aca3;margin:0">Tes priorités du jour</p>
+        <span style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:700;color:var(--brand)">Checklist</span>
+      </div>
       <div id="tasks-list" style="display:flex;flex-direction:column;gap:10px"></div>
+
       <div class="card" style="padding:22px;margin-top:18px">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px"><div><p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 6px">Rituel du jour</p><h3 class="serif" style="font-size:20px;margin:0;color:var(--ink)">Ton rythme Methode Tee</h3></div><div style="width:42px;height:42px;border-radius:50%;background:var(--paper);display:flex;align-items:center;justify-content:center;font-size:20px">plante</div></div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px">
+          <div>
+            <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 6px">Rituel du jour</p>
+            <h3 class="serif" style="font-size:20px;margin:0;color:var(--ink)">Ton rythme Méthode Tee</h3>
+          </div>
+          <div style="width:42px;height:42px;border-radius:50%;background:var(--paper);display:flex;align-items:center;justify-content:center;font-size:20px">🌿</div>
+        </div>
         <div id="rituel-card" style="display:flex;flex-direction:column;gap:10px"></div>
       </div>
+
       <div class="card" style="padding:22px;margin-top:18px">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px"><div><p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 6px">Analyse du terrain</p><h3 class="serif" style="font-size:20px;margin:0;color:var(--ink)">Ce que nous travaillons</h3></div><div style="width:42px;height:42px;border-radius:50%;background:var(--paper);display:flex;align-items:center;justify-content:center;font-size:20px">plante2</div></div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px">
+          <div>
+            <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 6px">Analyse du terrain</p>
+            <h3 class="serif" style="font-size:20px;margin:0;color:var(--ink)">Ce que nous travaillons</h3>
+          </div>
+          <div style="width:42px;height:42px;border-radius:50%;background:var(--paper);display:flex;align-items:center;justify-content:center;font-size:20px">🌱</div>
+        </div>
         <div id="terrain-card"></div>
       </div>
     </section>
 
-    <!-- REPAS -->
     <section id="tab-repas" class="tab-section" style="padding-top:24px">
-      <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:20px"><div><h2 class="serif" style="font-size:30px;font-weight:700;color:var(--ink);margin:0 0 4px">Ton Menu</h2><p style="font-size:12px;color:var(--muted)">Programme alimentaire personnalise</p></div><span id="week-badge" style="font-size:11px;color:var(--accent);font-weight:700;background:rgba(140,117,97,.1);padding:5px 12px;border-radius:999px"></span></div>
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:20px">
+        <div>
+          <h2 class="serif" style="font-size:30px;font-weight:700;color:var(--ink);margin:0 0 4px">Ton Menu</h2>
+          <p style="font-size:12px;color:var(--muted)">Programme alimentaire personnalisé</p>
+        </div>
+        <span id="week-badge" style="font-size:11px;color:var(--accent);font-weight:700;background:rgba(140,117,97,.1);padding:5px 12px;border-radius:999px"></span>
+      </div>
       <div id="days-nav" style="display:flex;overflow-x:auto;gap:10px;margin:0 -20px;padding:0 20px 16px;scrollbar-width:none"></div>
       <div style="display:flex;flex-direction:column;gap:14px">
-        <div class="card" style="padding:18px"><div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="font-size:22px">lever</span><p style="font-size:11px;text-transform:uppercase;letter-spacing:.12em;font-weight:800;color:var(--brand);margin:0">Eveil et Matin</p></div><p id="meal-morning" style="font-size:13px;color:#4a3f38;line-height:1.7;margin:0;padding-left:14px;border-left:2px solid #e8e4de"></p></div>
-        <div class="card" style="padding:18px"><div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="font-size:22px">salade</span><p style="font-size:11px;text-transform:uppercase;letter-spacing:.12em;font-weight:800;color:var(--brand);margin:0">Dejeuner</p></div><p id="meal-lunch" style="font-size:13px;color:#4a3f38;line-height:1.7;margin:0;padding-left:14px;border-left:2px solid var(--brand)"></p></div>
-        <div class="card" style="padding:18px"><div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="font-size:22px">eclair</span><p style="font-size:11px;text-transform:uppercase;letter-spacing:.12em;font-weight:800;color:var(--brand);margin:0">Collation</p></div><p id="meal-snack" style="font-size:13px;color:#4a3f38;line-height:1.7;margin:0;padding-left:14px;border-left:2px solid #e8e4de"></p></div>
-        <div class="card" style="padding:18px"><div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="font-size:22px">lune</span><p style="font-size:11px;text-transform:uppercase;letter-spacing:.12em;font-weight:800;color:var(--ink);margin:0">Diner et Soir</p></div><p id="meal-dinner" style="font-size:13px;color:#4a3f38;line-height:1.7;margin:0;padding-left:14px;border-left:2px solid #e8e4de"></p></div>
+        <div class="card" style="padding:18px">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="font-size:22px">🌅</span><p style="font-size:11px;text-transform:uppercase;letter-spacing:.12em;font-weight:800;color:var(--brand);margin:0">Éveil &amp; Matin</p></div>
+          <p id="meal-morning" style="font-size:13px;color:#4a3f38;line-height:1.7;margin:0;padding-left:14px;border-left:2px solid #e8e4de"></p>
+        </div>
+        <div class="card" style="padding:18px">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="font-size:22px">🥗</span><p style="font-size:11px;text-transform:uppercase;letter-spacing:.12em;font-weight:800;color:var(--brand);margin:0">Déjeuner</p></div>
+          <p id="meal-lunch" style="font-size:13px;color:#4a3f38;line-height:1.7;margin:0;padding-left:14px;border-left:2px solid var(--brand)"></p>
+        </div>
+        <div class="card" style="padding:18px">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="font-size:22px">⚡</span><p style="font-size:11px;text-transform:uppercase;letter-spacing:.12em;font-weight:800;color:var(--brand);margin:0">Collation</p></div>
+          <p id="meal-snack" style="font-size:13px;color:#4a3f38;line-height:1.7;margin:0;padding-left:14px;border-left:2px solid #e8e4de"></p>
+        </div>
+        <div class="card" style="padding:18px">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="font-size:22px">🌙</span><p style="font-size:11px;text-transform:uppercase;letter-spacing:.12em;font-weight:800;color:var(--ink);margin:0">Dîner &amp; Soir</p></div>
+          <p id="meal-dinner" style="font-size:13px;color:#4a3f38;line-height:1.7;margin:0;padding-left:14px;border-left:2px solid #e8e4de"></p>
+        </div>
       </div>
     </section>
 
-    <!-- SOINS -->
     <section id="tab-soins" class="tab-section" style="padding-top:24px">
       <h2 class="serif" style="font-size:30px;font-weight:700;color:var(--ink);margin:0 0 4px">Soins</h2>
-      <p style="font-size:12px;color:var(--muted);margin:0 0 24px">Tes allies naturels selectionnes pour ton profil.</p>
+      <p style="font-size:12px;color:var(--muted);margin:0 0 24px">Tes alliés naturels sélectionnés pour ton profil.</p>
       <div class="card" style="padding:22px;margin-bottom:18px">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px"><div><p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 6px">Protocole vegetal</p><h3 class="serif" style="font-size:20px;margin:0;color:var(--ink)">Rythme plantes et infusions</h3></div><div style="width:42px;height:42px;border-radius:50%;background:var(--paper);display:flex;align-items:center;justify-content:center;font-size:20px">the</div></div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px">
+          <div>
+            <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 6px">Protocole végétal</p>
+            <h3 class="serif" style="font-size:20px;margin:0;color:var(--ink)">Rythme plantes & infusions</h3>
+          </div>
+          <div style="width:42px;height:42px;border-radius:50%;background:var(--paper);display:flex;align-items:center;justify-content:center;font-size:20px">🍵</div>
+        </div>
         <div id="protocole-card" style="display:flex;flex-direction:column;gap:10px"></div>
       </div>
       <div id="products-grid" class="products-grid"></div>
+
       <div id="selection-panel" style="display:none;margin-top:18px">
         <div class="card" style="padding:20px">
-          <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 10px">Ma selection</p>
+          <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 10px">Ma sélection</p>
           <div id="selection-list" style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px"></div>
-          <button onclick="envoyerSelection()" style="width:100%;padding:13px;border-radius:999px;border:none;background:var(--ink);color:white;font-family:inherit;font-size:12px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;cursor:pointer">Envoyer ma selection a Tee</button>
-          <button onclick="viderSelection()" style="width:100%;padding:10px;border-radius:999px;border:none;background:#f0ece6;color:var(--muted);font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;margin-top:8px">Vider</button>
+          <button onclick="envoyerSelection()" style="width:100%;padding:13px;border-radius:999px;border:none;background:var(--ink);color:white;font-family:inherit;font-size:12px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;cursor:pointer">Envoyer ma sélection à Tee</button>
+          <button onclick="viderSelection()" style="width:100%;padding:10px;border-radius:999px;border:none;background:#f0ece6;color:var(--muted);font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;margin-top:8px">Vider la sélection</button>
         </div>
       </div>
     </section>
 
-    <!-- SIGNATURE -->
     <section id="tab-signature" class="tab-section" style="padding-top:24px">
       <h2 class="serif" style="font-size:30px;font-weight:700;color:var(--ink);margin:0 0 4px">Signature Healthy</h2>
-      <p style="font-size:12px;color:var(--muted);margin:0 0 24px">Ton plat signature personnalise.</p>
+      <p style="font-size:12px;color:var(--muted);margin:0 0 24px">Ton plat signature personnalisé.</p>
       <div id="signature-card" class="card" style="padding:24px"></div>
     </section>
 
-    <!-- JOURNAL PHOTO EVOLUTION - NOUVEAU -->
-    <section id="tab-journal" class="tab-section" style="padding-top:24px">
-      <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:8px">
-        <div><h2 class="serif" style="font-size:30px;font-weight:700;color:var(--ink);margin:0 0 4px">Mon Journal</h2><p style="font-size:12px;color:var(--muted)">Ta transformation semaine apres semaine.</p></div>
-        <button onclick="ouvrirNouvelleEntreeJournal()" style="border:none;border-radius:999px;background:var(--brand);color:white;font-family:inherit;font-size:11px;font-weight:700;padding:9px 14px;cursor:pointer;white-space:nowrap">+ Semaine</button>
-      </div>
-
-      <!-- Formulaire entree -->
-      <div id="journal-form" style="display:none;margin-bottom:20px;margin-top:16px">
-        <div class="card" style="padding:22px;border:2px solid var(--brand)">
-          <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 16px">Nouvelle entree - Semaine <span id="journal-form-week"></span></p>
-          <div id="journal-photo-zone" style="background:var(--paper);border-radius:16px;aspect-ratio:4/3;display:flex;flex-direction:column;align-items:center;justify-content:center;margin-bottom:16px;cursor:pointer;overflow:hidden;position:relative;max-height:220px" onclick="document.getElementById(quantite journal-photo-input quantite).click()">
-            <div id="journal-photo-placeholder" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px">
-              <div style="width:48px;height:48px;border-radius:50%;background:rgba(83,100,74,.1);display:flex;align-items:center;justify-content:center"><i data-lucide="camera" style="width:20px;height:20px;color:var(--brand)"></i></div>
-              <p style="font-size:12px;font-weight:700;color:var(--brand);margin:0">Ajouter une photo</p>
-              <p style="font-size:11px;color:var(--muted);margin:0;text-align:center">Optionnel - visible par toi et Tee uniquement</p>
-            </div>
-            <img id="journal-photo-preview" style="display:none;width:100%;height:100%;object-fit:cover;position:absolute;inset:0">
-          </div>
-          <input type="file" id="journal-photo-input" accept="image/*" style="display:none" onchange="previewJournalPhoto(this)">
-          <p style="font-size:11px;text-transform:uppercase;letter-spacing:.1em;font-weight:800;color:var(--muted);margin:0 0 16px">Comment tu te sens cette semaine ?</p>
-          <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:18px">
-            <div><label style="font-size:12px;font-weight:700;color:var(--ink);display:flex;justify-content:space-between;margin-bottom:6px"><span>Energie</span><span id="lbl-j-energie" style="color:var(--brand)">3/5</span></label><input type="range" min="1" max="5" value="3" id="slider-j-energie" oninput="document.getElementById(quantite lbl-j-energie quantite).textContent=this.value+ quantite /5 quantite" style="width:100%;accent-color:var(--brand)"></div>
-            <div><label style="font-size:12px;font-weight:700;color:var(--ink);display:flex;justify-content:space-between;margin-bottom:6px"><span>Peau</span><span id="lbl-j-peau" style="color:var(--brand)">3/5</span></label><input type="range" min="1" max="5" value="3" id="slider-j-peau" oninput="document.getElementById(quantite lbl-j-peau quantite).textContent=this.value+ quantite /5 quantite" style="width:100%;accent-color:var(--brand)"></div>
-            <div><label style="font-size:12px;font-weight:700;color:var(--ink);display:flex;justify-content:space-between;margin-bottom:6px"><span>Ventre</span><span id="lbl-j-ventre" style="color:var(--brand)">3/5</span></label><input type="range" min="1" max="5" value="3" id="slider-j-ventre" oninput="document.getElementById(quantite lbl-j-ventre quantite).textContent=this.value+ quantite /5 quantite" style="width:100%;accent-color:var(--brand)"></div>
-            <div><label style="font-size:12px;font-weight:700;color:var(--ink);display:flex;justify-content:space-between;margin-bottom:6px"><span>Sommeil</span><span id="lbl-j-sommeil" style="color:var(--brand)">3/5</span></label><input type="range" min="1" max="5" value="3" id="slider-j-sommeil" oninput="document.getElementById(quantite lbl-j-sommeil quantite).textContent=this.value+ quantite /5 quantite" style="width:100%;accent-color:var(--brand)"></div>
-            <div><label style="font-size:12px;font-weight:700;color:var(--ink);display:flex;justify-content:space-between;margin-bottom:6px"><span>Humeur</span><span id="lbl-j-humeur" style="color:var(--brand)">3/5</span></label><input type="range" min="1" max="5" value="3" id="slider-j-humeur" oninput="document.getElementById(quantite lbl-j-humeur quantite).textContent=this.value+ quantite /5 quantite" style="width:100%;accent-color:var(--brand)"></div>
-          </div>
-          <div style="margin-bottom:16px"><label class="field-label">Note libre</label><textarea id="journal-note" placeholder="Ce que j ai ressenti cette semaine..." style="width:100%;border:1.5px solid #e8e4de;border-radius:14px;padding:12px 14px;font-size:13px;font-family:inherit;min-height:80px;resize:none;outline:none;color:var(--ink)"></textarea></div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-            <button onclick="annulerJournal()" style="padding:12px;border-radius:999px;border:none;background:#f0ece6;color:var(--muted);font-family:inherit;font-size:12px;font-weight:700;cursor:pointer">Annuler</button>
-            <button onclick="sauvegarderJournal()" style="padding:12px;border-radius:999px;border:none;background:var(--brand);color:white;font-family:inherit;font-size:12px;font-weight:800;cursor:pointer">Sauvegarder</button>
-          </div>
-        </div>
-      </div>
-
-      <div id="journal-empty" style="text-align:center;padding:48px 20px"><div style="width:64px;height:64px;border-radius:50%;background:rgba(83,100,74,.08);display:flex;align-items:center;justify-content:center;margin:0 auto 16px"><i data-lucide="camera" style="width:28px;height:28px;color:var(--brand)"></i></div><p style="font-size:15px;font-weight:700;color:var(--ink);margin:0 0 8px">Commence ton journal</p><p style="font-size:12px;color:var(--muted);line-height:1.6">Une entree par semaine pour suivre ta transformation visuellement.</p></div>
-      <div id="journal-timeline" style="display:flex;flex-direction:column;gap:0"></div>
-    </section>
-
-    <!-- PLACARD INTELLIGENT + GENERATEUR RECETTES - NOUVEAU -->
-    <section id="tab-placard" class="tab-section" style="padding-top:24px">
-      <h2 class="serif" style="font-size:30px;font-weight:700;color:var(--ink);margin:0 0 4px">Mon Placard</h2>
-      <p style="font-size:12px;color:var(--muted);margin:0 0 20px">Coche ce que tu as, decouvre ce que tu peux creer.</p>
-      <div class="card" style="padding:20px;margin-bottom:18px">
-        <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 6px">Ce que j ai chez moi</p>
-        <p style="font-size:11px;color:var(--muted);margin:0 0 14px">Coche tes ingredients et produits disponibles.</p>
-        <div style="margin-bottom:14px">
-          <p style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin:0 0 10px">Produits Maison Yanna</p>
-          <div id="placard-my-ingredients" style="display:flex;flex-wrap:wrap;gap:8px"></div>
-        </div>
-        <div>
-          <p style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin:0 0 10px">Ingredients du quotidien</p>
-          <div id="placard-ingredients" style="display:flex;flex-wrap:wrap;gap:8px"></div>
-        </div>
-      </div>
-      <div class="card" style="padding:20px;margin-bottom:18px">
-        <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 12px">Mon envie du moment</p>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
-          <div class="mood-tag" onclick="toggleMood(this)" data-mood="fatigue">Rebooster</div>
-          <div class="mood-tag" onclick="toggleMood(this)" data-mood="digestion">Digerer</div>
-          <div class="mood-tag" onclick="toggleMood(this)" data-mood="gourmand">Gourmand</div>
-          <div class="mood-tag" onclick="toggleMood(this)" data-mood="detox">Detox</div>
-          <div class="mood-tag" onclick="toggleMood(this)" data-mood="rapide">Rapide</div>
-          <div class="mood-tag" onclick="toggleMood(this)" data-mood="sommeil">Dormir</div>
-          <div class="mood-tag" onclick="toggleMood(this)" data-mood="sport">Sport</div>
-          <div class="mood-tag" onclick="toggleMood(this)" data-mood="zen">Zen</div>
-        </div>
-        <button onclick="genererRecettes()" style="width:100%;padding:13px;border-radius:999px;border:none;background:var(--ink);color:white;font-family:inherit;font-size:12px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;cursor:pointer">Generer mes recettes</button>
-      </div>
-      <div id="recettes-container" style="display:none">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0">Tes recettes du moment</p><button onclick="genererRecettes()" style="border:none;background:none;color:var(--muted);font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;padding:0">Regenerer</button></div>
-        <div id="recettes-list" style="display:flex;flex-direction:column;gap:14px"></div>
-      </div>
-    </section>
-
-    <!-- TRANSFORMATION -->
     <section id="tab-transformation" class="tab-section" style="padding-top:24px">
       <h2 class="serif" style="font-size:30px;font-weight:700;color:var(--ink);margin:0 0 4px">Ma Transformation</h2>
-      <p style="font-size:12px;color:var(--muted);margin:0 0 24px">Ton evolution depuis le debut du programme.</p>
-      <div class="card" style="padding:22px;margin-bottom:16px"><div style="display:flex;align-items:center;gap:10px;margin-bottom:14px"><div style="width:36px;height:36px;border-radius:50%;background:rgba(140,117,97,.12);display:flex;align-items:center;justify-content:center;font-size:18px">pin</div><div><p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--muted);margin:0 0 2px">Point de depart</p><p style="font-size:14px;font-weight:700;color:var(--ink);margin:0" id="transfo-depart-titre"></p></div></div><div id="transfo-depart-content"></div></div>
-      <div class="card" style="padding:22px;margin-bottom:16px;background:var(--brand);border:none"><p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:rgba(255,255,255,.7);margin:0 0 12px">Mes objectifs</p><div id="transfo-objectifs"></div></div>
-      <div class="card" style="padding:22px;margin-bottom:16px"><p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 14px">Evolution semaine par semaine</p><div id="transfo-evolution" style="display:flex;flex-direction:column;gap:12px"></div></div>
-      <div class="card" style="padding:22px;margin-bottom:16px"><p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 14px">Mes victoires</p><div id="transfo-victoires" style="display:flex;flex-direction:column;gap:8px"></div></div>
-      <div class="card" style="padding:22px;margin-bottom:16px"><p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 14px">Ressentis marquants</p><div id="transfo-ressentis" style="display:flex;flex-direction:column;gap:8px"></div></div>
+      <p style="font-size:12px;color:var(--muted);margin:0 0 24px">Ton évolution depuis le début du programme.</p>
+
+      <div class="card" style="padding:22px;margin-bottom:16px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+          <div style="width:36px;height:36px;border-radius:50%;background:rgba(140,117,97,.12);display:flex;align-items:center;justify-content:center;font-size:18px">📍</div>
+          <div>
+            <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--muted);margin:0 0 2px">Point de départ</p>
+            <p style="font-size:14px;font-weight:700;color:var(--ink);margin:0" id="transfo-depart-titre"></p>
+          </div>
+        </div>
+        <div id="transfo-depart-content"></div>
+      </div>
+
+      <div class="card" style="padding:22px;margin-bottom:16px;background:var(--brand);border:none">
+        <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:rgba(255,255,255,.7);margin:0 0 12px">🎯 Mes objectifs</p>
+        <div id="transfo-objectifs"></div>
+      </div>
+
+      <div class="card" style="padding:22px;margin-bottom:16px">
+        <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 14px">📈 Évolution semaine par semaine</p>
+        <div id="transfo-evolution" style="display:flex;flex-direction:column;gap:12px"></div>
+      </div>
+
+      <div class="card" style="padding:22px;margin-bottom:16px">
+        <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 14px">🏆 Mes victoires</p>
+        <div id="transfo-victoires" style="display:flex;flex-direction:column;gap:8px"></div>
+      </div>
+
+      <div class="card" style="padding:22px;margin-bottom:16px">
+        <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 14px">💬 Ressentis marquants</p>
+        <div id="transfo-ressentis" style="display:flex;flex-direction:column;gap:8px"></div>
+      </div>
     </section>
 
-    <!-- PROGRAMME -->
     <section id="tab-programme" class="tab-section" style="padding-top:24px">
       <h2 class="serif" style="font-size:30px;font-weight:700;color:var(--ink);margin:0 0 4px">Mon Programme</h2>
       <p id="prog-subtitle" style="font-size:12px;color:var(--muted);margin:0 0 20px"></p>
-      <div id="regle-semaine" class="card" style="padding:20px;margin-bottom:20px;border-left:4px solid var(--brand)"><p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 8px">Ta regle cette semaine</p><p id="regle-texte" class="serif" style="font-size:16px;font-weight:700;color:var(--ink);margin:0 0 8px"></p><p id="regle-detail" style="font-size:12px;color:var(--muted);line-height:1.7;margin:0"></p></div>
-      <div class="card" style="padding:20px;margin-bottom:20px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0">Progression globale</p><span id="prog-semaine-label" style="font-size:11px;font-weight:700;color:var(--accent);background:rgba(140,117,97,.1);padding:4px 10px;border-radius:999px"></span></div><div style="background:#f0ece6;border-radius:999px;height:10px;overflow:hidden;margin-bottom:8px"><div id="prog-bar" style="height:100%;background:var(--brand);border-radius:999px;transition:width .6s;width:0%"></div></div><p id="prog-bar-label" style="font-size:12px;color:var(--muted);margin:0"></p></div>
+
+      <div id="regle-semaine" class="card" style="padding:20px;margin-bottom:20px;border-left:4px solid var(--brand)">
+        <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 8px">📋 Ta règle cette semaine</p>
+        <p id="regle-texte" class="serif" style="font-size:16px;font-weight:700;color:var(--ink);margin:0 0 8px"></p>
+        <p id="regle-detail" style="font-size:12px;color:var(--muted);line-height:1.7;margin:0"></p>
+      </div>
+
+      <div class="card" style="padding:20px;margin-bottom:20px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+          <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0">Progression globale</p>
+          <span id="prog-semaine-label" style="font-size:11px;font-weight:700;color:var(--accent);background:rgba(140,117,97,.1);padding:4px 10px;border-radius:999px"></span>
+        </div>
+        <div style="background:#f0ece6;border-radius:999px;height:10px;overflow:hidden;margin-bottom:8px">
+          <div id="prog-bar" style="height:100%;background:var(--brand);border-radius:999px;transition:width .6s;width:0%"></div>
+        </div>
+        <p id="prog-bar-label" style="font-size:12px;color:var(--muted);margin:0"></p>
+      </div>
+
       <div id="timeline-container" style="display:flex;flex-direction:column;gap:16px"></div>
     </section>
 
-    <!-- SUIVI -->
     <section id="tab-suivi" class="tab-section" style="padding-top:24px">
-      <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:20px"><div><h2 class="serif" style="font-size:30px;font-weight:700;color:var(--ink);margin:0 0 4px">Mon Suivi</h2><p id="suivi-date" style="font-size:12px;color:var(--muted)"></p></div><div id="score-badge" style="display:none;font-size:11px;color:white;font-weight:700;background:var(--brand);padding:5px 12px;border-radius:999px"></div></div>
-      <div class="card" style="padding:20px;margin-bottom:18px">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0">Mes 7 derniers jours</p><span id="streak-badge" style="display:none;font-size:11px;font-weight:700;color:white;background:var(--brand);padding:4px 10px;border-radius:999px"></span></div>
-        <div id="streak-days" style="display:flex;justify-content:space-between;gap:4px;margin-bottom:18px"></div>
-        <p style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:800;color:var(--muted);margin:0 0 8px">Energie</p><div style="display:flex;align-items:flex-end;gap:4px;height:50px;margin-bottom:14px" id="chart-energie"></div>
-        <p style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:800;color:var(--muted);margin:0 0 8px">Sommeil</p><div style="display:flex;align-items:flex-end;gap:4px;height:50px;margin-bottom:14px" id="chart-sommeil"></div>
-        <p style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:800;color:var(--muted);margin:0 0 8px">Digestion</p><div style="display:flex;align-items:flex-end;gap:4px;height:50px;margin-bottom:14px" id="chart-digestion"></div>
-        <p style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:800;color:var(--muted);margin:0 0 8px">Poids</p><div id="poids-list" style="display:flex;justify-content:space-between;gap:4px"></div>
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:20px">
+        <div>
+          <h2 class="serif" style="font-size:30px;font-weight:700;color:var(--ink);margin:0 0 4px">Mon Suivi</h2>
+          <p id="suivi-date" style="font-size:12px;color:var(--muted)"></p>
+        </div>
+        <div id="score-badge" style="font-size:11px;color:white;font-weight:700;background:var(--brand);padding:5px 12px;border-radius:999px;display:none"></div>
       </div>
-      <div class="card" style="padding:20px;margin-bottom:18px"><p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 8px">Score de la semaine</p><div style="background:#f0ece6;border-radius:999px;height:10px;overflow:hidden;margin-bottom:8px"><div id="score-bar" style="height:100%;background:var(--brand);border-radius:999px;transition:width .5s;width:0%"></div></div><p id="score-text" style="font-size:13px;color:var(--ink);font-weight:600;margin:0"></p></div>
+
+      <div class="card" style="padding:20px;margin-bottom:18px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+          <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0">📈 Mes 7 derniers jours</p>
+          <span id="streak-badge" style="font-size:11px;font-weight:700;color:white;background:var(--brand);padding:4px 10px;border-radius:999px;display:none"></span>
+        </div>
+        <div id="streak-days" style="display:flex;justify-content:space-between;gap:4px;margin-bottom:18px"></div>
+        <p style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:800;color:var(--muted);margin:0 0 8px">⚡ Énergie</p>
+        <div style="display:flex;align-items:flex-end;gap:4px;height:50px;margin-bottom:14px" id="chart-energie"></div>
+        <p style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:800;color:var(--muted);margin:0 0 8px">🌙 Sommeil</p>
+        <div style="display:flex;align-items:flex-end;gap:4px;height:50px;margin-bottom:14px" id="chart-sommeil"></div>
+        <p style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:800;color:var(--muted);margin:0 0 8px">🌿 Digestion</p>
+        <div style="display:flex;align-items:flex-end;gap:4px;height:50px;margin-bottom:14px" id="chart-digestion"></div>
+        <p style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:800;color:var(--muted);margin:0 0 8px">⚖️ Poids</p>
+        <div id="poids-list" style="display:flex;justify-content:space-between;gap:4px"></div>
+      </div>
+
+      <div class="card" style="padding:20px;margin-bottom:18px">
+        <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 8px">Score de la semaine</p>
+        <div id="score-bar-wrap" style="background:#f0ece6;border-radius:999px;height:10px;overflow:hidden;margin-bottom:8px">
+          <div id="score-bar" style="height:100%;background:var(--brand);border-radius:999px;transition:width .5s;width:0%"></div>
+        </div>
+        <p id="score-text" style="font-size:13px;color:var(--ink);font-weight:600;margin:0"></p>
+      </div>
+
       <div class="card" style="padding:20px;margin-bottom:18px">
         <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 14px">Checks du jour</p>
         <div style="display:flex;flex-direction:column;gap:12px">
-          <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer"><span style="font-size:13px;color:var(--ink)">Eau suffisante</span><input type="checkbox" id="check-eau" onchange="saveSuivi()" style="width:20px;height:20px;accent-color:var(--brand)"></label>
-          <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer"><span style="font-size:13px;color:var(--ink)">Repas respectes</span><input type="checkbox" id="check-repas" onchange="saveSuivi()" style="width:20px;height:20px;accent-color:var(--brand)"></label>
-          <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer"><span style="font-size:13px;color:var(--ink)">Infusion protocole</span><input type="checkbox" id="check-infusion" onchange="saveSuivi()" style="width:20px;height:20px;accent-color:var(--brand)"></label>
-          <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer"><span style="font-size:13px;color:var(--ink)">Sport marche</span><input type="checkbox" id="check-sport" onchange="saveSuivi()" style="width:20px;height:20px;accent-color:var(--brand)"></label>
+          <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer">
+            <span style="font-size:13px;color:var(--ink)">💧 Eau suffisante</span>
+            <input type="checkbox" id="check-eau" onchange="saveSuivi()" style="width:20px;height:20px;accent-color:var(--brand)">
+          </label>
+          <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer">
+            <span style="font-size:13px;color:var(--ink)">🥗 Repas respectés</span>
+            <input type="checkbox" id="check-repas" onchange="saveSuivi()" style="width:20px;height:20px;accent-color:var(--brand)">
+          </label>
+          <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer">
+            <span style="font-size:13px;color:var(--ink)">🍵 Infusion / protocole</span>
+            <input type="checkbox" id="check-infusion" onchange="saveSuivi()" style="width:20px;height:20px;accent-color:var(--brand)">
+          </label>
+          <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer">
+            <span style="font-size:13px;color:var(--ink)">🏃 Sport / marche</span>
+            <input type="checkbox" id="check-sport" onchange="saveSuivi()" style="width:20px;height:20px;accent-color:var(--brand)">
+          </label>
         </div>
       </div>
+
       <div class="card" style="padding:20px;margin-bottom:18px">
         <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 14px">Mesures du jour</p>
         <div style="display:flex;flex-direction:column;gap:14px">
-          <div><label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:6px">Poids kg</label><input id="suivi-poids" type="number" step="0.1" placeholder="74.5" oninput="saveSuivi()" style="width:100%;border:1.5px solid #e8e4de;border-radius:14px;padding:11px 14px;font-size:14px;outline:none;font-family:inherit"></div>
-          <div><label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:8px">Energie <span id="val-energie" style="color:var(--brand)">3/5</span></label><input type="range" id="suivi-energie" min="1" max="5" value="3" oninput="document.getElementById('val-energie').textContent=this.value+'/5';saveSuivi()" style="width:100%;accent-color:var(--brand)"></div>
-          <div><label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:8px">Sommeil <span id="val-sommeil" style="color:var(--brand)">3/5</span></label><input type="range" id="suivi-sommeil" min="1" max="5" value="3" oninput="document.getElementById('val-sommeil').textContent=this.value+'/5';saveSuivi()" style="width:100%;accent-color:var(--brand)"></div>
-          <div><label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:8px">Digestion <span id="val-digestion" style="color:var(--brand)">3/5</span></label><input type="range" id="suivi-digestion" min="1" max="5" value="3" oninput="document.getElementById('val-digestion').textContent=this.value+'/5';saveSuivi()" style="width:100%;accent-color:var(--brand)"></div>
+          <div>
+            <label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:6px">Poids (kg)</label>
+            <input id="suivi-poids" type="number" step="0.1" placeholder="ex: 74.5" oninput="saveSuivi()" style="width:100%;border:1.5px solid #e8e4de;border-radius:14px;padding:11px 14px;font-size:14px;outline:none;font-family:inherit">
+          </div>
+          <div>
+            <label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:8px">Energie <span id="val-energie" style="color:var(--brand)">3/5</span></label>
+            <input type="range" id="suivi-energie" min="1" max="5" value="3" oninput="document.getElementById('val-energie').textContent=this.value+'/5';saveSuivi()" style="width:100%;accent-color:var(--brand)">
+          </div>
+          <div>
+            <label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:8px">Sommeil <span id="val-sommeil" style="color:var(--brand)">3/5</span></label>
+            <input type="range" id="suivi-sommeil" min="1" max="5" value="3" oninput="document.getElementById('val-sommeil').textContent=this.value+'/5';saveSuivi()" style="width:100%;accent-color:var(--brand)">
+          </div>
+          <div>
+            <label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:8px">Digestion <span id="val-digestion" style="color:var(--brand)">3/5</span></label>
+            <input type="range" id="suivi-digestion" min="1" max="5" value="3" oninput="document.getElementById('val-digestion').textContent=this.value+'/5';saveSuivi()" style="width:100%;accent-color:var(--brand)">
+          </div>
         </div>
       </div>
+
       <div class="card" style="padding:20px;margin-bottom:18px">
         <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 10px">Comment tu te sens ?</p>
-        <input id="phyto-input" type="text" placeholder="Fatigue, mal au dos..." oninput="analyserSymptome(this.value)" style="width:100%;border:1.5px solid #e8e4de;border-radius:14px;padding:12px 14px;font-size:13px;font-family:inherit;outline:none;color:var(--ink)">
+        <input id="phyto-input" type="text" placeholder="Fatigué, mal au dos... / Tired, back pain..." oninput="analyserSymptome(this.value)" style="width:100%;border:1.5px solid #e8e4de;border-radius:14px;padding:12px 14px;font-size:13px;font-family:inherit;outline:none;color:var(--ink)">
         <div id="phyto-result" style="display:none;margin-top:14px">
           <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 10px">Suggestions Maison Yanna</p>
           <div id="phyto-suggestions" style="display:flex;flex-direction:column;gap:10px"></div>
-          <div style="margin-top:14px"><p style="font-size:11px;color:var(--muted);margin:0 0 8px">Tu as deja ces produits ?</p><div id="phyto-checklist" style="display:flex;flex-direction:column;gap:8px"></div></div>
-          <button onclick="envoyerPhyto()" style="width:100%;padding:13px;border-radius:999px;border:none;background:var(--ink);color:white;font-family:inherit;font-size:12px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;cursor:pointer;margin-top:14px">Envoyer a Tee</button>
+          <div style="margin-top:14px">
+            <p style="font-size:11px;color:var(--muted);margin:0 0 8px">Tu as déjà ces produits ?</p>
+            <div id="phyto-checklist" style="display:flex;flex-direction:column;gap:8px"></div>
+          </div>
+          <button onclick="envoyerPhyto()" style="width:100%;padding:13px;border-radius:999px;border:none;background:var(--ink);color:white;font-family:inherit;font-size:12px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;cursor:pointer;margin-top:14px">Envoyer à Tee</button>
         </div>
       </div>
-      <div class="card" style="padding:20px;margin-bottom:18px"><p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 10px">Note du jour</p><textarea id="suivi-note" placeholder="Comment tu te sens aujourd hui ?" oninput="saveSuivi()" style="width:100%;border:1.5px solid #e8e4de;border-radius:14px;padding:12px 14px;font-size:13px;font-family:inherit;min-height:90px;resize:none;outline:none;color:var(--ink)"></textarea></div>
+
+      <div class="card" style="padding:20px;margin-bottom:18px">
+        <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 10px">Note du jour</p>
+        <textarea id="suivi-note" placeholder="Comment tu te sens aujourd'hui ?" oninput="saveSuivi()" style="width:100%;border:1.5px solid #e8e4de;border-radius:14px;padding:12px 14px;font-size:13px;font-family:inherit;min-height:90px;resize:none;outline:none;color:var(--ink)"></textarea>
+      </div>
     </section>
 
-    <!-- MESSAGES -->
     <section id="tab-messages" class="tab-section" style="padding-top:24px">
-      <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:20px"><div><h2 class="serif" style="font-size:30px;font-weight:700;color:var(--ink);margin:0 0 4px">Messages</h2><p style="font-size:12px;color:var(--muted)">Ton espace d echange avec Tee.</p></div><div id="messages-badge" style="display:none;width:20px;height:20px;border-radius:50%;background:#dc2626;color:white;font-size:10px;font-weight:800;align-items:center;justify-content:center"></div></div>
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:20px">
+        <div>
+          <h2 class="serif" style="font-size:30px;font-weight:700;color:var(--ink);margin:0 0 4px">Messages</h2>
+          <p style="font-size:12px;color:var(--muted)">Ton espace d'échange avec Tee.</p>
+        </div>
+        <div id="messages-badge" style="display:none;width:20px;height:20px;border-radius:50%;background:#dc2626;color:white;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center"></div>
+      </div>
       <div id="messages-fil" style="display:flex;flex-direction:column;gap:12px;margin-bottom:20px;min-height:200px"></div>
-      <div class="card" style="padding:16px;margin-top:20px"><textarea id="message-input" placeholder="Ecris ton message a Tee..." style="width:100%;border:1.5px solid #e8e4de;border-radius:14px;padding:12px 14px;font-size:13px;font-family:inherit;min-height:80px;resize:none;outline:none;color:var(--ink);margin-bottom:10px"></textarea><button onclick="envoyerMessage()" style="width:100%;padding:13px;border-radius:999px;border:none;background:var(--ink);color:white;font-family:inherit;font-size:12px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;cursor:pointer">Envoyer a Tee</button></div>
+      <div class="card" style="padding:16px;margin-top:20px">
+        <textarea id="message-input" placeholder="Écris ton message à Tee…" style="width:100%;border:1.5px solid #e8e4de;border-radius:14px;padding:12px 14px;font-size:13px;font-family:inherit;min-height:80px;resize:none;outline:none;color:var(--ink);margin-bottom:10px"></textarea>
+        <button onclick="envoyerMessage()" style="width:100%;padding:13px;border-radius:999px;border:none;background:var(--ink);color:white;font-family:inherit;font-size:12px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;cursor:pointer">Envoyer à Tee</button>
+      </div>
     </section>
 
-    <!-- METHODE -->
     <section id="tab-methode" class="tab-section" style="padding-top:24px">
-      <h2 class="serif" style="font-size:30px;font-weight:700;color:var(--ink);margin:0 0 4px">Methode Tee</h2>
-      <p style="font-size:12px;color:var(--muted);margin:0 0 24px">Tes conseils personnalises pour reussir.</p>
+      <h2 class="serif" style="font-size:30px;font-weight:700;color:var(--ink);margin:0 0 4px">Méthode Tee</h2>
+      <p style="font-size:12px;color:var(--muted);margin:0 0 24px">Tes conseils personnalisés pour réussir.</p>
       <div id="method-rules" style="display:flex;flex-direction:column;gap:14px"></div>
     </section>
+
   </div>
 
   <nav class="bottom-nav">
-    <button class="nav-btn active" onclick="switchTab('accueil',this)"><i data-lucide="layout-dashboard" style="width:20px;height:20px"></i><span>Accueil</span></button>
-    <button class="nav-btn" onclick="switchTab('repas',this)"><i data-lucide="utensils" style="width:20px;height:20px"></i><span>Repas</span></button>
-    <button class="nav-btn" onclick="switchTab('soins',this)"><i data-lucide="leaf" style="width:20px;height:20px"></i><span>Soins</span></button>
-    <button class="nav-btn" onclick="switchTab('signature',this)"><i data-lucide="salad" style="width:20px;height:20px"></i><span>Signature</span></button>
-    <button class="nav-btn" onclick="switchTab('journal',this)"><i data-lucide="camera" style="width:20px;height:20px"></i><span>Journal</span></button>
-    <button class="nav-btn" onclick="switchTab('placard',this)"><i data-lucide="package-open" style="width:20px;height:20px"></i><span>Placard</span></button>
-    <button class="nav-btn" onclick="switchTab('transformation',this)"><i data-lucide="sparkles" style="width:20px;height:20px"></i><span>Bilan</span></button>
-    <button class="nav-btn" onclick="switchTab('programme',this)"><i data-lucide="trending-up" style="width:20px;height:20px"></i><span>Programme</span></button>
-    <button class="nav-btn" onclick="switchTab('suivi',this)"><i data-lucide="bar-chart-2" style="width:20px;height:20px"></i><span>Suivi</span></button>
-    <button class="nav-btn" onclick="switchTab('messages',this)" id="nav-messages"><i data-lucide="message-circle" style="width:20px;height:20px"></i><span>Messages</span></button>
-    <button class="nav-btn" onclick="switchTab('methode',this)"><i data-lucide="book-open" style="width:20px;height:20px"></i><span>Methode</span></button>
+    <button class="nav-btn active" onclick="switchTab('accueil',this)" id="nav-accueil">
+      <i data-lucide="layout-dashboard" style="width:20px;height:20px"></i>
+      <span>Accueil</span>
+    </button>
+    <button class="nav-btn" onclick="switchTab('repas',this)" id="nav-repas">
+      <i data-lucide="utensils" style="width:20px;height:20px"></i>
+      <span>Repas</span>
+    </button>
+    <button class="nav-btn" onclick="switchTab('soins',this)" id="nav-soins">
+      <i data-lucide="leaf" style="width:20px;height:20px"></i>
+      <span>Soins</span>
+    </button>
+    <button class="nav-btn" onclick="switchTab('signature',this)" id="nav-signature">
+      <i data-lucide="salad" style="width:20px;height:20px"></i>
+      <span>Signature</span>
+    </button>
+    <button class="nav-btn" onclick="switchTab('transformation',this)" id="nav-transformation">
+      <i data-lucide="sparkles" style="width:20px;height:20px"></i>
+      <span>Bilan</span>
+    </button>
+    <button class="nav-btn" onclick="switchTab('programme',this)" id="nav-programme">
+      <i data-lucide="trending-up" style="width:20px;height:20px"></i>
+      <span>Programme</span>
+    </button>
+    <button class="nav-btn" onclick="switchTab('suivi',this)" id="nav-suivi">
+      <i data-lucide="bar-chart-2" style="width:20px;height:20px"></i>
+      <span>Suivi</span>
+    </button>
+    <button class="nav-btn" onclick="switchTab('messages',this)" id="nav-messages">
+      <i data-lucide="message-circle" style="width:20px;height:20px"></i>
+      <span>Messages</span>
+    </button>
+    <button class="nav-btn" onclick="switchTab('methode',this)" id="nav-methode">
+      <i data-lucide="book-open" style="width:20px;height:20px"></i>
+      <span>Méthode</span>
+    </button>
   </nav>
-  <button class="fab" id="fab-admin" onclick="openAdmin()" type="button"><i data-lucide="sliders-horizontal" style="width:20px;height:20px"></i></button>
+
+  <button class="fab" id="fab-admin" onclick="openAdmin()" type="button" aria-label="Admin">
+    <i data-lucide="sliders-horizontal" style="width:20px;height:20px"></i>
+  </button>
 
   <div id="admin-overlay" class="admin-overlay" onclick="if(event.target===this)closeAdmin()">
     <div class="admin-panel">
