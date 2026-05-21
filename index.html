@@ -201,6 +201,57 @@
       color: white; font-size: 9px; font-weight: 700; text-transform: uppercase;
       letter-spacing: .08em; padding: 8px 10px 6px; text-align: center;
     }
+
+/* ── Journal évolution premium ── */
+.evolution-card {
+  background: linear-gradient(145deg, #fff 0%, #f8f4ee 100%);
+  border: 1px solid rgba(140,117,97,.13);
+  border-radius: 24px;
+  padding: 20px;
+  box-shadow: 0 8px 28px rgba(0,0,0,.04);
+}
+
+.evolution-metric {
+  background: white;
+  border: 1px solid rgba(140,117,97,.10);
+  border-radius: 16px;
+  padding: 12px;
+}
+
+.premium-chip {
+  border: 1.5px solid rgba(83,100,74,.22);
+  background: white;
+  color: var(--brand);
+  border-radius: 999px;
+  padding: 8px 13px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.premium-chip.active {
+  background: var(--brand);
+  color: white;
+  border-color: var(--brand);
+}
+
+/* ── Placard intelligent ── */
+.pantry-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pantry-result {
+  background: #f8f4ee;
+  border: 1px solid rgba(140,117,97,.13);
+  border-radius: 18px;
+  padding: 14px;
+  margin-top: 10px;
+}
+
     #loading-screen {
       position: absolute; inset: 0; background: var(--bg); display: flex;
       flex-direction: column; align-items: center; justify-content: center; z-index: 100; gap: 16px;
@@ -381,23 +432,58 @@
       <h2 class="serif" style="font-size:30px;font-weight:700;color:var(--ink);margin:0 0 4px">Ma Transformation</h2>
       <p style="font-size:12px;color:var(--muted);margin:0 0 24px">Ton évolution depuis le début du programme.</p>
 
-      <!-- ── NOUVEAU : Photos de progression ── -->
-      <div class="card" style="padding:22px;margin-bottom:16px">
-        <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 14px">📸 Photos de progression</p>
-        <div id="photos-grid" class="photo-grid"></div>
-        <div class="photo-upload-zone" onclick="document.getElementById('photo-input').click()" style="margin-top:12px">
-          <div style="font-size:28px;margin-bottom:8px">📷</div>
-          <p style="font-size:12px;font-weight:700;color:var(--brand);margin:0 0 4px">Ajouter une photo</p>
-          <p style="font-size:11px;color:var(--muted);margin:0">Avant / Après — visible uniquement par toi et Tee</p>
-        </div>
-        <input type="file" id="photo-input" accept="image/*" style="display:none" onchange="uploadPhoto(this)">
-        <div id="photo-upload-progress" style="display:none;margin-top:10px">
-          <div style="background:#f0ece6;border-radius:999px;height:6px;overflow:hidden">
-            <div id="photo-progress-bar" style="height:100%;background:var(--brand);border-radius:999px;width:0%;transition:width .3s"></div>
-          </div>
-          <p style="font-size:11px;color:var(--muted);margin:6px 0 0;text-align:center">Envoi en cours…</p>
-        </div>
-      </div>
+      <div class="evolution-card" style="margin-bottom:16px">
+  <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 8px">
+    Journal photo évolution
+  </p>
+  <h3 class="serif" style="font-size:22px;color:var(--ink);margin:0 0 6px">
+    Ton évolution semaine après semaine
+  </h3>
+  <p style="font-size:12px;color:var(--muted);line-height:1.6;margin:0 0 16px">
+    Une photo, quelques ressentis, et une trace élégante de ton chemin.
+  </p>
+
+  <div id="photos-grid" class="photo-grid"></div>
+
+  <div class="photo-upload-zone" onclick="document.getElementById('photo-input').click()" style="margin-top:14px">
+    <div style="font-size:28px;margin-bottom:8px">📷</div>
+    <p style="font-size:12px;font-weight:700;color:var(--brand);margin:0 0 4px">Ajouter une photo de la semaine</p>
+    <p style="font-size:11px;color:var(--muted);margin:0">Face, profil ou ressenti visuel — visible uniquement par toi et Tee</p>
+  </div>
+
+  <input type="file" id="photo-input" accept="image/*" style="display:none" onchange="uploadPhoto(this)">
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px">
+    <div class="evolution-metric">
+      <label class="field-label">Énergie</label>
+      <input id="evo-energie" type="range" min="1" max="5" value="3" style="width:100%;accent-color:var(--brand)">
+    </div>
+    <div class="evolution-metric">
+      <label class="field-label">Peau</label>
+      <input id="evo-peau" type="range" min="1" max="5" value="3" style="width:100%;accent-color:var(--brand)">
+    </div>
+    <div class="evolution-metric">
+      <label class="field-label">Ventre</label>
+      <input id="evo-ventre" type="range" min="1" max="5" value="3" style="width:100%;accent-color:var(--brand)">
+    </div>
+    <div class="evolution-metric">
+      <label class="field-label">Sommeil</label>
+      <input id="evo-sommeil-photo" type="range" min="1" max="5" value="3" style="width:100%;accent-color:var(--brand)">
+    </div>
+  </div>
+
+  <div style="margin-top:12px">
+    <label class="field-label">Humeur / ressenti</label>
+    <textarea id="evo-humeur" placeholder="Ex : ventre plus léger, meilleure énergie, peau plus nette…" style="width:100%;border:1.5px solid #e8e4de;border-radius:14px;padding:12px 14px;font-size:13px;font-family:inherit;min-height:76px;resize:none;outline:none;color:var(--ink)"></textarea>
+  </div>
+
+  <div id="photo-upload-progress" style="display:none;margin-top:10px">
+    <div style="background:#f0ece6;border-radius:999px;height:6px;overflow:hidden">
+      <div id="photo-progress-bar" style="height:100%;background:var(--brand);border-radius:999px;width:0%;transition:width .3s"></div>
+    </div>
+    <p style="font-size:11px;color:var(--muted);margin:6px 0 0;text-align:center">Envoi en cours…</p>
+  </div>
+</div>
 
       <div class="card" style="padding:22px;margin-bottom:16px">
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
@@ -533,6 +619,44 @@
       </div>
     </section>
 
+<!-- PLACARD INTELLIGENT -->
+<section id="tab-placard" class="tab-section" style="padding-top:24px">
+  <h2 class="serif" style="font-size:30px;font-weight:700;color:var(--ink);margin:0 0 4px">
+    Placard Maison Yanna
+  </h2>
+  <p style="font-size:12px;color:var(--muted);margin:0 0 22px">
+    Sélectionne ce que tu as chez toi. L’app te propose un rituel, une boisson ou une recette adaptée.
+  </p>
+
+  <div class="card" style="padding:22px;margin-bottom:18px">
+    <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 14px">
+      Ce que j’ai dans mon placard
+    </p>
+    <div id="pantry-grid" class="pantry-grid"></div>
+  </div>
+
+  <div class="card" style="padding:22px;margin-bottom:18px">
+    <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 12px">
+      Générateur rituel & recette
+    </p>
+
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px">
+      <button class="premium-chip" onclick="toggleRecipeMood(this,'fatigue')">Fatigue</button>
+      <button class="premium-chip" onclick="toggleRecipeMood(this,'gourmand')">Gourmand</button>
+      <button class="premium-chip" onclick="toggleRecipeMood(this,'rapide')">Rapide</button>
+      <button class="premium-chip" onclick="toggleRecipeMood(this,'digestion')">Digestion</button>
+      <button class="premium-chip" onclick="toggleRecipeMood(this,'peau')">Peau</button>
+      <button class="premium-chip" onclick="toggleRecipeMood(this,'sommeil')">Sommeil</button>
+    </div>
+
+    <button onclick="genererRecettePlacard()" class="btn btn-ink" style="width:100%">
+      Générer mon rituel
+    </button>
+
+    <div id="pantry-recipe-result" class="pantry-result" style="display:none"></div>
+  </div>
+</section>
+
     <!-- MÉTHODE -->
     <section id="tab-methode" class="tab-section" style="padding-top:24px">
       <h2 class="serif" style="font-size:30px;font-weight:700;color:var(--ink);margin:0 0 4px">Méthode Tee</h2>
@@ -552,6 +676,12 @@
     <button class="nav-btn" onclick="switchTab('programme',this)"><i data-lucide="trending-up" style="width:20px;height:20px"></i><span>Programme</span></button>
     <button class="nav-btn" onclick="switchTab('suivi',this)"><i data-lucide="bar-chart-2" style="width:20px;height:20px"></i><span>Suivi</span></button>
     <button class="nav-btn" onclick="switchTab('messages',this)" id="nav-messages"><i data-lucide="message-circle" style="width:20px;height:20px"></i><span>Messages</span></button>
+
+<button class="nav-btn" onclick="switchTab('placard',this)">
+  <i data-lucide="sparkles" style="width:20px;height:20px"></i>
+  <span>Placard</span>
+</button>
+
     <button class="nav-btn" onclick="switchTab('methode',this)"><i data-lucide="book-open" style="width:20px;height:20px"></i><span>Méthode</span></button>
   </nav>
 
@@ -1010,6 +1140,8 @@ function renderClientView(prenom,prog) {
   renderPhotos(prog.photos||[]);
   safeRender(()=>renderMessages(prog),"renderMessages");
 
+safeRender(()=>renderPantry(),"renderPantry");
+
   const slugR=new URLSearchParams(window.location.search).get("client");
   requestAnimationFrame(()=>{
     safeRender(()=>restoreTasks(slugR),"restoreTasks");
@@ -1029,17 +1161,160 @@ function copierPromo() {
 }
 
 /* ════════════════════════════════════════
+   PLACARD INTELLIGENT + GÉNÉRATEUR
+════════════════════════════════════════ */
+const PANTRY_ITEMS = [
+  "matcha", "hibiscus", "cannelle", "granola", "protéines",
+  "thym", "gingembre", "citron", "miel", "lait végétal",
+  "banane", "fruits rouges", "cacao", "avoine", "menthe",
+  "romarin", "ashwagandha", "sirop de dattes"
+];
+
+let _pantrySelected = [];
+let _recipeMoods = [];
+
+function renderPantry() {
+  const grid = document.getElementById("pantry-grid");
+  if (!grid) return;
+
+  const slug = new URLSearchParams(window.location.search).get("client") || "admin";
+  try {
+    _pantrySelected = JSON.parse(localStorage.getItem("mt_pantry_" + slug) || "[]");
+  } catch(e) {
+    _pantrySelected = [];
+  }
+
+  grid.innerHTML = PANTRY_ITEMS.map(item => `
+    <button class="premium-chip ${_pantrySelected.includes(item) ? "active" : ""}" onclick="togglePantryItem(this,'${item}')">
+      ${item}
+    </button>
+  `).join("");
+}
+
+function togglePantryItem(btn, item) {
+  const slug = new URLSearchParams(window.location.search).get("client") || "admin";
+  const exists = _pantrySelected.includes(item);
+
+  if (exists) {
+    _pantrySelected = _pantrySelected.filter(x => x !== item);
+  } else {
+    _pantrySelected.push(item);
+  }
+
+  localStorage.setItem("mt_pantry_" + slug, JSON.stringify(_pantrySelected));
+  btn.classList.toggle("active");
+}
+
+function toggleRecipeMood(btn, mood) {
+  const exists = _recipeMoods.includes(mood);
+
+  if (exists) {
+    _recipeMoods = _recipeMoods.filter(x => x !== mood);
+  } else {
+    _recipeMoods.push(mood);
+  }
+
+  btn.classList.toggle("active");
+}
+
+function genererRecettePlacard() {
+  const result = document.getElementById("pantry-recipe-result");
+  if (!result) return;
+
+  if (!_pantrySelected.length) {
+    result.style.display = "block";
+    result.innerHTML = `
+      <p style="font-size:13px;color:var(--muted);line-height:1.7;margin:0">
+        Sélectionne d’abord ce que tu as dans ton placard pour générer un rituel personnalisé.
+      </p>
+    `;
+    return;
+  }
+
+  const has = item => _pantrySelected.includes(item);
+  const mood = m => _recipeMoods.includes(m);
+
+  let titre = "Rituel Maison Yanna";
+  let type = "boisson botanique";
+  let recette = "";
+  let conseil = "";
+
+  if (mood("fatigue") && (has("matcha") || has("protéines") || has("banane"))) {
+    titre = "Smoothie Énergie Verte";
+    type = "smoothie";
+    recette = `Mix : ${has("banane") ? "banane" : "fruit doux"} + ${has("protéines") ? "protéines Maison Yanna" : "base végétale"} + ${has("matcha") ? "matcha" : "cannelle"} + lait végétal.`;
+    conseil = "Idéal le matin ou avant une journée chargée.";
+  } else if (mood("digestion") && (has("gingembre") || has("thym") || has("menthe"))) {
+    titre = "Infusion Digestive du Soir";
+    type = "infusion";
+    recette = `Infuse : ${has("thym") ? "thym" : "menthe"} + ${has("gingembre") ? "gingembre" : "citron"} + ${has("miel") ? "une touche de miel" : "une touche chaude et simple"}.`;
+    conseil = "À prendre après le dîner, dans une logique de terrain plus léger.";
+  } else if (mood("gourmand") && (has("cacao") || has("cannelle") || has("sirop de dattes"))) {
+    titre = "Latte Velours Gourmand";
+    type = "latte";
+    recette = `Chauffe du lait végétal avec ${has("cacao") ? "cacao" : "cannelle"} + ${has("sirop de dattes") ? "sirop de dattes" : "miel"} + une pointe de cannelle.`;
+    conseil = "Une alternative douce aux envies sucrées du soir.";
+  } else if (has("granola") && (has("fruits rouges") || has("miel") || has("lait végétal"))) {
+    titre = "Bowl Botanique Express";
+    type = "bowl";
+    recette = `Base : granola + ${has("fruits rouges") ? "fruits rouges" : "banane"} + ${has("miel") ? "miel" : "sirop de dattes"} + lait végétal ou yaourt.`;
+    conseil = "Parfait en petit-déjeuner ou collation rassasiante.";
+  } else {
+    titre = "Rituel Simple du Placard";
+    type = "rituel";
+    recette = `Avec ton placard actuel : ${_pantrySelected.slice(0, 5).join(", ")}. Crée une boisson chaude simple ou un bowl rapide autour de ces bases.`;
+    conseil = "Le plus important : rester régulière, pas compliquer le rituel.";
+  }
+
+  result.style.display = "block";
+  result.innerHTML = `
+    <p style="font-size:9px;text-transform:uppercase;letter-spacing:.16em;font-weight:800;color:var(--brand);margin:0 0 6px">
+      ${type}
+    </p>
+    <h3 class="serif" style="font-size:20px;color:var(--ink);margin:0 0 8px;font-style:italic">
+      ${titre}
+    </h3>
+    <p style="font-size:13px;color:var(--ink);line-height:1.7;margin:0 0 10px">
+      ${recette}
+    </p>
+    <p style="font-size:12px;color:var(--muted);line-height:1.6;margin:0">
+      ${conseil}
+    </p>
+  `;
+}
+/* ════════════════════════════════════════
    PHOTOS DE PROGRESSION
 ════════════════════════════════════════ */
+
 function renderPhotos(photos) {
-  const grid=document.getElementById("photos-grid");
+  const grid = document.getElementById("photos-grid");
   if (!grid) return;
-  if (!photos||!photos.length) { grid.innerHTML='<p style="font-size:12px;color:var(--muted);grid-column:1/-1;text-align:center;padding:12px 0">Aucune photo pour le moment.</p>'; return; }
-  grid.innerHTML=photos.map((p,i)=>`
+
+  if (!photos || !photos.length) {
+    grid.innerHTML = '<p style="font-size:12px;color:var(--muted);grid-column:1/-1;text-align:center;padding:12px 0">Aucune photo pour le moment.</p>';
+    return;
+  }
+
+  grid.innerHTML = photos.map((p, i) => `
     <div class="photo-thumb">
-      <img src="${p.url}" alt="Photo ${i+1}" loading="lazy">
-      <div class="photo-thumb-label">${p.label||("Semaine "+(i+1))}</div>
-    </div>`).join("");
+      <img src="${p.url}" alt="Photo évolution ${i + 1}" loading="lazy">
+      <div class="photo-thumb-label">
+        ${p.label || "Semaine " + (i + 1)}
+      </div>
+    </div>
+    <div style="grid-column:1/-1;background:#fff;border:1px solid rgba(140,117,97,.10);border-radius:16px;padding:12px 14px;margin-bottom:6px">
+      <p style="font-size:10px;text-transform:uppercase;letter-spacing:.12em;font-weight:800;color:var(--brand);margin:0 0 8px">
+        ${p.date || ""}
+      </p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px">
+        <span style="font-size:11px;color:var(--muted)">⚡ Énergie : ${p.energie || "—"}/5</span>
+        <span style="font-size:11px;color:var(--muted)">✨ Peau : ${p.peau || "—"}/5</span>
+        <span style="font-size:11px;color:var(--muted)">🌿 Ventre : ${p.ventre || "—"}/5</span>
+        <span style="font-size:11px;color:var(--muted)">🌙 Sommeil : ${p.sommeil || "—"}/5</span>
+      </div>
+      ${p.humeur ? `<p class="serif" style="font-size:13px;color:var(--ink);font-style:italic;line-height:1.6;margin:0">"${p.humeur}"</p>` : ""}
+    </div>
+  `).join("");
 }
 
 async function uploadPhoto(input) {
@@ -1071,12 +1346,26 @@ async function uploadPhoto(input) {
     const prog=Object.assign({},clientData.programme||{});
     if(!prog.photos) prog.photos=[];
     const label=prompt("Label pour cette photo (ex: Semaine 1, Avant…)","Semaine "+(prog.photos.length+1));
-    prog.photos.push({url:photoUrl,path,label:label||("Photo "+(prog.photos.length+1)),date:new Date().toLocaleDateString("fr-FR")});
+    prog.photos.push({
+  url: photoUrl,
+  path,
+  label: label || ("Semaine " + (prog.photos.length + 1)),
+  date: new Date().toLocaleDateString("fr-FR"),
+  energie: document.getElementById("evo-energie")?.value || "",
+  peau: document.getElementById("evo-peau")?.value || "",
+  ventre: document.getElementById("evo-ventre")?.value || "",
+  sommeil: document.getElementById("evo-sommeil-photo")?.value || "",
+  humeur: document.getElementById("evo-humeur")?.value.trim() || ""
+});
     const {error:uErr}=await sb.from(SB_TABLE).update({programme:prog}).eq("slug",slug);
     if(uErr) throw new Error(uErr.message);
     if(bar) bar.style.width="100%";
     if(_currentProg) _currentProg.photos=prog.photos;
     renderPhotos(prog.photos);
+
+const humeur = document.getElementById("evo-humeur");
+if (humeur) humeur.value = "";
+
     setTimeout(()=>{ if(progress) progress.style.display="none"; if(bar) bar.style.width="0%"; },800);
   } catch(e) {
     if(progress) progress.style.display="none";
@@ -2043,7 +2332,13 @@ async function genererRapport(){
   // Alerte renouvellement dans le rapport
   const renewal=getRenewalStatus(prog);
   if(renewal&&renewal.joursRestants<=14) rapport+="\n⏰ RENOUVELLEMENT : Programme se termine le "+renewal.dateFin+" (J-"+renewal.joursRestants+")\n";
-  rapport+="\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nGénéré par Méthode Tee — "+new Date().toLocaleDateString("fr-FR")+"\n";
+  try {
+  const pantry = JSON.parse(localStorage.getItem("mt_pantry_" + currentSlug) || "[]");
+  if (pantry.length) {
+    rapport += "\n━━━ PLACARD MAISON YANNA ━━━\n";
+    rapport += pantry.join(", ") + "\n";
+  }
+} catch(e) {} rapport+="\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nGénéré par Méthode Tee — "+new Date().toLocaleDateString("fr-FR")+"\n";
   const block=document.getElementById("rapport-block");const contenu=document.getElementById("rapport-contenu");
   if(block) block.style.display="block";if(contenu) contenu.textContent=rapport;
   setTimeout(()=>{if(block)block.scrollIntoView({behavior:"smooth",block:"start"});},100);
