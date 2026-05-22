@@ -1069,19 +1069,57 @@ async function testSupabase() {
 /* ════════════════════════════════════════
    CHARGEMENT CLIENT DEPUIS URL
 ════════════════════════════════════════ */
+
 async function loadClientFromURL() {
-  const slug = new URLSearchParams(window.location.search).get("client");
-  if (!slug){hideLoading();return;}
-  isClientMode=true;
+  let slug = new URLSearchParams(window.location.search).get("client");
+
+  if (!slug) {
+    hideLoading();
+    return;
+  }
+
+  slug = slug
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9-]/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+  isClientMode = true;
   document.getElementById("fab-admin").classList.add("hidden");
-  const settings=loadSettings();
-  if (!settings.url||!settings.key){showError("App non configurée. Contacte ton coach.");return;}
+
+  const settings = loadSettings();
+
+  if (!settings.url || !settings.key) {
+    showError("App non configurée. Contacte Tee.");
+    return;
+  }
+
   try {
-    sb=getFactory()(settings.url,settings.key);
-    const timeout=new Promise((_,r)=>setTimeout(()=>r(new Error("Timeout")),8000));
-    const req=sb.from(SB_TABLE).select("slug,prenom,programme").eq("slug",slug).single();
-    const {data,error}=await Promise.race([req,timeout]);
-    if (error||!data){showError("Fiche introuvable : "+slug);return;}
+    sb = getFactory()(settings.url, settings.key);
+
+    const { data, error } = await sb
+      .from(SB_TABLE)
+      .select("slug, prenom, programme")
+      .eq("slug", slug)
+      .maybeSingle();
+
+    if (error) {
+      showError("Erreur de connexion à la fiche : " + error.message);
+      return;
+    }
+
+    if (!data) {
+      showError("Cette fiche n’est pas encore activée. Contacte Tee.");
+      return;
+    }
+
+    renderClientView(data.prenom, data.programme || {});
+    hideLoading();
+
+  } catch (e) {
+    showError("Erreur : " + e.message);
+  }
+}
     renderClientView(data.prenom,data.programme||{});
     hideLoading();
   } catch(e){showError("Erreur : "+e.message);}
