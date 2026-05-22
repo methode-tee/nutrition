@@ -998,7 +998,14 @@
 const DEFAULT_SB_URL = "https://tskwtxstajenhyzvrece.supabase.co";
 const DEFAULT_SB_KEY = "sb_publishable_YldvpG7h1_3TUha6Q2-ZBw_8PLuPCo0";
 const SB_TABLE       = "mt_clients";
-const SETTINGS_KEY   = "mt_sb_settings";
+
+const SETTINGS_KEY = "mt_sb_settings";
+
+if (new URLSearchParams(window.location.search).get("reset") === "1") {
+  localStorage.removeItem("mt_sb_settings");
+  alert("Réglages Supabase réinitialisés");
+}
+
 // Hash SHA-256 de "OUTITA" — mot de passe jamais en clair
 const ADMIN_HASH = "20ca1fc5ac568dedf781a3bc75dab254ee51c84f0675895d88ef0903401d0ec5";
 
