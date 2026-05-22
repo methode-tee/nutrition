@@ -1120,10 +1120,6 @@ async function loadClientFromURL() {
     showError("Erreur : " + e.message);
   }
 }
-    renderClientView(data.prenom,data.programme||{});
-    hideLoading();
-  } catch(e){showError("Erreur : "+e.message);}
-}
 
 /* ════════════════════════════════════════
    RENDU CLIENT
