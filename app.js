@@ -10,11 +10,12 @@ const SETTINGS_KEY   = "mt_sb_settings";
 /* ════════════════════════════════════════
    AUTH ADMIN (hash SHA-256)
 ════════════════════════════════════════ */
-async function checkAdminAuth() {
+async function checkAdminAuth(userId) {
   if (!sb) return false;
-  const {data:{user}} = await sb.auth.getUser();
-  if (!user) return false;
-  const {data,error} = await sb.from("mt_admin_users").select("user_id").eq("user_id",user.id).maybeSingle();
+  if (!userId) return false;
+  const request=sb.from("mt_admin_users").select("user_id").eq("user_id",userId).maybeSingle();
+  const timeout=new Promise((_,reject)=>setTimeout(()=>reject(new Error("Vérification trop longue")),10000));
+  const {data,error} = await Promise.race([request,timeout]);
   return !error && !!data;
 }
 
@@ -102,7 +103,8 @@ async function loadAuthenticatedClient() {
   try {
     sb=getFactory()(settings.url,settings.key);
     const timeout=new Promise((_,r)=>setTimeout(()=>r(new Error("Connexion Supabase trop longue. Vérifie la clé ou recharge avec ?reset=1")),12000));
-    const {data:{user}}=await sb.auth.getUser();
+    const {data:{session}}=await sb.auth.getSession();
+    const user=session?.user;
     if(!user){showAuthScreen(false);return;}
     const req=sb.from(SB_TABLE).select("slug,prenom,programme").ilike("client_email",user.email).single();
     const {data,error}=await Promise.race([req,timeout]);
@@ -222,7 +224,8 @@ async function uploadPhoto(input) {
 
   try {
     const ext=file.name.split(".").pop().toLowerCase()||"jpg";
-    const {data:{user}}=await sb.auth.getUser();
+    const {data:{session}}=await sb.auth.getSession();
+    const user=session?.user;
     if(!user) throw new Error("Session expirée");
     const path=`${user.id}/${Date.now()}.${ext}`;
     // Upload dans Supabase Storage (bucket "mt-photos")
@@ -1489,14 +1492,20 @@ if(typeof saveSuivi==="function" && !window.__mtPatchedSave){
   mtInitPremiumFeatures();
   const isAdminPage = !!window.MT_ADMIN_PAGE || location.pathname.toLowerCase().includes("admin.html");
   if(isAdminPage) {
-    const {data:{user}}=await sb.auth.getUser();
-    if(!user){showAuthScreen(true);return;}
-    const ok=await checkAdminAuth();
-    if(ok){
+    try{
+      const {data:{session},error:sessionError}=await sb.auth.getSession();
+      if(sessionError) throw sessionError;
+      const user=session?.user;
+      if(!user){showAuthScreen(true);return;}
+      const ok=await checkAdminAuth(user.id);
+      if(!ok) throw new Error("Ce compte n’est pas autorisé à administrer Méthode Tee.");
+      hideLoading();
       renderClientView("toi",emptyProgramme());
       setTimeout(()=>{ try{ openAdmin(); loadAllClients(); }catch(e){} },250);
-    } else {
-      document.body.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:sans-serif;color:#888">Accès refusé</div>';return;
+    }catch(e){
+      hideLoading();
+      document.body.innerHTML=`<main class="auth-page"><section class="auth-card"><p class="auth-kicker">Espace professionnel</p><h1>Connexion<br><em>interrompue</em></h1><p>${e.message||"La vérification n’a pas abouti."}</p><button onclick="location.reload()">Réessayer</button></section></main>`;
+      return;
     }
   } else {
     await loadAuthenticatedClient();
