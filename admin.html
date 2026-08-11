@@ -14,7 +14,7 @@
   <script>if(!window.supabase){document.write('<script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"><\/script>')}</script>
   <link rel="stylesheet" href="./style.css">
 </head>
-<body>
+<body class="admin-page">
 <div class="app-shell" id="app">
 
   <div id="loading-screen">
@@ -30,7 +30,7 @@
   <!-- HEADER -->
   <header style="background:rgba(253,251,247,.92);backdrop-filter:blur(12px);padding:18px 20px 14px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:20;border-bottom:1px solid rgba(0,0,0,0.04);">
     <div>
-      <p style="font-size:9px;text-transform:uppercase;letter-spacing:.18em;color:#b5aca3;font-weight:800;margin-bottom:3px">Espace Client</p>
+      <p style="font-size:9px;text-transform:uppercase;letter-spacing:.18em;color:#b5aca3;font-weight:800;margin-bottom:3px">Espace Professionnel</p>
       <h1 class="serif" style="font-size:20px;font-style:italic;font-weight:700;color:var(--brand);margin:0">Méthode Tee</h1>
     </div>
     <div id="avatar" style="width:42px;height:42px;border-radius:50%;background:var(--brand);color:white;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-style:italic;font-weight:700;font-size:19px;box-shadow:0 4px 14px rgba(83,100,74,.28)">T</div>
@@ -476,9 +476,11 @@
       <div class="admin-section">
         <h3 class="serif" style="font-size:20px;color:var(--ink);margin:0 0 16px">Profil client</h3>
         <div style="display:flex;flex-direction:column;gap:12px">
-          <div><label class="field-label">Slug (URL) ex: rams → ?client=rams</label><input id="f-slug" class="admin-input" placeholder="rams" /></div>
+          <div><label class="field-label">Identifiant interne</label><input id="f-slug" class="admin-input" placeholder="rams" /></div>
           <div><label class="field-label">Prénom</label><input id="f-prenom" class="admin-input" placeholder="Rams" /></div>
+          <div><label class="field-label">E-mail de connexion</label><input id="f-client-email" type="email" class="admin-input" placeholder="cliente@exemple.com" /></div>
           <div><label class="field-label">Semaine</label><input id="f-semaine" class="admin-input" placeholder="Semaine 2" /></div>
+          <div><label class="field-label">Parcours</label><select id="f-parcours" class="admin-input"><option value="equilibre">Équilibre</option><option value="performance">Performance</option></select></div>
           <div><label class="field-label">Statut</label>
             <select id="f-statut" class="admin-input" style="cursor:pointer">
               <option value="nouveau">🟢 Nouveau</option><option value="actif">🔵 Actif</option>

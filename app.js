@@ -6,23 +6,32 @@ const DEFAULT_SB_URL = "https://oomyrntkxroebztukntp.supabase.co";
 const DEFAULT_SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9vbXlybnRreHJvZWJ6dHVrbnRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyOTEwMDAsImV4cCI6MjA5NDg2NzAwMH0.gCDUggHR2ZOMSn2sgTO2DoJ-0U4fXEFQm-zlUfAFUe4";
 const SB_TABLE       = "mt_clients";
 const SETTINGS_KEY   = "mt_sb_settings";
-// Hash SHA-256 de "OUTITA" — mot de passe jamais en clair
-const ADMIN_HASH = "20ca1fc5ac568dedf781a3bc75dab254ee51c84f0675895d88ef0903401d0ec5";
 
 /* ════════════════════════════════════════
    AUTH ADMIN (hash SHA-256)
 ════════════════════════════════════════ */
-async function hashPassword(pwd) {
-  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(pwd));
-  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,"0")).join("");
-}
 async function checkAdminAuth() {
-  if (localStorage.getItem("mt_admin_hash") === ADMIN_HASH) return true;
-  const saisie = prompt("Mot de passe admin :");
-  if (!saisie) return false;
-  const h = await hashPassword(saisie);
-  if (h === ADMIN_HASH) { localStorage.setItem("mt_admin_hash", h); return true; }
-  return false;
+  if (!sb) return false;
+  const {data:{user}} = await sb.auth.getUser();
+  if (!user) return false;
+  const {data,error} = await sb.from("mt_admin_users").select("user_id").eq("user_id",user.id).maybeSingle();
+  return !error && !!data;
+}
+
+function showAuthScreen(isAdmin=false) {
+  hideLoading();
+  const label=isAdmin?"Espace professionnel":"Espace privé";
+  const hint=isAdmin?"Connecte-toi avec ton compte administrateur.":"Entre l’adresse e-mail utilisée pour ton accompagnement.";
+  document.body.innerHTML=`<main class="auth-page"><section class="auth-card"><p class="auth-kicker">${label}</p><h1>Bienvenue dans<br><em>Méthode Tee</em></h1><p>${hint}</p><form id="mt-auth-form"><label for="mt-auth-email">Adresse e-mail</label><input id="mt-auth-email" type="email" autocomplete="email" required placeholder="bonjour@exemple.com"><button type="submit">Recevoir mon lien sécurisé</button></form><p id="mt-auth-status" class="auth-status"></p></section></main>`;
+  document.getElementById("mt-auth-form").addEventListener("submit",async(e)=>{
+    e.preventDefault();
+    const email=document.getElementById("mt-auth-email").value.trim();
+    const status=document.getElementById("mt-auth-status");
+    status.textContent="Envoi en cours…";
+    const redirectTo=new URL(isAdmin?"admin.html":"index.html",location.href).href;
+    const {error}=await sb.auth.signInWithOtp({email,options:{emailRedirectTo:redirectTo}});
+    status.textContent=error?"Impossible d’envoyer le lien. Réessaie.":"Lien envoyé. Consulte ta boîte e-mail.";
+  });
 }
 
 /* ════════════════════════════════════════
@@ -35,12 +44,12 @@ var _notifTimers = { timeouts:[], intervals:[] };
 
 function emptyProgramme() {
   return {
-    semaine:"", objectif:"", coach:"", goals:[], tasks:[], days:{}, products:[],
+    semaine:"", parcours:"equilibre", objectif:"", coach:"", goals:[], tasks:[], days:{}, products:[],
     signature:{titre:"",ingredients:[],description:""},
     rituel:{matin:"",midi:"",soir:"",note:""},
     terrain:{dominant:"",axes:[],note:""},
     protocole:{matin:"",midi:"",soir:"",duree:""},
-    methode:[], offre:"", notes_priv:"", timeline:{}, transformation:{},
+    methode:[], offre:"", timeline:{}, transformation:{},
     statut:"nouveau", promo_code:"", rdv:""
   };
 }
@@ -78,16 +87,14 @@ function connectSupabase() {
 async function testSupabase() {
   if (!sb){log("❌ Connecte d'abord.");return;}
   const {data,error}=await sb.from(SB_TABLE).select("slug").limit(5);
-  if (error) { log("❌ "+error.message+"\n\nCréer la table:\nCREATE TABLE mt_clients (\n  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,\n  slug text UNIQUE NOT NULL,\n  prenom text NOT NULL,\n  programme jsonb NOT NULL DEFAULT '{}'\n);\nALTER TABLE mt_clients DISABLE ROW LEVEL SECURITY;"); }
+  if (error) { log("❌ "+error.message+"\n\nVérifie que la migration supabase-security.sql a bien été exécutée."); }
   else { log("✅ Table OK — "+(data.length)+" client(s).\n"+(data.length?data.map(r=>"• "+r.slug).join("\n"):"Vide.")); renderClientsList(data); }
 }
 
 /* ════════════════════════════════════════
    CHARGEMENT CLIENT DEPUIS URL
 ════════════════════════════════════════ */
-async function loadClientFromURL() {
-  const slug = new URLSearchParams(window.location.search).get("client");
-  if (!slug){hideLoading();return;}
+async function loadAuthenticatedClient() {
   isClientMode=true;
   document.getElementById("fab-admin").classList.add("hidden");
   const settings=loadSettings();
@@ -95,9 +102,12 @@ async function loadClientFromURL() {
   try {
     sb=getFactory()(settings.url,settings.key);
     const timeout=new Promise((_,r)=>setTimeout(()=>r(new Error("Connexion Supabase trop longue. Vérifie la clé ou recharge avec ?reset=1")),12000));
-    const req=sb.from(SB_TABLE).select("slug,prenom,programme").eq("slug",slug).single();
+    const {data:{user}}=await sb.auth.getUser();
+    if(!user){showAuthScreen(false);return;}
+    const req=sb.from(SB_TABLE).select("slug,prenom,programme").ilike("client_email",user.email).single();
     const {data,error}=await Promise.race([req,timeout]);
     if (error||!data){showError("Fiche introuvable : "+slug);return;}
+    currentSlug=data.slug;
     renderClientView(data.prenom,data.programme||{});
     hideLoading();
   } catch(e){showError("Erreur : "+e.message);}
@@ -117,6 +127,10 @@ function renderClientView(prenom,prog) {
   const d=document.getElementById("today-date");
   if(d) d.textContent=new Date().toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"});
   document.getElementById("goal-title").textContent=prog.objectif||"";
+  document.body.dataset.parcours=prog.parcours==="performance"?"performance":"equilibre";
+  const parcoursBadge=document.getElementById("parcours-badge");
+  if(parcoursBadge) parcoursBadge.textContent=prog.parcours==="performance"?"Performance":"Équilibre";
+  renderProfileCheckin(prog.parcours||"equilibre");
   document.getElementById("goal-list").innerHTML=(prog.goals||[]).map(g=>`<li style="display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:6px"><i data-lucide="check" style="width:14px;height:14px;flex-shrink:0;opacity:.85"></i>${g}</li>`).join("");
   document.getElementById("coach-msg").textContent=prog.coach?`"${prog.coach}"`:"";
   document.getElementById("week-badge").textContent=prog.semaine||"";
@@ -156,7 +170,7 @@ function renderClientView(prenom,prog) {
   renderPhotos(prog.photos||[]);
   safeRender(()=>renderMessages(prog),"renderMessages");
 
-  const slugR=new URLSearchParams(window.location.search).get("client");
+  const slugR=currentSlug;
   requestAnimationFrame(()=>{
     safeRender(()=>restoreTasks(slugR),"restoreTasks");
     safeRender(()=>renderHistorique(slugR),"renderHistorique");
@@ -177,13 +191,18 @@ function copierPromo() {
 /* ════════════════════════════════════════
    PHOTOS DE PROGRESSION
 ════════════════════════════════════════ */
-function renderPhotos(photos) {
+async function renderPhotos(photos) {
   const grid=document.getElementById("photos-grid");
   if (!grid) return;
   if (!photos||!photos.length) { grid.innerHTML='<p style="font-size:12px;color:var(--muted);grid-column:1/-1;text-align:center;padding:12px 0">Aucune photo pour le moment.</p>'; return; }
-  grid.innerHTML=photos.map((p,i)=>`
+  const secured=await Promise.all(photos.map(async p=>{
+    if(!p.path) return Object.assign({},p,{signedUrl:""});
+    const {data}=await sb.storage.from("mt-photos").createSignedUrl(p.path,3600);
+    return Object.assign({},p,{signedUrl:data?.signedUrl||""});
+  }));
+  grid.innerHTML=secured.map((p,i)=>`
     <div class="photo-thumb">
-      <img src="${p.url}" alt="Photo ${i+1}" loading="lazy">
+      <img src="${p.signedUrl}" alt="Photo ${i+1}" loading="lazy">
       <div class="photo-thumb-label">${p.label||("Semaine "+(i+1))}</div>
     </div>`).join("");
 }
@@ -191,7 +210,7 @@ function renderPhotos(photos) {
 async function uploadPhoto(input) {
   const file=input.files[0];
   if (!file||!sb) { alert("Connecte-toi d'abord."); input.value=""; return; }
-  const slug=new URLSearchParams(window.location.search).get("client");
+  const slug=currentSlug;
   if (!slug) return;
   const MAX=5*1024*1024; // 5 Mo
   if (file.size>MAX) { alert("Photo trop lourde (max 5 Mo)."); input.value=""; return; }
@@ -203,21 +222,20 @@ async function uploadPhoto(input) {
 
   try {
     const ext=file.name.split(".").pop().toLowerCase()||"jpg";
-    const path=`${slug}/${Date.now()}.${ext}`;
+    const {data:{user}}=await sb.auth.getUser();
+    if(!user) throw new Error("Session expirée");
+    const path=`${user.id}/${Date.now()}.${ext}`;
     // Upload dans Supabase Storage (bucket "mt-photos")
     const {data:upData,error:upErr}=await sb.storage.from("mt-photos").upload(path,file,{contentType:file.type,upsert:false});
     if(upErr) throw new Error(upErr.message);
     if(bar) bar.style.width="70%";
-    // URL publique
-    const {data:urlData}=sb.storage.from("mt-photos").getPublicUrl(path);
-    const photoUrl=urlData.publicUrl;
     // Sauvegarder dans programme
     const {data:clientData,error:cErr}=await sb.from(SB_TABLE).select("programme").eq("slug",slug).single();
     if(cErr||!clientData) throw new Error("Client introuvable");
     const prog=Object.assign({},clientData.programme||{});
     if(!prog.photos) prog.photos=[];
     const label=prompt("Label pour cette photo (ex: Semaine 1, Avant…)","Semaine "+(prog.photos.length+1));
-    prog.photos.push({url:photoUrl,path,label:label||("Photo "+(prog.photos.length+1)),date:new Date().toLocaleDateString("fr-FR")});
+    prog.photos.push({path,label:label||("Photo "+(prog.photos.length+1)),date:new Date().toLocaleDateString("fr-FR")});
     const {error:uErr}=await sb.from(SB_TABLE).update({programme:prog}).eq("slug",slug);
     if(uErr) throw new Error(uErr.message);
     if(bar) bar.style.width="100%";
@@ -242,7 +260,7 @@ function toggleTask(i) {
   check.style.background=done?"var(--brand)":"white";
   check.style.borderColor=done?"var(--brand)":"#ddd8d0";
   icon.style.display=done?"block":"none";
-  const slug=new URLSearchParams(window.location.search).get("client")||"admin";
+  const slug=currentSlug||"admin";
   const today=new Date().toISOString().slice(0,10);
   const key="mt_tasks_"+slug+"_"+today;
   try{const s=JSON.parse(localStorage.getItem(key)||"{}");s[i]=done;localStorage.setItem(key,JSON.stringify(s));}catch(e){}
@@ -349,7 +367,7 @@ function analyserSymptome(texte) {
 }
 
 async function envoyerPhyto() {
-  const slug=new URLSearchParams(window.location.search).get("client");
+  const slug=currentSlug;
   if(!slug||!sb){alert("Connecte-toi d'abord.");return;}
   const possession=_phytoProduits.filter((_,i)=>{const e=document.getElementById("phyto-check-"+i);return e&&e.checked;}).map(s=>s.nom);
   const payload={symptome:_phytoSymptome,suggestions:_phytoProduits.map(s=>s.emoji+" "+s.nom),possession,date:new Date().toLocaleDateString("fr-FR"),statut:"en_attente"};
@@ -405,7 +423,7 @@ function restoreSelection(){_selection=[];updateSelectionUI();}
 function viderSelection(){_selection=[];updateSelectionUI();}
 async function envoyerSelection(){
   if(!_selection.length) return;
-  const slug=new URLSearchParams(window.location.search).get("client");
+  const slug=currentSlug;
   if(!slug||!sb){alert("Impossible d'envoyer — contacte ton coach.");return;}
   const selectionData={produits:_selection.map(s=>s.emoji+" "+s.titre+(s.format?" — "+s.format:"")),date:new Date().toLocaleDateString("fr-FR"),statut:"en_attente"};
   try {
@@ -454,8 +472,17 @@ function renderProtocole(p){
 /* ════════════════════════════════════════
    SUIVI QUOTIDIEN
 ════════════════════════════════════════ */
+function renderProfileCheckin(parcours){
+  const el=document.getElementById("profile-checkin");
+  if(!el) return;
+  const field=(id,label)=>`<div style="margin-top:14px"><label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:8px">${label} <span id="val-${id}" style="color:var(--brand)">3/5</span></label><input type="range" id="suivi-${id}" min="1" max="5" value="3" oninput="document.getElementById('val-${id}').textContent=this.value+'/5';saveSuivi()" style="width:100%;accent-color:var(--brand)"></div>`;
+  el.innerHTML=parcours==="performance"
+    ?field("recuperation","Récupération")+field("courbatures","Courbatures")+field("disponibilite","Disponibilité physique")
+    :field("stress","Stress")+field("faim","Faim et satiété")+field("confort","Confort corporel");
+}
+
 function initSuivi(){
-  const slug=new URLSearchParams(window.location.search).get("client")||"admin";
+  const slug=currentSlug||"admin";
   const today=new Date().toISOString().slice(0,10);
   const el=document.getElementById("suivi-date");
   if(el) el.textContent=new Date().toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"});
@@ -470,15 +497,17 @@ function initSuivi(){
     if(s.energie){document.getElementById("suivi-energie").value=s.energie;document.getElementById("val-energie").textContent=s.energie+"/5";}
     if(s.sommeil){document.getElementById("suivi-sommeil").value=s.sommeil;document.getElementById("val-sommeil").textContent=s.sommeil+"/5";}
     if(s.digestion){document.getElementById("suivi-digestion").value=s.digestion;document.getElementById("val-digestion").textContent=s.digestion+"/5";}
+    ["recuperation","courbatures","disponibilite","stress","faim","confort"].forEach(id=>{const input=document.getElementById("suivi-"+id);if(input&&s[id]){input.value=s[id];document.getElementById("val-"+id).textContent=s[id]+"/5";}});
     if(s.note) document.getElementById("suivi-note").value=s.note;
   }catch(e){}
   updateScore(slug);
 }
 function saveSuivi(){
-  const slug=new URLSearchParams(window.location.search).get("client")||"admin";
+  const slug=currentSlug||"admin";
   const today=new Date().toISOString().slice(0,10);
   const key="mt_suivi_"+slug+"_"+today;
   const data={eau:document.getElementById("check-eau").checked,repas:document.getElementById("check-repas").checked,infusion:document.getElementById("check-infusion").checked,sport:document.getElementById("check-sport").checked,poids:document.getElementById("suivi-poids").value,energie:document.getElementById("suivi-energie").value,sommeil:document.getElementById("suivi-sommeil").value,digestion:document.getElementById("suivi-digestion").value,note:document.getElementById("suivi-note").value,filled:true,date:today};
+  ["recuperation","courbatures","disponibilite","stress","faim","confort"].forEach(id=>{const input=document.getElementById("suivi-"+id);if(input)data[id]=input.value;});
   try{localStorage.setItem(key,JSON.stringify(data));}catch(e){}
   updateScore(slug);
   if(sb&&slug&&slug!=="admin"){
@@ -630,7 +659,7 @@ async function activerNotifications(){
   const banner=document.getElementById("notif-banner");
   if(perm==="granted"){
     if(banner) banner.style.display="none";
-    const slug=new URLSearchParams(window.location.search).get("client")||"admin";
+    const slug=currentSlug||"admin";
     planifierRappels(slug);
     new Notification("Méthode Tee 🌿",{body:"Rappels activés !",icon:"/nutrition/icon-192.PNG"});
   } else {if(banner) banner.style.display="none";alert("Notifications refusées.");}
@@ -669,7 +698,7 @@ function renderMessages(prog){
   setTimeout(()=>{fil.scrollTop=fil.scrollHeight;},50);
 }
 async function envoyerMessage(){
-  const slug=new URLSearchParams(window.location.search).get("client");
+  const slug=currentSlug;
   if(!slug||!sb){alert("Impossible d'envoyer.");return;}
   const input=document.getElementById("message-input");
   const texte=input.value.trim();
@@ -720,7 +749,9 @@ function switchTab(name,btn){
   document.querySelectorAll(".tab-section").forEach(s=>s.classList.remove("active"));
   document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("active"));
   document.getElementById("tab-"+name).classList.add("active");
-  btn.classList.add("active");
+  const hubMap={soins:"plan",programme:"plan",signature:"plan",terrainai:"suivi",cycle:"suivi",lexique:"plan",pdf:"progression"};
+  const activeBtn=btn||document.querySelector(`.simplified-nav [data-hub="${hubMap[name]||name}"]`);
+  if(activeBtn) activeBtn.classList.add("active");
   lucide.createIcons();
 }
 
@@ -841,13 +872,15 @@ async function selectClient(slug){
   const {data,error}=await sb.from(SB_TABLE).select("*").eq("slug",slug).single();
   if(error){log("❌ "+error.message);return;}
   currentSlug=slug;
+  document.getElementById("f-client-email").value=data.client_email||"";
   programme=data.programme||emptyProgramme();
   adminDay=Object.keys(programme.days||{})[0]||null;
   fillAdmin(data.prenom,programme);
+  document.getElementById("f-notes-priv").value=data.admin_notes||"";
   log("✅ Client « "+slug+" » chargé.");
   openAdmin();
 }
-function createClient(){currentSlug=null;programme=emptyProgramme();adminDay=null;fillAdmin("",programme);log("Nouveau client — remplis le profil puis sauvegarde.");}
+function createClient(){currentSlug=null;programme=emptyProgramme();adminDay=null;fillAdmin("",programme);document.getElementById("f-client-email").value="";document.getElementById("f-notes-priv").value="";log("Nouveau client — remplis le profil puis sauvegarde.");}
 function duplicateClient(){
   const base=document.getElementById("f-slug").value.trim()||"client";
   const sug=base.endsWith("-s2")?base+"-copie":base+"-s2";
@@ -871,6 +904,7 @@ function fillAdmin(prenom,prog){
   document.getElementById("f-prenom").value=prenom||"";
   document.getElementById("f-slug").value=currentSlug||"";
   document.getElementById("f-semaine").value=prog.semaine||"";
+  document.getElementById("f-parcours").value=prog.parcours||"equilibre";
   document.getElementById("f-objectif").value=prog.objectif||"";
   document.getElementById("f-coach").value=prog.coach||"";
   document.getElementById("f-goals").value=(prog.goals||[]).join("\n");
@@ -892,7 +926,7 @@ function fillAdmin(prenom,prog){
   document.getElementById("f-method").value=JSON.stringify(prog.methode||[],null,2);
   document.getElementById("f-offre").value=prog.offre||"";
   document.getElementById("f-statut").value=prog.statut||"nouveau";
-  document.getElementById("f-notes-priv").value=prog.notes_priv||"";
+  document.getElementById("f-notes-priv").value="";
   document.getElementById("f-promo-code").value=prog.promo_code||"";
   document.getElementById("f-rdv").value=prog.rdv||"";
   const tr=prog.transformation||{};
@@ -1097,15 +1131,19 @@ async function saveClient(){
   if(!sb){log("❌ Connecte Supabase d'abord.");return;}
   const slug=document.getElementById("f-slug").value.trim().toLowerCase().replace(/[^a-z0-9-]/g,"-").replace(/^-+|-+$/g,"")||"client";
   const prenom=document.getElementById("f-prenom").value.trim()||"Client";
+  const client_email=document.getElementById("f-client-email").value.trim().toLowerCase();
+  const admin_notes=document.getElementById("f-notes-priv").value.trim();
+  if(!client_email){log("❌ L’e-mail de connexion de la cliente est obligatoire.");return;}
   syncProducts();
   if(adminDay){
     programme.days[document.getElementById("f-day-name").value.trim()||adminDay]={morning:textToHtml(document.getElementById("f-morning").value),lunch:textToHtml(document.getElementById("f-lunch").value),snack:textToHtml(document.getElementById("f-snack").value),dinner:textToHtml(document.getElementById("f-dinner").value)};
     if(document.getElementById("f-day-name").value.trim()!==adminDay){delete programme.days[adminDay];adminDay=document.getElementById("f-day-name").value.trim();}
   }
   programme.semaine=document.getElementById("f-semaine").value.trim();
+  programme.parcours=document.getElementById("f-parcours").value;
   programme.offre=document.getElementById("f-offre").value;
   programme.statut=document.getElementById("f-statut").value;
-  programme.notes_priv=document.getElementById("f-notes-priv").value.trim();
+  delete programme.notes_priv;
   programme.promo_code=document.getElementById("f-promo-code").value.trim().toUpperCase();
   programme.rdv=document.getElementById("f-rdv").value;
   programme.transformation={depart:document.getElementById("f-transfo-depart").value.trim(),victoires:document.getElementById("f-transfo-victoires").value.trim(),ressentis:document.getElementById("f-transfo-ressentis").value.trim()};
@@ -1121,7 +1159,7 @@ async function saveClient(){
   try{programme.methode=JSON.parse(document.getElementById("f-method").value||"[]");}
   catch(e){log("❌ JSON Méthode invalide.");return;}
   log("⏳ Sauvegarde…");
-  const {error}=await sb.from(SB_TABLE).upsert({slug,prenom,programme},{onConflict:"slug"});
+  const {error}=await sb.from(SB_TABLE).upsert({slug,prenom,client_email,admin_notes,programme},{onConflict:"slug"});
   if(error){log("❌ "+error.message);return;}
   currentSlug=slug;document.getElementById("f-slug").value=slug;
   log("✅ "+prenom+" ("+slug+") sauvegardé !\n\nLien : "+buildLink(slug));
@@ -1200,7 +1238,7 @@ function copierRapport(){
   if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(contenu.textContent).then(()=>log("✅ Rapport copié !"));}
   else{const ta=document.createElement("textarea");ta.value=contenu.textContent;document.body.appendChild(ta);ta.select();document.execCommand("copy");document.body.removeChild(ta);log("✅ Rapport copié !");}
 }
-function buildLink(slug){return window.location.origin+window.location.pathname+"?client="+encodeURIComponent(slug);}
+function buildLink(){return new URL("index.html",window.location.href).href;}
 function copyLink(){const slug=currentSlug||document.getElementById("f-slug").value.trim();if(!slug){log("❌ Sauvegarde d'abord.");return;}const link=buildLink(slug);if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(link).then(()=>log("✅ Lien copié !\n"+link));}else{prompt("Copie :",link);}}
 
 function openAdmin(){document.getElementById("admin-overlay").classList.add("open");lucide.createIcons();renderSuiviGlobal();renderRenewals();}
@@ -1276,7 +1314,7 @@ function mtGenerateTerrainAI(){
     plantes:plantes.map(([nom,p])=>({nom, produit:p.produit}))
   };
   try{
-    const slug=new URLSearchParams(location.search).get("client")||"admin";
+    const slug=currentSlug||"admin";
     localStorage.setItem("mt_terrain_ai_"+slug, JSON.stringify(result));
     mtQueueSync({type:"terrain_ai", slug, data:result});
   }catch(e){}
@@ -1297,7 +1335,7 @@ function mtGenerateTerrainAI(){
 function mtSetCyclePhase(phase){
   const c=MT_CYCLE[phase]; if(!c) return;
   try{
-    const slug=new URLSearchParams(location.search).get("client")||"admin";
+    const slug=currentSlug||"admin";
     localStorage.setItem("mt_cycle_"+slug, JSON.stringify({phase,date:new Date().toISOString()}));
     mtQueueSync({type:"cycle",slug,data:{phase,date:new Date().toISOString()}});
   }catch(e){}
@@ -1344,7 +1382,7 @@ function mtComputeSmartScore(slug){
 function mtGeneratePremiumPDF(){
   const jsPDF=window.jspdf?.jsPDF;
   if(!jsPDF){ alert("Le générateur PDF n'est pas chargé."); return; }
-  const slug=new URLSearchParams(location.search).get("client")||"cliente";
+  const slug=currentSlug||"cliente";
   const prog=window._currentProg || {};
   const terrain=JSON.parse(localStorage.getItem("mt_terrain_ai_"+slug)||"null");
   const score=mtComputeSmartScore(slug);
@@ -1423,7 +1461,7 @@ if(typeof saveSuivi==="function" && !window.__mtPatchedSave){
   const oldSaveSuivi=saveSuivi;
   saveSuivi=function(){
     oldSaveSuivi.apply(this,arguments);
-    const slug=new URLSearchParams(location.search).get("client")||"admin";
+    const slug=currentSlug||"admin";
     const score=mtComputeSmartScore(slug);
     const bar=document.getElementById("score-bar"), txt=document.getElementById("score-text"), badge=document.getElementById("score-badge");
     if(bar) bar.style.width=score+"%";
@@ -1449,12 +1487,10 @@ if(typeof saveSuivi==="function" && !window.__mtPatchedSave){
   if(sbKey) sbKey.value=settings.key||"";
   if(settings.url&&settings.key){try{sb=getFactory()(settings.url,settings.key);}catch(e){}}
   mtInitPremiumFeatures();
-  const slug=new URLSearchParams(window.location.search).get("client");
   const isAdminPage = !!window.MT_ADMIN_PAGE || location.pathname.toLowerCase().includes("admin.html");
-  if(slug){
-    await loadClientFromURL();
-  } else if(isAdminPage) {
-    hideLoading();
+  if(isAdminPage) {
+    const {data:{user}}=await sb.auth.getUser();
+    if(!user){showAuthScreen(true);return;}
     const ok=await checkAdminAuth();
     if(ok){
       renderClientView("toi",emptyProgramme());
@@ -1463,9 +1499,7 @@ if(typeof saveSuivi==="function" && !window.__mtPatchedSave){
       document.body.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:sans-serif;color:#888">Accès refusé</div>';return;
     }
   } else {
-    hideLoading();
-    document.getElementById("fab-admin")?.classList.add("hidden");
-    renderClientView("toi",emptyProgramme());
+    await loadAuthenticatedClient();
   }
   lucide.createIcons();
 })();

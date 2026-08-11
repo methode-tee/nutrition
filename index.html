@@ -45,10 +45,10 @@
         <div>
           <p id="today-date" style="font-size:11px;color:var(--muted);font-weight:600;margin:0 0 4px;text-transform:capitalize"></p>
           <h2 class="serif" style="font-size:34px;font-weight:700;color:var(--ink);margin:0 0 6px;line-height:1.15">Bonjour <span id="display-prenom">toi</span>,</h2>
-          <p style="font-size:12px;color:var(--muted)">Ton espace nutrition &amp; routines premium.</p>
+          <p style="font-size:12px;color:var(--muted)">Voici ce que nous travaillons aujourd’hui.</p>
         </div>
         <span class="badge" style="background:var(--brand);color:white;margin-top:4px;flex-shrink:0">
-          <i data-lucide="sparkles" style="width:11px;height:11px"></i> Privé
+          <i data-lucide="sparkles" style="width:11px;height:11px"></i> <span id="parcours-badge">Équilibre</span>
         </span>
       </div>
       <div id="notif-banner" style="display:none;margin:0 0 16px;border-radius:16px;padding:14px 16px;background:#f0f9f0;border:1.5px solid rgba(83,100,74,.2);align-items:center;justify-content:space-between;gap:12px">
@@ -112,6 +112,7 @@
 
     <!-- REPAS -->
     <section id="tab-repas" class="tab-section" style="padding-top:24px">
+      <div class="section-switcher"><button class="active" onclick="switchTab('repas')">Nutrition</button><button onclick="switchTab('soins')">Plantes</button><button onclick="switchTab('programme')">Programme</button><button onclick="switchTab('signature')">Signature</button></div>
       <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:20px">
         <div>
           <h2 class="serif" style="font-size:30px;font-weight:700;color:var(--ink);margin:0 0 4px">Ton Menu</h2>
@@ -247,6 +248,7 @@
 
     <!-- SUIVI -->
     <section id="tab-suivi" class="tab-section" style="padding-top:24px">
+      <div class="section-switcher"><button class="active" onclick="switchTab('suivi')">Quotidien</button><button onclick="switchTab('terrainai')">Terrain</button><button onclick="switchTab('cycle')">Cycle</button></div>
       <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:20px">
         <div>
           <h2 class="serif" style="font-size:30px;font-weight:700;color:var(--ink);margin:0 0 4px">Mon Suivi</h2>
@@ -292,6 +294,7 @@
           <div><label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:8px">Energie <span id="val-energie" style="color:var(--brand)">3/5</span></label><input type="range" id="suivi-energie" min="1" max="5" value="3" oninput="document.getElementById('val-energie').textContent=this.value+'/5';saveSuivi()" style="width:100%;accent-color:var(--brand)"></div>
           <div><label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:8px">Sommeil <span id="val-sommeil" style="color:var(--brand)">3/5</span></label><input type="range" id="suivi-sommeil" min="1" max="5" value="3" oninput="document.getElementById('val-sommeil').textContent=this.value+'/5';saveSuivi()" style="width:100%;accent-color:var(--brand)"></div>
           <div><label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:8px">Digestion <span id="val-digestion" style="color:var(--brand)">3/5</span></label><input type="range" id="suivi-digestion" min="1" max="5" value="3" oninput="document.getElementById('val-digestion').textContent=this.value+'/5';saveSuivi()" style="width:100%;accent-color:var(--brand)"></div>
+          <div id="profile-checkin"></div>
         </div>
       </div>
       <div class="card" style="padding:20px;margin-bottom:18px">
@@ -384,21 +387,12 @@
   </div><!-- /main-scroll -->
 
   <!-- BOTTOM NAV -->
-  <nav class="bottom-nav">
-    <button class="nav-btn active" onclick="switchTab('accueil',this)"><i data-lucide="layout-dashboard" style="width:20px;height:20px"></i><span>Accueil</span></button>
-    <button class="nav-btn" onclick="switchTab('repas',this)"><i data-lucide="utensils" style="width:20px;height:20px"></i><span>Repas</span></button>
-    <button class="nav-btn" onclick="switchTab('soins',this)"><i data-lucide="leaf" style="width:20px;height:20px"></i><span>Soins</span></button>
-    <button class="nav-btn" onclick="switchTab('signature',this)"><i data-lucide="salad" style="width:20px;height:20px"></i><span>Signature</span></button>
-    <button class="nav-btn" onclick="switchTab('transformation',this)"><i data-lucide="sparkles" style="width:20px;height:20px"></i><span>Bilan</span></button>
-    <button class="nav-btn" onclick="switchTab('programme',this)"><i data-lucide="trending-up" style="width:20px;height:20px"></i><span>Programme</span></button>
-    <button class="nav-btn" onclick="switchTab('suivi',this)"><i data-lucide="bar-chart-2" style="width:20px;height:20px"></i><span>Suivi</span></button>
-
-    <button class="nav-btn" onclick="switchTab('terrainai',this)"><i data-lucide="brain" style="width:20px;height:20px"></i><span>Terrain</span></button>
-    <button class="nav-btn" onclick="switchTab('cycle',this)"><i data-lucide="moon" style="width:20px;height:20px"></i><span>Cycle</span></button>
-    <button class="nav-btn" onclick="switchTab('lexique',this)"><i data-lucide="flower-2" style="width:20px;height:20px"></i><span>Lexique</span></button>
-    <button class="nav-btn" onclick="switchTab('pdf',this)"><i data-lucide="file-text" style="width:20px;height:20px"></i><span>PDF</span></button>
-    <button class="nav-btn" onclick="switchTab('messages',this)" id="nav-messages"><i data-lucide="message-circle" style="width:20px;height:20px"></i><span>Messages</span></button>
-    <button class="nav-btn" onclick="switchTab('methode',this)"><i data-lucide="book-open" style="width:20px;height:20px"></i><span>Méthode</span></button>
+  <nav class="bottom-nav simplified-nav">
+    <button data-hub="accueil" class="nav-btn active" onclick="switchTab('accueil',this)"><i data-lucide="sun" style="width:20px;height:20px"></i><span>Aujourd’hui</span></button>
+    <button data-hub="plan" class="nav-btn" onclick="switchTab('repas',this)"><i data-lucide="clipboard-list" style="width:20px;height:20px"></i><span>Mon plan</span></button>
+    <button data-hub="suivi" class="nav-btn" onclick="switchTab('suivi',this)"><i data-lucide="heart-pulse" style="width:20px;height:20px"></i><span>Mon suivi</span></button>
+    <button data-hub="progression" class="nav-btn" onclick="switchTab('transformation',this)"><i data-lucide="trending-up" style="width:20px;height:20px"></i><span>Progression</span></button>
+    <button data-hub="messages" class="nav-btn" onclick="switchTab('messages',this)" id="nav-messages"><i data-lucide="message-circle" style="width:20px;height:20px"></i><span>Tee</span></button>
   </nav>
 
   <button class="fab" id="fab-admin" onclick="openAdmin()" type="button" aria-label="Admin">
@@ -476,7 +470,7 @@
       <div class="admin-section">
         <h3 class="serif" style="font-size:20px;color:var(--ink);margin:0 0 16px">Profil client</h3>
         <div style="display:flex;flex-direction:column;gap:12px">
-          <div><label class="field-label">Slug (URL) ex: rams → ?client=rams</label><input id="f-slug" class="admin-input" placeholder="rams" /></div>
+          <div><label class="field-label">Identifiant interne</label><input id="f-slug" class="admin-input" placeholder="rams" /></div>
           <div><label class="field-label">Prénom</label><input id="f-prenom" class="admin-input" placeholder="Rams" /></div>
           <div><label class="field-label">Semaine</label><input id="f-semaine" class="admin-input" placeholder="Semaine 2" /></div>
           <div><label class="field-label">Statut</label>
