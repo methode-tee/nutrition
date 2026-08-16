@@ -35,6 +35,23 @@ function mtLinesFromMeal(v){
 }
 function mtWeekRequired(week,count=5){return week<=1?Math.min(1,count):week===2?Math.min(2,count):week===3?Math.min(3,count):count;}
 
+const MT_WEEKDAY_ORDER={lundi:0,mardi:1,mercredi:2,jeudi:3,vendredi:4,samedi:5,dimanche:6};
+function mtNormalizeDayName(v){
+  return String(v||"").trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+}
+function mtWeekdayRank(v){
+  const n=mtNormalizeDayName(v);
+  for(const [day,rank] of Object.entries(MT_WEEKDAY_ORDER)){
+    if(n===day || n.startsWith(day+" ") || n.includes(day)) return rank;
+  }
+  return 99;
+}
+function mtSortDayKeys(days){
+  return Object.keys(days||{}).map((key,index)=>({key,index,rank:mtWeekdayRank(key)}))
+    .sort((a,b)=>a.rank-b.rank || (a.rank===99 ? a.index-b.index : 0))
+    .map(x=>x.key);
+}
+
 /* remplace les utilitaires de conversion HTML pour ne plus stocker du HTML actif */
 textToHtml=function(t){return mtEsc(String(t||"").trim()).replace(/\n/g,"<br>");};
 htmlToText=function(h){
@@ -84,9 +101,9 @@ function getSemaineEnCours(dateDebut,nbSemaines){
 function mtCurrentWeek(prog){prog=mtNormalizeProgramme(prog);return getSemaineEnCours(prog.timeline.dateDebut,prog.timeline.nbSemaines||4);}
 function mtWeekDays(prog,week){prog=mtNormalizeProgramme(prog);return (prog.weeks[String(week)]&&prog.weeks[String(week)].days)||{};}
 function mtBestDayKey(days){
-  const keys=Object.keys(days||{}); if(!keys.length)return null;
-  const weekday=new Intl.DateTimeFormat("fr-FR",{weekday:"long"}).format(new Date()).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
-  const found=keys.find(k=>String(k).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").includes(weekday));
+  const keys=mtSortDayKeys(days); if(!keys.length)return null;
+  const weekday=mtNormalizeDayName(new Intl.DateTimeFormat("fr-FR",{weekday:"long"}).format(new Date()));
+  const found=keys.find(k=>{const n=mtNormalizeDayName(k);return n===weekday||n.startsWith(weekday+" ")||n.includes(weekday);});
   return found||keys[0];
 }
 function mtSyncLegacyDays(prog){prog.days=mtDeepClone(mtWeekDays(prog,1));return prog;}
@@ -217,11 +234,11 @@ function mtPersistAdminDayDraft(){
   mtSyncLegacyDays(programme);
 }
 function mtSelectAdminWeek(s){
-  mtPersistAdminDayDraft(); mtAdminWeek=s; const days=mtWeekDays(programme,s); adminDay=Object.keys(days)[0]||null; mtRenderAdminWeekNav(); renderAdminDaysNav(days);
+  mtPersistAdminDayDraft(); mtAdminWeek=s; const days=mtWeekDays(programme,s); adminDay=mtSortDayKeys(days)[0]||null; mtRenderAdminWeekNav(); renderAdminDaysNav(days);
 }
 renderAdminDaysNav=function(days){
   if(!window.MT_ADMIN_PAGE)return;
-  const real=days||mtWeekDays(programme,mtAdminWeek); const keys=Object.keys(real);
+  const real=days||mtWeekDays(programme,mtAdminWeek); const keys=mtSortDayKeys(real);
   if(!adminDay||!keys.includes(adminDay))adminDay=keys[0]||null;
   const nav=document.getElementById("admin-days-nav");if(nav)nav.innerHTML=keys.map(day=>`<button type="button" class="chip ${day===adminDay?"active":""}" data-day="${mtAttr(day)}">${mtEsc(day)}</button>`).join("");
   if(nav)nav.querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>selectAdminDay(b.dataset.day,b)));
@@ -242,13 +259,35 @@ function mtRenderClientWeekNav(prog){
 }
 function mtSelectClientWeek(s){const current=mtCurrentWeek(_currentProg||{});if(s>current)return;mtClientViewWeek=s;const days=mtWeekDays(_currentProg,s);currentDay=mtBestDayKey(days);mtRenderClientWeekNav(_currentProg);renderDaysNav(days);renderMeals(days);}
 renderDaysNav=function(days){
-  const nav=document.getElementById("days-nav");if(!nav)return;const keys=Object.keys(days||{});if(!currentDay||!keys.includes(currentDay))currentDay=keys[0]||null;
+  const nav=document.getElementById("days-nav");if(!nav)return;const keys=mtSortDayKeys(days);if(!currentDay||!keys.includes(currentDay))currentDay=mtBestDayKey(days);
   nav.innerHTML=keys.map(day=>`<button type="button" class="day-pill ${day===currentDay?"active":""}" data-day="${mtAttr(day)}">${mtEsc(day)}</button>`).join("");
   nav.querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>selectDay(b.dataset.day,b)));
 };
 selectDay=function(day,btn){currentDay=day;document.querySelectorAll(".day-pill").forEach(b=>b.classList.remove("active"));if(btn)btn.classList.add("active");renderMeals(mtWeekDays(_currentProg,mtClientViewWeek));};
 function mtSelectionFor(prog,week,day,moment){return (((prog.meal_selections||{})[String(week)]||{})[day]||{})[moment]||[];}
 function mtEnsureSelectionPath(prog,week,day,moment){prog.meal_selections=prog.meal_selections||{};prog.meal_selections[String(week)]=prog.meal_selections[String(week)]||{};prog.meal_selections[String(week)][day]=prog.meal_selections[String(week)][day]||{};prog.meal_selections[String(week)][day][moment]=prog.meal_selections[String(week)][day][moment]||[];return prog.meal_selections[String(week)][day][moment];}
+
+let mtMealPendingVersion=0;
+function mtMealPendingKey(){return currentSlug?`mt_pending_meal_selections_${currentSlug}`:null;}
+function mtWriteMealPending(value){
+  const key=mtMealPendingKey();if(!key)return null;
+  const token=`${Date.now()}-${++mtMealPendingVersion}`;
+  try{localStorage.setItem(key,JSON.stringify({token,data:mtDeepClone(value)}));}catch(e){}
+  return token;
+}
+function mtReadMealPending(){
+  const key=mtMealPendingKey();if(!key)return null;
+  try{const raw=JSON.parse(localStorage.getItem(key)||"null");return raw&&raw.data?raw:null;}catch(e){return null;}
+}
+function mtClearMealPending(token){
+  const key=mtMealPendingKey();if(!key)return;
+  try{const raw=JSON.parse(localStorage.getItem(key)||"null");if(raw&&raw.token===token)localStorage.removeItem(key);}catch(e){}
+}
+function mtRestorePendingMealSelections(prog){
+  const pending=mtReadMealPending();if(!pending)return null;
+  prog.meal_selections=mtDeepClone(pending.data||{});
+  return pending.token||null;
+}
 function mtRenderMealMoment(id,moment,raw){
   const el=document.getElementById(id);if(!el)return;const items=mtLinesFromMeal(raw);if(!items.length){el.innerHTML="<em style='color:#aaa'>—</em>";return;}
   const current=mtCurrentWeek(_currentProg);const readonly=mtClientViewWeek!==current;const selected=mtSelectionFor(_currentProg,mtClientViewWeek,currentDay,moment);const required=mtWeekRequired(mtClientViewWeek,items.length);
@@ -259,29 +298,59 @@ renderMeals=function(days){const d=(days||{})[currentDay]||{};mtRenderMealMoment
 function mtRenderMealDayProgress(dayData){
   const nav=document.getElementById("days-nav");if(!nav)return;let box=document.getElementById("meal-progress-summary");if(!box){box=document.createElement("div");box.id="meal-progress-summary";box.style.cssText="margin:0 0 14px;padding:12px 14px;border-radius:14px;background:#f8f4ee;font-size:11px;color:var(--ink)";nav.insertAdjacentElement("afterend",box);}
   const moments=["morning","lunch","snack","dinner"];const labels={morning:"Matin",lunch:"Déjeuner",snack:"Collation",dinner:"Soir"};let ok=0;
-  let totalSel=0,totalReq=0;
-  const chips=moments.map(m=>{const n=mtLinesFromMeal(dayData[m]).length,req=mtWeekRequired(mtClientViewWeek,n),sel=mtSelectionFor(_currentProg,mtClientViewWeek,currentDay,m).length,done=req>0&&sel>=req;if(done)ok++;totalSel+=sel;totalReq+=req;return `<span style="padding:4px 8px;border-radius:999px;background:${done?"#dcfce7":"white"};color:${done?"#166534":"var(--muted)"};font-weight:700">${done?"✓":"○"} ${labels[m]}</span>`;}).join("");
-  box.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:4px"><strong>Progression du jour</strong><span>${ok}/4 moments</span></div><div style="font-size:10px;color:var(--muted);margin-bottom:8px">${totalSel}/${totalReq} propositions minimum sélectionnées</div><div style="display:flex;gap:6px;flex-wrap:wrap">${chips}</div>`;
+  const chips=moments.map(m=>{const n=mtLinesFromMeal(dayData[m]).length,req=mtWeekRequired(mtClientViewWeek,n),sel=mtSelectionFor(_currentProg,mtClientViewWeek,currentDay,m).length,done=req>0&&sel>=req;if(done)ok++;return `<span style="padding:4px 8px;border-radius:999px;background:${done?"#dcfce7":"white"};color:${done?"#166534":"var(--muted)"};font-weight:700">${done?"✓":"○"} ${labels[m]}</span>`;}).join("");
+  const min=mtWeekRequired(mtClientViewWeek,5);
+  const rule=mtClientViewWeek>=4?`Semaine ${mtClientViewWeek} · les 5 choix par moment`:`Semaine ${mtClientViewWeek} · minimum ${min} choix par moment`;
+  box.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:4px"><strong>Progression du jour</strong><span>${ok}/4 moments validés aujourd’hui</span></div><div style="font-size:10px;color:var(--muted);margin-bottom:8px">${rule}</div><div style="display:flex;gap:6px;flex-wrap:wrap">${chips}</div>`;
 }
 function mtToggleMealChoice(moment,index){
   if(mtClientViewWeek!==mtCurrentWeek(_currentProg))return;
-  const arr=mtEnsureSelectionPath(_currentProg,mtClientViewWeek,currentDay,moment);const pos=arr.indexOf(index);if(pos>=0)arr.splice(pos,1);else arr.push(index);arr.sort((a,b)=>a-b);renderMeals(mtWeekDays(_currentProg,mtClientViewWeek));mtSyncClientProgrammeKey("meal_selections",_currentProg.meal_selections);
+  const arr=mtEnsureSelectionPath(_currentProg,mtClientViewWeek,currentDay,moment);const pos=arr.indexOf(index);if(pos>=0)arr.splice(pos,1);else arr.push(index);arr.sort((a,b)=>a-b);
+  const token=mtWriteMealPending(_currentProg.meal_selections);
+  renderMeals(mtWeekDays(_currentProg,mtClientViewWeek));
+  mtSyncClientProgrammeKey("meal_selections",_currentProg.meal_selections,{immediate:true,pendingMealToken:token});
 }
 
 /* ---------- synchro Supabase des interactions ---------- */
-let mtSyncTimer=null;
-async function mtSyncClientProgrammeKey(key,value){
-  if(!sb||!currentSlug||window.MT_ADMIN_PAGE)return;
-  clearTimeout(mtSyncTimer); mtSyncTimer=setTimeout(async()=>{
-    try{
-      const res=await sb.from(SB_TABLE).select("programme").eq("slug",currentSlug).single();if(res.error||!res.data)return;
-      // Important : ne normalise pas le programme DB ici. Un client ne doit écrire QUE la clé autorisée.
-      const p=Object.assign({},res.data.programme||{});p[key]=mtDeepClone(value);
-      const up=await sb.from(SB_TABLE).update({programme:p}).eq("slug",currentSlug);
-      if(up.error)throw up.error;
-      if(_currentProg)_currentProg[key]=mtDeepClone(value);
-    }catch(e){console.warn("MT sync",e);}
-  },550);
+const mtSyncTimers=new Map();
+let mtSyncChain=Promise.resolve();
+function mtSetMealSyncState(state){
+  const box=document.getElementById("meal-progress-summary");if(!box)return;box.dataset.syncState=state||"";
+}
+async function mtPerformClientProgrammeSync(key,value,options={}){
+  if(!sb||!currentSlug||window.MT_ADMIN_PAGE)return false;
+  try{
+    const res=await sb.from(SB_TABLE).select("programme").eq("slug",currentSlug).single();
+    if(res.error||!res.data)throw (res.error||new Error("Programme introuvable"));
+    const p=Object.assign({},res.data.programme||{});p[key]=mtDeepClone(value);
+    const up=await sb.from(SB_TABLE).update({programme:p}).eq("slug",currentSlug).select("programme").single();
+    if(up.error)throw up.error;
+    if(_currentProg)_currentProg[key]=mtDeepClone(value);
+    if(key==="meal_selections"&&options.pendingMealToken)mtClearMealPending(options.pendingMealToken);
+    if(key==="meal_selections")mtSetMealSyncState("saved");
+    return true;
+  }catch(e){
+    console.warn("MT sync",key,e);
+    if(key==="meal_selections")mtSetMealSyncState("pending");
+    return false;
+  }
+}
+function mtQueueClientProgrammeSync(key,value,options={}){
+  const snapshot=mtDeepClone(value);
+  mtSyncChain=mtSyncChain.then(()=>mtPerformClientProgrammeSync(key,snapshot,options),()=>mtPerformClientProgrammeSync(key,snapshot,options));
+  return mtSyncChain;
+}
+function mtSyncClientProgrammeKey(key,value,options={}){
+  if(!sb||!currentSlug||window.MT_ADMIN_PAGE)return Promise.resolve(false);
+  if(options.immediate){
+    const old=mtSyncTimers.get(key);if(old)clearTimeout(old);mtSyncTimers.delete(key);
+    return mtQueueClientProgrammeSync(key,value,options);
+  }
+  const old=mtSyncTimers.get(key);if(old)clearTimeout(old);
+  return new Promise(resolve=>{
+    const timer=setTimeout(()=>{mtSyncTimers.delete(key);mtQueueClientProgrammeSync(key,value,options).then(resolve);},550);
+    mtSyncTimers.set(key,timer);
+  });
 }
 
 toggleTask=function(i){
@@ -318,7 +387,11 @@ function mtApplyProfileVisibility(prog){
 
 /* ---------- rendu client sécurisé + semaine auto ---------- */
 renderClientView=function(prenom,prog){
-  prog=mtNormalizeProgramme(prog);_currentProg=prog;const p=(prenom||"toi").trim();const setText=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};setText("display-prenom",p);setText("avatar",p.charAt(0).toUpperCase());document.title="Méthode Tee — "+p;const d=document.getElementById("today-date");if(d)d.textContent=new Date().toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"});setText("goal-title",prog.objectif||"");document.body.dataset.parcours=prog.parcours==="performance"?"performance":"equilibre";setText("parcours-badge",prog.parcours==="performance"?"Performance":"Équilibre");renderProfileCheckin(prog.parcours||"equilibre");
+  prog=mtNormalizeProgramme(prog);
+  const pendingMealToken=mtRestorePendingMealSelections(prog);
+  _currentProg=prog;
+  if(pendingMealToken)mtSyncClientProgrammeKey("meal_selections",prog.meal_selections,{immediate:true,pendingMealToken});
+  const p=(prenom||"toi").trim();const setText=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};setText("display-prenom",p);setText("avatar",p.charAt(0).toUpperCase());document.title="Méthode Tee — "+p;const d=document.getElementById("today-date");if(d)d.textContent=new Date().toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"});setText("goal-title",prog.objectif||"");document.body.dataset.parcours=prog.parcours==="performance"?"performance":"equilibre";setText("parcours-badge",prog.parcours==="performance"?"Performance":"Équilibre");renderProfileCheckin(prog.parcours||"equilibre");
   const goals=document.getElementById("goal-list");if(goals)goals.innerHTML=(prog.goals||[]).map(g=>`<li style="display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:6px"><span style="color:var(--brand)">✓</span>${mtEsc(g)}</li>`).join("");setText("coach-msg",prog.coach?`“${prog.coach}”`:"");const cw=mtCurrentWeek(prog);mtClientViewWeek=cw;setText("week-badge","Semaine "+cw);
   const tasks=document.getElementById("tasks-list");if(tasks)tasks.innerHTML=(prog.tasks||[]).map((t,i)=>`<div class="task-item" id="task-${i}" onclick="toggleTask(${i})"><div class="task-check" id="check-${i}"><span id="checkicon-${i}" style="display:none;color:white">✓</span></div><span class="task-text" style="font-size:13px;font-weight:500;color:var(--ink)">${mtEsc(t)}</span></div>`).join("");
   const offre=prog.offre||"",promo=prog.promo_code||"",banner=document.getElementById("my-banner"),bt=document.getElementById("my-banner-text"),pw=document.getElementById("my-promo-wrap"),pe=document.getElementById("my-promo-code"),map={signature:"Offre Signature : -15% sur toute la boutique Maison Yanna",privilege:"Offre Privilege : 5 produits offerts — envoie ta sélection",elite:"Offre Elite : 10 produits offerts à la quantité souhaitée"};if(banner&&bt&&map[offre]){bt.textContent=map[offre];if(promo&&pe&&pw){pe.textContent=promo;pw.style.display="block";}else if(pw)pw.style.display="none";banner.style.display="block";}else if(banner)banner.style.display="none";
