@@ -33,7 +33,12 @@
       <p style="font-size:9px;text-transform:uppercase;letter-spacing:.18em;color:#b5aca3;font-weight:800;margin-bottom:3px">Espace Client</p>
       <h1 class="serif" style="font-size:20px;font-style:italic;font-weight:700;color:var(--brand);margin:0">Méthode Tee</h1>
     </div>
-    <div id="avatar" style="width:42px;height:42px;border-radius:50%;background:var(--brand);color:white;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-style:italic;font-weight:700;font-size:19px;box-shadow:0 4px 14px rgba(83,100,74,.28)">T</div>
+    <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+      <div id="avatar" style="width:42px;height:42px;border-radius:50%;background:var(--brand);color:white;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-style:italic;font-weight:700;font-size:19px;box-shadow:0 4px 14px rgba(83,100,74,.28)">T</div>
+      <button id="client-logout-btn" type="button" onclick="logoutClient()" aria-label="Se déconnecter" title="Se déconnecter" style="border:1px solid rgba(83,100,74,.16);background:white;color:var(--brand);border-radius:999px;padding:8px 10px;display:flex;align-items:center;gap:5px;font-family:inherit;font-size:10px;font-weight:800;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.04)">
+        <i data-lucide="log-out" style="width:14px;height:14px"></i><span>Déconnexion</span>
+      </button>
+    </div>
   </header>
 
   <!-- MAIN -->

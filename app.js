@@ -97,22 +97,64 @@ async function testSupabase() {
 ════════════════════════════════════════ */
 async function loadAuthenticatedClient() {
   isClientMode=true;
-  document.getElementById("fab-admin").classList.add("hidden");
+  const fabAdmin=document.getElementById("fab-admin");
+  if(fabAdmin) fabAdmin.classList.add("hidden");
   const settings=loadSettings();
   if (!settings.url||!settings.key){showError("App non configurée. Contacte ton coach.");return;}
   try {
     sb=getFactory()(settings.url,settings.key);
-    const timeout=new Promise((_,r)=>setTimeout(()=>r(new Error("Connexion Supabase trop longue. Vérifie la clé ou recharge avec ?reset=1")),12000));
-    const {data:{session}}=await sb.auth.getSession();
+    const timeout=new Promise((_,r)=>setTimeout(()=>r(new Error("Connexion Supabase trop longue. Vérifie ta connexion puis réessaie.")),12000));
+    const {data:{session},error:sessionError}=await sb.auth.getSession();
+    if(sessionError) throw sessionError;
     const user=session?.user;
     if(!user){showAuthScreen(false);return;}
-    const req=sb.from(SB_TABLE).select("slug,prenom,programme").ilike("client_email",user.email).single();
+
+    const email=(user.email||"").trim().toLowerCase();
+    if(!email){
+      await sb.auth.signOut();
+      showAuthScreen(false);
+      const status=document.getElementById("mt-auth-status");
+      if(status) status.textContent="Ta session a expiré. Reconnecte-toi avec l’e-mail de ton accompagnement.";
+      return;
+    }
+
+    const req=sb.from(SB_TABLE).select("slug,prenom,programme").ilike("client_email",email).maybeSingle();
     const {data,error}=await Promise.race([req,timeout]);
-    if (error||!data){showError("Fiche introuvable : "+slug);return;}
+    if(error) throw new Error("Impossible de charger ta fiche pour le moment. Réessaie dans quelques instants.");
+
+    // Une ancienne session (admin, autre cliente, e-mail modifié...) ne doit jamais faire planter l’espace client.
+    if(!data){
+      await sb.auth.signOut();
+      currentSlug=null;
+      _currentProg=null;
+      showAuthScreen(false);
+      const status=document.getElementById("mt-auth-status");
+      if(status) status.textContent="Cette session ne correspond à aucune fiche cliente. Entre l’e-mail lié à ton accompagnement.";
+      return;
+    }
+
     currentSlug=data.slug;
     renderClientView(data.prenom,data.programme||{});
     hideLoading();
   } catch(e){showError("Erreur : "+e.message);}
+}
+
+async function logoutClient(){
+  const btn=document.getElementById("client-logout-btn");
+  if(btn){btn.disabled=true;btn.style.opacity=".55";}
+  try{
+    clearNotifTimers();
+    if(sb) await sb.auth.signOut();
+  }catch(e){
+    console.warn("[MT] Déconnexion :",e.message);
+  }finally{
+    currentSlug=null;
+    currentDay=null;
+    _currentProg=null;
+    _selection=[];
+    // Recharge l’entrée client sans conserver d’éventuels paramètres/hash du magic link.
+    location.replace(new URL("./index.html",location.href).href);
+  }
 }
 
 /* ════════════════════════════════════════
