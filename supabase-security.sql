@@ -44,9 +44,9 @@ begin
       or new.prenom is distinct from old.prenom
       or new.client_email is distinct from old.client_email
       or new.admin_notes is distinct from old.admin_notes
-      or (new.programme - array['suivi','photos','phyto_demande','selection','messages']::text[])
+      or (new.programme - array['suivi','photos','phyto_demande','selection','messages','meal_selections','task_state','terrain_bilan','cycle']::text[])
          is distinct from
-         (old.programme - array['suivi','photos','phyto_demande','selection','messages']::text[]) then
+         (old.programme - array['suivi','photos','phyto_demande','selection','messages','meal_selections','task_state','terrain_bilan','cycle']::text[]) then
       raise exception 'Modification non autorisée';
     end if;
   end if;
@@ -69,3 +69,11 @@ with check (bucket_id='mt-photos' and (storage.foldername(name))[1]=auth.uid()::
 
 -- Après avoir créé ton compte admin, remplace la valeur ci-dessous :
 -- insert into public.mt_admin_users(user_id) values ('UUID_DE_TEE');
+
+
+-- V6 : index utile pour les recherches de dossiers actifs / e-mail
+create index if not exists mt_clients_status_idx on public.mt_clients ((programme->>'statut'));
+
+-- Les interactions clientes autorisées par le trigger sont limitées aux clés :
+-- suivi, photos, phyto_demande, selection, messages, meal_selections, task_state, terrain_bilan, cycle.
+-- Le bilan initial, les menus, le profil, la sécurité phyto et les notes privées restent administrateur uniquement.

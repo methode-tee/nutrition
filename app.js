@@ -306,12 +306,12 @@ function toggleTask(i) {
   check.style.borderColor=done?"var(--brand)":"#ddd8d0";
   icon.style.display=done?"block":"none";
   const slug=currentSlug||"admin";
-  const today=new Date().toISOString().slice(0,10);
+  const today=mtLocalDateKey();
   const key="mt_tasks_"+slug+"_"+today;
   try{const s=JSON.parse(localStorage.getItem(key)||"{}");s[i]=done;localStorage.setItem(key,JSON.stringify(s));}catch(e){}
 }
 function restoreTasks(slug) {
-  const today=new Date().toISOString().slice(0,10);
+  const today=mtLocalDateKey();
   const key="mt_tasks_"+(slug||"admin")+"_"+today;
   try {
     const saved=JSON.parse(localStorage.getItem(key)||"{}");
@@ -528,7 +528,7 @@ function renderProfileCheckin(parcours){
 
 function initSuivi(){
   const slug=currentSlug||"admin";
-  const today=new Date().toISOString().slice(0,10);
+  const today=mtLocalDateKey();
   const el=document.getElementById("suivi-date");
   if(el) el.textContent=new Date().toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"});
   const key="mt_suivi_"+slug+"_"+today;
@@ -549,7 +549,7 @@ function initSuivi(){
 }
 function saveSuivi(){
   const slug=currentSlug||"admin";
-  const today=new Date().toISOString().slice(0,10);
+  const today=mtLocalDateKey();
   const key="mt_suivi_"+slug+"_"+today;
   const data={eau:document.getElementById("check-eau").checked,repas:document.getElementById("check-repas").checked,infusion:document.getElementById("check-infusion").checked,sport:document.getElementById("check-sport").checked,poids:document.getElementById("suivi-poids").value,energie:document.getElementById("suivi-energie").value,sommeil:document.getElementById("suivi-sommeil").value,digestion:document.getElementById("suivi-digestion").value,note:document.getElementById("suivi-note").value,filled:true,date:today};
   ["recuperation","courbatures","disponibilite","stress","faim","confort"].forEach(id=>{const input=document.getElementById("suivi-"+id);if(input)data[id]=input.value;});
@@ -573,7 +573,7 @@ function updateScore(slug){
   let total=0,filled=0;
   for(let i=6;i>=0;i--){
     const d=new Date();d.setDate(d.getDate()-i);
-    const day=d.toISOString().slice(0,10);
+    const day=mtLocalDateKey(d);
     const key="mt_suivi_"+(slug||"admin")+"_"+day;
     total++;
     try{const s=JSON.parse(localStorage.getItem(key)||"{}");if(s.filled)filled++;}catch(e){}
@@ -666,7 +666,7 @@ function renderHistorique(slug){
   const joursLabels=["D","L","M","M","J","V","S"];
   for(let i=6;i>=0;i--){
     const d=new Date();d.setDate(d.getDate()-i);
-    const dateStr=d.toISOString().slice(0,10);
+    const dateStr=mtLocalDateKey(d);
     const key="mt_suivi_"+(slug||"admin")+"_"+dateStr;
     const label=joursLabels[d.getDay()];
     try{const s=JSON.parse(localStorage.getItem(key)||"{}");jours.push({date:dateStr,label,filled:s.filled||false,energie:parseInt(s.energie)||0,sommeil:parseInt(s.sommeil)||0,digestion:parseInt(s.digestion)||0,poids:s.poids||""});}
@@ -677,7 +677,7 @@ function renderHistorique(slug){
   const sb2=document.getElementById("streak-badge");
   if(sb2){sb2.style.display=streak>0?"block":"none";if(streak>0)sb2.textContent="🔥 "+streak+" jour"+(streak>1?"s":"")+" de suite";}
   const se=document.getElementById("streak-days");
-  if(se){se.innerHTML=jours.map(j=>{const auj=j.date===new Date().toISOString().slice(0,10);const bg=j.filled?"var(--brand)":"#f0ece6";const brd=auj?"2px solid var(--brand)":"2px solid transparent";return`<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px"><div style="width:32px;height:32px;border-radius:50%;background:${bg};display:flex;align-items:center;justify-content:center;font-size:14px;border:${brd}">${j.filled?"✓":`<span style="color:${j.filled?"white":"var(--muted)"};font-size:10px;font-weight:700">${j.label}</span>`}</div><span style="font-size:9px;color:var(--muted);font-weight:600">${j.label}</span></div>`;}).join("");}
+  if(se){se.innerHTML=jours.map(j=>{const auj=j.date===mtLocalDateKey();const bg=j.filled?"var(--brand)":"#f0ece6";const brd=auj?"2px solid var(--brand)":"2px solid transparent";return`<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px"><div style="width:32px;height:32px;border-radius:50%;background:${bg};display:flex;align-items:center;justify-content:center;font-size:14px;border:${brd}">${j.filled?"✓":`<span style="color:${j.filled?"white":"var(--muted)"};font-size:10px;font-weight:700">${j.label}</span>`}</div><span style="font-size:9px;color:var(--muted);font-weight:600">${j.label}</span></div>`;}).join("");}
   function renderCourbe(id,key,couleur){const el=document.getElementById(id);if(!el)return;el.innerHTML=jours.map(j=>{const val=j[key];const h=val>0?Math.round((val/5)*50):3;const bg=val>0?couleur:"#f0ece6";return`<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:3px"><span style="font-size:9px;color:var(--muted);font-weight:700">${val>0?val:""}</span><div style="width:100%;height:${h}px;background:${bg};border-radius:4px;opacity:${val>0?"1":"0.5"};transition:height .3s"></div></div>`;}).join("");}
   renderCourbe("chart-energie","energie","#f59e0b");
   renderCourbe("chart-sommeil","sommeil","#6366f1");
@@ -725,7 +725,7 @@ function planifierRappels(slug){
   creerRappel(prochainHeure(8,0),"🌅 Méthode Tee — Rituel du matin","C'est l'heure de ton rituel du matin. Eau chaude, infusion, et bonne journée !");
   creerRappel(prochainHeure(20,0),"🍵 Méthode Tee — Infusion du soir","Pense à ton infusion du soir pour préparer ton corps au repos.");
   const tSuivi=setTimeout(()=>{
-    function check(){const today=new Date().toISOString().slice(0,10);const key="mt_suivi_"+(slug||"admin")+"_"+today;try{const s=JSON.parse(localStorage.getItem(key)||"{}");if(!s.filled)new Notification("✅ Méthode Tee — Suivi du jour",{body:"Tu n'as pas encore rempli ton suivi aujourd'hui. 2 minutes suffisent !",icon:"/nutrition/icon-192.PNG"});}catch(e){}}
+    function check(){const today=mtLocalDateKey();const key="mt_suivi_"+(slug||"admin")+"_"+today;try{const s=JSON.parse(localStorage.getItem(key)||"{}");if(!s.filled)new Notification("✅ Méthode Tee — Suivi du jour",{body:"Tu n'as pas encore rempli ton suivi aujourd'hui. 2 minutes suffisent !",icon:"/nutrition/icon-192.PNG"});}catch(e){}}
     check();const iv=setInterval(check,86400000);_notifTimers.intervals.push(iv);
   },prochainHeure(21,0));
   _notifTimers.timeouts.push(tSuivi);
@@ -1151,7 +1151,7 @@ function renderSuiviAdmin(prog){
 ════════════════════════════════════════ */
 async function renderSuiviGlobal(){
   if(!sb) return;
-  const today=new Date().toISOString().slice(0,10);
+  const today=mtLocalDateKey();
   const de=document.getElementById("suivi-global-date");const le=document.getElementById("suivi-global-list");
   if(de) de.textContent=new Date().toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"});
   if(!le) return;
@@ -1238,7 +1238,7 @@ async function genererRapport(){
   if(res.error||!res.data){log("❌ Erreur.");return;}
   const prenom=res.data.prenom||currentSlug;const prog=res.data.programme||{};const suivi=prog.suivi||{};const tl=prog.timeline||{};
   const sc=getSemaineEnCours(tl.dateDebut,tl.nbSemaines||4);
-  const jours=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const ds=d.toISOString().slice(0,10);jours.push({date:ds,entry:suivi[ds]||null});}
+  const jours=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const ds=mtLocalDateKey(d);jours.push({date:ds,entry:suivi[ds]||null});}
   const jr=jours.filter(j=>j.entry&&j.entry.filled).length;const score=Math.round(jr/7*100);
   const energies=jours.filter(j=>j.entry&&j.entry.energie).map(j=>parseFloat(j.entry.energie));const sommeils=jours.filter(j=>j.entry&&j.entry.sommeil).map(j=>parseFloat(j.entry.sommeil));const digestions=jours.filter(j=>j.entry&&j.entry.digestion).map(j=>parseFloat(j.entry.digestion));const poids=jours.filter(j=>j.entry&&j.entry.poids).map(j=>parseFloat(j.entry.poids));
   function moy(a){if(!a.length)return null;return(a.reduce((x,y)=>x+y,0)/a.length).toFixed(1);}
@@ -1412,7 +1412,7 @@ function mtComputeSmartScore(slug){
   const days=[];
   for(let i=6;i>=0;i--){
     const d=new Date(); d.setDate(d.getDate()-i);
-    try{ days.push(JSON.parse(localStorage.getItem("mt_suivi_"+slug+"_"+d.toISOString().slice(0,10))||"{}")); }catch(e){days.push({});}
+    try{ days.push(JSON.parse(localStorage.getItem("mt_suivi_"+slug+"_"+mtLocalDateKey(d))||"{}")); }catch(e){days.push({});}
   }
   let total=0, count=0, checks=0;
   days.forEach(x=>{
@@ -1513,7 +1513,7 @@ if(typeof saveSuivi==="function" && !window.__mtPatchedSave){
     if(txt) txt.textContent="Score intelligent : "+score+"/100 — calculé depuis énergie, sommeil, digestion et habitudes.";
     if(badge){ badge.style.display="block"; badge.textContent=score+"/100"; }
     try{
-      const today=new Date().toISOString().slice(0,10);
+      const today=mtLocalDateKey();
       const data=JSON.parse(localStorage.getItem("mt_suivi_"+slug+"_"+today)||"{}");
       mtQueueSync({type:"suivi",slug,date:today,data});
     }catch(e){}
