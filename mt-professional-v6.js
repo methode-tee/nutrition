@@ -98,7 +98,22 @@ function getSemaineEnCours(dateDebut,nbSemaines){
   if(s<1)s=1; if(nbSemaines&&s>nbSemaines)s=nbSemaines;
   return s;
 }
-function mtCurrentWeek(prog){prog=mtNormalizeProgramme(prog);return getSemaineEnCours(prog.timeline.dateDebut,prog.timeline.nbSemaines||4);}
+function mtValidatedWeekFloor(prog){
+  prog=mtNormalizeProgramme(prog);
+  const nb=prog.timeline.nbSemaines||4;
+  let current=1;
+  for(let s=1;s<nb;s++){
+    if(prog.week_reviews?.[String(s)]?.validatedAt) current=s+1;
+    else break;
+  }
+  return current;
+}
+function mtCurrentWeek(prog){
+  prog=mtNormalizeProgramme(prog);
+  const byDate=getSemaineEnCours(prog.timeline.dateDebut,prog.timeline.nbSemaines||4);
+  const byValidation=mtValidatedWeekFloor(prog);
+  return Math.min(prog.timeline.nbSemaines||4,Math.max(byDate,byValidation));
+}
 function mtWeekDays(prog,week){prog=mtNormalizeProgramme(prog);return (prog.weeks[String(week)]&&prog.weeks[String(week)].days)||{};}
 function mtBestDayKey(days){
   const keys=mtSortDayKeys(days); if(!keys.length)return null;
@@ -430,7 +445,7 @@ appliquerProtocole=function(type){
 
 /* ---------- admin : chargement/sauvegarde V6 ---------- */
 const mtOriginalFillAdmin=fillAdmin;
-fillAdmin=function(prenom,prog){prog=mtNormalizeProgramme(prog);programme=prog;const current=mtCurrentWeek(prog);mtAdminWeek=Math.min(current,prog.timeline.nbSemaines||4);mtOriginalFillAdmin(prenom,prog);const sexe=document.getElementById("f-sexe"),cycle=document.getElementById("f-cycle-mode"),safe=document.getElementById("f-phyto-validated");if(sexe)sexe.value=prog.profile?.sexe||"";if(cycle)cycle.value=prog.profile?.cycleMode||"inconnu";if(safe)safe.checked=!!prog.safety?.phytoValidated;mtRenderIntakeFields(prog.intake||{});mtRenderAdminWeekNav();adminDay=Object.keys(mtWeekDays(prog,mtAdminWeek))[0]||null;renderAdminDaysNav(mtWeekDays(prog,mtAdminWeek));const lbl=document.getElementById("mt-week-review-label");if(lbl)lbl.textContent=`Semaine ${current} en cours — les améliorations restent à valider par Tee.`;};
+fillAdmin=function(prenom,prog){prog=mtNormalizeProgramme(prog);programme=prog;const current=mtCurrentWeek(prog);mtAdminWeek=Math.min(current,prog.timeline.nbSemaines||4);mtOriginalFillAdmin(prenom,prog);const sexe=document.getElementById("f-sexe"),cycle=document.getElementById("f-cycle-mode"),safe=document.getElementById("f-phyto-validated");if(sexe)sexe.value=prog.profile?.sexe||"";if(cycle)cycle.value=prog.profile?.cycleMode||"inconnu";if(safe)safe.checked=!!prog.safety?.phytoValidated;mtRenderIntakeFields(prog.intake||{});mtRenderAdminWeekNav();adminDay=Object.keys(mtWeekDays(prog,mtAdminWeek))[0]||null;renderAdminDaysNav(mtWeekDays(prog,mtAdminWeek));const lbl=document.getElementById("mt-week-review-label");if(lbl)lbl.textContent=`Semaine ${current} en cours — les améliorations restent à valider par Tee.`;const reviewBtn=document.querySelector("#mt-week-review .btn");if(reviewBtn){const nb=prog.timeline.nbSemaines||4;reviewBtn.textContent=current>=nb?`Dernière semaine — clôturer le suivi`:`Valider S${current} → ouvrir S${current+1}`;}};
 
 const mtOriginalSelectClient=selectClient;
 selectClient=async function(slug){await mtOriginalSelectClient(slug);programme=mtNormalizeProgramme(programme);fillAdmin(document.getElementById("f-prenom")?.value||"",programme);};
@@ -459,7 +474,27 @@ const mtOriginalLoadAllClients=loadAllClients;
 loadAllClients=async function(){if(!sb){log("❌ Connecte Supabase d'abord.");return;}const {data,error}=await sb.from(SB_TABLE).select("slug,prenom,programme");if(error){log("❌ "+error.message);return;}const norm=(data||[]).map(c=>({...c,programme:mtNormalizeProgramme(c.programme||{})}));log(`✅ ${norm.length} client(s) chargé(s).`);renderClientsList(norm);mtRenderAdminAlerts(norm);};
 
 /* ---------- clôture de semaine ---------- */
-function mtPrepareNextWeek(){if(!currentSlug){log("❌ Sélectionne un client.");return;}programme=mtNormalizeProgramme(programme);mtPersistAdminDayDraft();const current=mtCurrentWeek(programme),nb=programme.timeline.nbSemaines||4;if(current>=nb){log("✅ Dernière semaine : pas de semaine suivante à préparer.");return;}if(!confirm(`Valider S${current} et préparer S${current+1} ? Le menu de S${current} sera copié comme base, puis tu pourras l’adapter.`))return;programme.week_reviews[String(current)]={validatedAt:new Date().toISOString()};const next=String(current+1);if(!Object.keys(mtWeekDays(programme,current+1)).length)programme.weeks[next]={days:mtDeepClone(mtWeekDays(programme,current))};mtAdminWeek=current+1;adminDay=Object.keys(mtWeekDays(programme,mtAdminWeek))[0]||null;mtRenderAdminWeekNav();renderAdminDaysNav(mtWeekDays(programme,mtAdminWeek));log(`✅ S${current} validée. S${current+1} est prête à être adaptée — sauvegarde le client.`);}
+async function mtPrepareNextWeek(){
+  if(!currentSlug){log("❌ Sélectionne un client.");return;}
+  programme=mtNormalizeProgramme(programme);
+  mtPersistAdminDayDraft();
+  const current=mtCurrentWeek(programme),nb=programme.timeline.nbSemaines||4;
+  if(current>=nb){log("✅ Dernière semaine : pas de semaine suivante à préparer.");return;}
+  const next=current+1;
+  const nextHasMenu=Object.keys(mtWeekDays(programme,next)).length>0;
+  const message=nextHasMenu
+    ? `Valider S${current} et passer à S${next} ? Ton menu S${next} est déjà préparé : il sera conservé tel quel.`
+    : `Valider S${current} et passer à S${next} ? S${next} est vide : le menu de S${current} sera copié comme base.`;
+  if(!confirm(message))return;
+  programme.week_reviews[String(current)]={validatedAt:new Date().toISOString()};
+  if(!nextHasMenu)programme.weeks[String(next)]={days:mtDeepClone(mtWeekDays(programme,current))};
+  mtAdminWeek=next;
+  adminDay=mtSortDayKeys(mtWeekDays(programme,mtAdminWeek))[0]||null;
+  mtRenderAdminWeekNav();
+  renderAdminDaysNav(mtWeekDays(programme,mtAdminWeek));
+  log(`⏳ S${current} validée — passage à S${next} et sauvegarde automatique…`);
+  await saveClient();
+}
 
 /* ---------- PDF corrigé : aucune victoire inventée ---------- */
 mtComputeSmartScore=function(slug){const p=_currentProg||programme||{};let total=0,count=0,checks=0;for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const x=(p.suivi||{})[mtLocalDateKey(d)]||{};["energie","sommeil","digestion"].forEach(k=>{if(x[k]){total+=Number(x[k]);count++;}});["eau","repas","infusion","sport"].forEach(k=>{if(x[k])checks++;});}const base=count?Math.round(total/(count*5)*65):0,habit=Math.round(checks/(7*4)*35);return Math.min(100,base+habit);};
