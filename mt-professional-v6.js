@@ -566,3 +566,125 @@ updateSelectionUI=function(){
 
 /* renouvellement calculé en date locale */
 getRenewalStatus=function(prog){const tl=prog.timeline||{},start=mtParseLocalDate(tl.dateDebut);if(!start)return null;const fin=new Date(start);fin.setDate(fin.getDate()+((tl.nbSemaines||4)*7));const joursRestants=Math.ceil(mtDaysDiff(fin,new Date()));return{joursRestants,dateFin:fin.toLocaleDateString("fr-FR",{day:"numeric",month:"long"})};};
+
+
+/* ════════════════════════════════════════
+   V6.3 — FOCUS HEBDOMADAIRE PERSONNALISÉ
+   Pharmacopée • Mouvement • Rituel du soir • Tip Tee
+   Chaque bloc est stocké dans timeline.semaines[n] et reste archivé par semaine.
+════════════════════════════════════════ */
+(function(){
+  if(window.__MT_V63_WEEKLY_FOCUS__) return;
+  window.__MT_V63_WEEKLY_FOCUS__=true;
+
+  const v63Esc = (v)=> typeof mtEsc==="function" ? mtEsc(String(v||"")) : String(v||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+  /* ---- Admin : enrichit chaque carte de semaine de la Timeline ---- */
+  const v63OriginalRenderTimelineAdmin = renderTimelineAdmin;
+  renderTimelineAdmin = function(tl){
+    v63OriginalRenderTimelineAdmin(tl);
+    const semaines=(tl&&tl.semaines)||[];
+    const cards=document.querySelectorAll("#timeline-admin-weeks > div");
+    cards.forEach((card,idx)=>{
+      const s=idx+1;
+      const data=semaines[idx]||{};
+      const extra=document.createElement("div");
+      extra.className="mt-v63-week-focus-fields";
+      extra.style.cssText="margin-top:14px;padding-top:14px;border-top:1px dashed #ded7cf;display:flex;flex-direction:column;gap:10px";
+      extra.innerHTML=`
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+          <div>
+            <p style="font-size:10px;text-transform:uppercase;letter-spacing:.12em;font-weight:800;color:var(--brand);margin:0 0 3px">Focus hebdomadaire</p>
+            <p style="font-size:11px;color:var(--muted);margin:0">Visible par la cliente uniquement pendant S${s}, puis conservé dans son historique.</p>
+          </div>
+          <span style="font-size:10px;font-weight:800;padding:4px 9px;border-radius:999px;background:rgba(83,100,74,.08);color:var(--brand)">S${s}</span>
+        </div>
+        <div>
+          <label class="field-label">🌿 Pharmacopée / mélange de la semaine</label>
+          <textarea class="admin-textarea tl-pharmaco" data-s="${s}" style="min-height:110px" placeholder="Ex : Mélange Ventre Léger Intensif\nFenouil 30 % • Anis vert 20 %…\n1 tasse après le repas principal.">${v63Esc(data.pharmacopoeia||data.pharmaco||"")}</textarea>
+        </div>
+        <div>
+          <label class="field-label">🏃 Objectif mouvement</label>
+          <textarea class="admin-textarea tl-mouvement" data-s="${s}" style="min-height:110px" placeholder="Ex : Lundi : Pilates 25–30 min\nMardi : marche active 30 min…">${v63Esc(data.mouvement||"")}</textarea>
+        </div>
+        <div>
+          <label class="field-label">🌙 Rituel du soir renforcé</label>
+          <textarea class="admin-textarea tl-rituel-soir" data-s="${s}" style="min-height:110px" placeholder="Ex : Après le dîner :\n1. Marche 10 à 15 min\n2. Infusion…">${v63Esc(data.rituelSoir||data.rituel_soir||"")}</textarea>
+        </div>
+        <div>
+          <label class="field-label">✦ Tip Tee spécial semaine</label>
+          <textarea class="admin-textarea tl-tip-tee" data-s="${s}" style="min-height:110px" placeholder="Ex : RÈGLE DES 4 S\nSEL — …\nSTRESS — …">${v63Esc(data.tipTee||data.tip||"")}</textarea>
+        </div>`;
+      card.appendChild(extra);
+    });
+  };
+
+  /* ---- Admin : sauvegarde les 4 nouveaux blocs dans la bonne semaine ---- */
+  const v63OriginalSyncTimeline = syncTimeline;
+  syncTimeline = function(){
+    const out=v63OriginalSyncTimeline();
+    out.semaines=(out.semaines||[]).map((w,idx)=>{
+      const s=idx+1;
+      const get=(cls)=>document.querySelector(`.${cls}[data-s='${s}']`)?.value?.trim()||"";
+      return Object.assign({},w,{
+        pharmacopoeia:get("tl-pharmaco"),
+        mouvement:get("tl-mouvement"),
+        rituelSoir:get("tl-rituel-soir"),
+        tipTee:get("tl-tip-tee")
+      });
+    });
+    return out;
+  };
+
+  /* ---- Client : carte Focus de la semaine courante ---- */
+  function v63RenderWeeklyFocus(prog){
+    const host=document.getElementById("regle-semaine");
+    if(!host) return;
+    let card=document.getElementById("mt-weekly-focus-client");
+    if(!card){
+      card=document.createElement("div");
+      card.id="mt-weekly-focus-client";
+      card.className="card";
+      card.style.cssText="padding:20px;margin-bottom:20px";
+      const progressCard=document.getElementById("prog-bar")?.closest(".card");
+      if(progressCard) progressCard.insertAdjacentElement("afterend",card);
+      else host.insertAdjacentElement("afterend",card);
+    }
+    const p=typeof mtNormalizeProgramme==="function"?mtNormalizeProgramme(prog||{}):(prog||{});
+    const sc=typeof mtCurrentWeek==="function"?mtCurrentWeek(p):1;
+    const data=p.timeline?.semaines?.[sc-1]||{};
+    const blocks=[
+      {emoji:"🌿",title:"Pharmacopée de la semaine",value:data.pharmacopoeia||data.pharmaco||""},
+      {emoji:"🏃",title:"Objectif mouvement",value:data.mouvement||""},
+      {emoji:"🌙",title:"Rituel du soir",value:data.rituelSoir||data.rituel_soir||""},
+      {emoji:"✦",title:"Tip Tee",value:data.tipTee||data.tip||""}
+    ].filter(x=>String(x.value||"").trim());
+    if(!blocks.length){card.style.display="none";card.innerHTML="";return;}
+    card.style.display="block";
+    card.innerHTML=`
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px">
+        <div>
+          <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 5px">Semaine ${sc} — Focus personnalisé</p>
+          <h3 class="serif" style="font-size:21px;color:var(--ink);margin:0">Tes repères renforcés</h3>
+        </div>
+        <span style="font-size:11px;font-weight:800;color:white;background:var(--brand);border-radius:999px;padding:5px 10px">S${sc}</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        ${blocks.map(b=>`<div style="border:1px solid rgba(140,117,97,.12);border-radius:16px;padding:14px;background:#fff"><div style="display:flex;align-items:center;gap:8px;margin-bottom:7px"><span style="font-size:18px">${b.emoji}</span><span style="font-size:10px;text-transform:uppercase;letter-spacing:.11em;font-weight:800;color:var(--brand)">${b.title}</span></div><div style="font-size:13px;line-height:1.72;color:var(--ink);white-space:pre-wrap">${v63Esc(b.value)}</div></div>`).join("")}
+      </div>`;
+  }
+
+  const v63OriginalRenderProgramme = renderProgramme;
+  renderProgramme = function(prog){
+    v63OriginalRenderProgramme(prog);
+    v63RenderWeeklyFocus(prog);
+  };
+
+  /* Si l'admin est déjà ouvert au chargement, le prochain fillAdmin utilisera les nouveaux champs. */
+  if(window.MT_ADMIN_PAGE && typeof programme!=="undefined" && programme){
+    try{
+      const tl=programme.timeline||{};
+      if(document.getElementById("timeline-admin-weeks")) renderTimelineAdmin(tl);
+    }catch(e){console.warn("[MT V6.3] Focus hebdo admin :",e.message);}
+  }
+})();
