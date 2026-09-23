@@ -32,3 +32,6 @@ Deux profils sont disponibles :
 Lire entièrement `PATCH_NOTES.md`, sauvegarder la base puis exécuter `supabase-security.sql`. L’application attend une authentification Supabase par e-mail et ne fonctionne plus avec les anciens liens publics `?client=...`.
 
 La clé `anon` Supabase peut rester dans le navigateur. Ne jamais y placer une clé `service_role`.
+
+## Performance Pro
+Deux niveaux sportifs premium sont disponibles dans l’admin : **Performance+ (850 €/mois)** et **Private Performance (1 500 €/mois)**. Ils activent un cockpit dédié aux sportifs : périodisation hebdomadaire, stratégie match, voyages/hôtel/restaurants, micronutrition/biologie, composition corporelle, sécurité suppléments/antidopage, coordination du staff et dotation Maison Yanna. Private Performance ajoute la couche concierge (chef/traiteur, meal prep, logistique de déplacement et présence physique ponctuelle sur devis).
