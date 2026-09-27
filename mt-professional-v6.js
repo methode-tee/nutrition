@@ -101,9 +101,8 @@ function getSemaineEnCours(dateDebut,nbSemaines){
 function mtValidatedWeekFloor(prog){
   prog=mtNormalizeProgramme(prog);
   const nb=prog.timeline.nbSemaines||4;
-  // Une validation manuelle doit ouvrir immédiatement la semaine suivante,
-  // même si d'anciennes semaines ont avancé automatiquement par la date
-  // et ne possèdent donc pas toutes un week_reviews historique.
+  // Une validation manuelle récente fait foi même si les anciennes semaines
+  // ont avancé par la date et n'ont pas toutes une entrée week_reviews.
   let highestValidated=0;
   for(let s=1;s<nb;s++){
     if(prog.week_reviews?.[String(s)]?.validatedAt) highestValidated=Math.max(highestValidated,s);
@@ -478,24 +477,68 @@ loadAllClients=async function(){if(!sb){log("❌ Connecte Supabase d'abord.");re
 /* ---------- clôture de semaine ---------- */
 async function mtPrepareNextWeek(){
   if(!currentSlug){log("❌ Sélectionne un client.");return;}
+  if(!sb){log("❌ Supabase n'est pas connecté.");alert("Impossible de valider la semaine : connexion Supabase absente.");return;}
+
   programme=mtNormalizeProgramme(programme);
   mtPersistAdminDayDraft();
   const current=mtCurrentWeek(programme),nb=programme.timeline.nbSemaines||4;
   if(current>=nb){log("✅ Dernière semaine : pas de semaine suivante à préparer.");return;}
+
   const next=current+1;
   const nextHasMenu=Object.keys(mtWeekDays(programme,next)).length>0;
   const message=nextHasMenu
     ? `Valider S${current} et passer à S${next} ? Ton menu S${next} est déjà préparé : il sera conservé tel quel.`
     : `Valider S${current} et passer à S${next} ? S${next} est vide : le menu de S${current} sera copié comme base.`;
   if(!confirm(message))return;
-  programme.week_reviews[String(current)]={validatedAt:new Date().toISOString()};
-  if(!nextHasMenu)programme.weeks[String(next)]={days:mtDeepClone(mtWeekDays(programme,current))};
-  mtAdminWeek=next;
-  adminDay=mtSortDayKeys(mtWeekDays(programme,mtAdminWeek))[0]||null;
-  mtRenderAdminWeekNav();
-  renderAdminDaysNav(mtWeekDays(programme,mtAdminWeek));
-  log(`⏳ S${current} validée — passage à S${next} et sauvegarde automatique…`);
-  await saveClient();
+
+  const btn=document.querySelector("#mt-week-review .btn");
+  const oldBtnText=btn?.textContent||"";
+  if(btn){btn.disabled=true;btn.textContent=`Validation de S${current}…`;}
+
+  // Snapshot pour pouvoir revenir proprement en arrière si Supabase refuse l'écriture.
+  const before=mtDeepClone(programme);
+  try{
+    programme.week_reviews=programme.week_reviews||{};
+    programme.week_reviews[String(current)]={
+      ...(programme.week_reviews[String(current)]||{}),
+      validatedAt:new Date().toISOString(),
+      openedWeek:next
+    };
+    if(!nextHasMenu)programme.weeks[String(next)]={days:mtDeepClone(mtWeekDays(programme,current))};
+    mtSyncLegacyDays(programme);
+
+    // IMPORTANT : on ne passe plus par saveClient(). Ce bouton ne doit pas
+    // dépendre d'un autre champ de l'admin (email, JSON Méthode, etc.).
+    // On persiste directement le programme déjà en mémoire.
+    log(`⏳ Validation de S${current} dans Supabase…`);
+    const res=await sb.from(SB_TABLE)
+      .update({programme:programme})
+      .eq("slug",currentSlug)
+      .select("prenom,programme")
+      .single();
+    if(res.error)throw res.error;
+    if(!res.data?.programme)throw new Error("La validation n'a pas été relue depuis Supabase.");
+
+    programme=mtNormalizeProgramme(res.data.programme);
+    _currentProg=programme;
+    const opened=mtCurrentWeek(programme);
+    if(opened<next)throw new Error(`La validation a été enregistrée mais S${next} ne s'est pas activée.`);
+
+    mtAdminWeek=next;
+    adminDay=mtSortDayKeys(mtWeekDays(programme,mtAdminWeek))[0]||null;
+    fillAdmin(res.data.prenom||document.getElementById("f-prenom")?.value||"",programme);
+    renderClientView(res.data.prenom||document.getElementById("f-prenom")?.value||"",programme);
+    log(`✅ S${current} validée — S${next} est maintenant ouverte.`);
+  }catch(e){
+    programme=mtNormalizeProgramme(before);
+    _currentProg=programme;
+    console.error("Validation semaine",e);
+    log(`❌ Validation S${current} non enregistrée : ${e?.message||e}`);
+    alert(`La semaine n'a pas été validée.\n\n${e?.message||e}`);
+    fillAdmin(document.getElementById("f-prenom")?.value||"",programme);
+  }finally{
+    if(btn){btn.disabled=false;if(btn.textContent.includes("Validation de S"))btn.textContent=oldBtnText;}
+  }
 }
 
 /* ---------- PDF corrigé : aucune victoire inventée ---------- */
