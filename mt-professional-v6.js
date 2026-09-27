@@ -101,12 +101,14 @@ function getSemaineEnCours(dateDebut,nbSemaines){
 function mtValidatedWeekFloor(prog){
   prog=mtNormalizeProgramme(prog);
   const nb=prog.timeline.nbSemaines||4;
-  let current=1;
+  // Une validation manuelle doit ouvrir immédiatement la semaine suivante,
+  // même si d'anciennes semaines ont avancé automatiquement par la date
+  // et ne possèdent donc pas toutes un week_reviews historique.
+  let highestValidated=0;
   for(let s=1;s<nb;s++){
-    if(prog.week_reviews?.[String(s)]?.validatedAt) current=s+1;
-    else break;
+    if(prog.week_reviews?.[String(s)]?.validatedAt) highestValidated=Math.max(highestValidated,s);
   }
-  return current;
+  return Math.min(nb,highestValidated+1);
 }
 function mtCurrentWeek(prog){
   prog=mtNormalizeProgramme(prog);
