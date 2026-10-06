@@ -12,12 +12,12 @@
   if(!window.MT_ADMIN_PAGE || window.__MT_ADMIN_DAILY__) return;
   window.__MT_ADMIN_DAILY__=true;
 
-  const OFFER_TO_PRICE={signature:120,privilege:240,elite:400,performance_plus:850,private_performance:1500};
+  const OFFER_TO_PRICE={signature:120,privilege:240,elite:400,performance_plus:900,private_performance:1500};
   const TIERS={
     120:{label:"Essentiel",weekTarget:1,monthTarget:4,planned:[1],color:"#d8a900",bg:"#fff8d8"},
     240:{label:"Suivi",weekTarget:2,monthTarget:8,planned:[1,4],color:"#d8a900",bg:"#fff8d8"},
     400:{label:"Signature",weekTarget:4,monthTarget:14,planned:[1,2,4,6],color:"#d97706",bg:"#fff2df"},
-    850:{label:"Private",weekTarget:6,monthTarget:22,planned:[1,2,3,4,5,6],color:"#b91c1c",bg:"#feecec"},
+    900:{label:"Private",weekTarget:6,monthTarget:22,planned:[1,2,3,4,5,6],color:"#b91c1c",bg:"#feecec"},
     1500:{label:"Private Performance+",weekTarget:7,monthTarget:null,planned:[0,1,2,3,4,5,6],color:"#b91c1c",bg:"#feecec"}
   };
 
@@ -48,7 +48,15 @@
   }
   function latestFilled(prog){return sortedSuivi(prog).find(([,v])=>v.filled)||null;}
   function lastFilled(prog,n=2){return sortedSuivi(prog).filter(([,v])=>v.filled).slice(0,n);}
-  function calendarItems(prog){return arr(prog?.athlete?.calendar);}
+  function calendarItems(prog){
+    const xs=[...arr(prog?.athlete?.calendar)];
+    const plans=prog?.client_sport_plans||{};
+    Object.values(plans).forEach(plan=>arr(plan?.sessions).forEach(s=>{
+      if(!s?.date)return;
+      xs.push({date:s.date,day_type:s.kind||s.type||"training",session:s.type||"",notes:[s.time,s.duration_min?`${s.duration_min} min`:"",s.intensity||""].filter(Boolean).join(" · ")});
+    }));
+    return xs;
+  }
   function eventKind(e){
     const hay=[e?.day_type,e?.session,e?.notes].filter(Boolean).join(" ").toLowerCase();
     if(/match/.test(hay)) return "match";
@@ -70,21 +78,22 @@
 
     const latest=latestFilled(prog);
     const recent=lastFilled(prog,2);
+    const freshnessDays=price>=1500?1:price>=900?2:price>=400?3:price>=240?4:7;
     if(latest){
       const [d,v]=latest, age=daysBetween(d,today);
       const energy=Number(v.energie), sleep=Number(v.sommeil), digestion=Number(v.digestion), recup=Number(v.recuperation), dispo=Number(v.disponibilite), courb=Number(v.courbatures);
-      if(age>=2) add("stale",`Aucun suivi rempli depuis ${age} jours`,price>=400?2:1,"Comprendre le blocage ou la difficulté");
-      if(energy>0&&energy<=2) add("energy",`Énergie basse : ${energy}/5 au dernier suivi`,price>=850?3:2,"Énergie + carburant de la journée");
-      if(sleep>0&&sleep<=2) add("sleep",`Sommeil bas : ${sleep}/5 au dernier suivi`,price>=850?3:2,"Sommeil + récupération");
+      if(age>=freshnessDays) add("stale",`Aucun point de suivi récent renseigné · dernier il y a ${age} jours`,price>=400?2:1,"Lire le dernier check-in et faire le point Tee si nécessaire");
+      if(energy>0&&energy<=2) add("energy",`Énergie basse : ${energy}/5 au dernier suivi`,price>=900?3:2,"Énergie + carburant de la journée");
+      if(sleep>0&&sleep<=2) add("sleep",`Sommeil bas : ${sleep}/5 au dernier suivi`,price>=900?3:2,"Sommeil + récupération");
       if(digestion>0&&digestion<=2) add("digestion",`Digestion inconfortable : ${digestion}/5`,2,"Digestion + repas précédents");
-      if(recup>0&&recup<=2) add("recovery",`Récupération basse : ${recup}/5`,price>=850?3:2,"Récupération + charge du jour");
-      if(dispo>0&&dispo<=2) add("availability",`Disponibilité physique basse : ${dispo}/5`,price>=850?3:2,"Disponibilité + charge du jour");
-      if(courb>=4) add("soreness",`Courbatures élevées : ${courb}/5`,price>=850?3:2,"Courbatures + récupération");
+      if(recup>0&&recup<=2) add("recovery",`Récupération basse : ${recup}/5`,price>=900?3:2,"Récupération + charge du jour");
+      if(dispo>0&&dispo<=2) add("availability",`Disponibilité physique basse : ${dispo}/5`,price>=900?3:2,"Disponibilité + charge du jour");
+      if(courb>=4) add("soreness",`Courbatures élevées : ${courb}/5`,price>=900?3:2,"Courbatures + récupération");
       if(v.note&&String(v.note).trim()) add("note","Note récente du Nutri à lire",1,"Lire le ressenti avant d’écrire");
     } else if((prog.statut||"")==="actif") {
-      add("no_checkin","Aucun suivi quotidien renseigné",price>=400?2:1,"Vérifier l’adhérence au suivi");
+      add("no_checkin","Aucun point de suivi récent renseigné",price>=400?2:1,"Vérifier l’adhérence au suivi et faire le point Tee si nécessaire");
     }
-    if(recent.length>=2 && recent.every(([,v])=>v.eau===false)) add("water","Hydratation non validée sur les 2 derniers suivis",price>=850?3:2,"Hydratation + contexte de la journée");
+    if(recent.length>=2 && recent.every(([,v])=>v.eau===false)) add("water","Hydratation non validée sur les 2 derniers suivis",price>=900?3:2,"Hydratation + contexte de la journée");
     if(recent.length>=2 && recent.every(([,v])=>v.repas===false)) add("meals","Repas non validés sur les 2 derniers suivis",price>=400?2:1,"Repas + organisation");
 
     const tomorrow=plusDays(today,1);
@@ -93,13 +102,13 @@
       const kind=eventKind(e);
       if(e.date===today){
         if(kind==="match") add("match_today","Match aujourd’hui",3,"Stratégie match + hydratation + récupération");
-        else if(kind==="travel") add("travel_today","Déplacement / voyage aujourd’hui",price>=850?3:2,"Repas nomades + hydratation + timing");
-        else if(kind==="double") add("double_today","Double séance aujourd’hui",price>=850?3:2,"Carburant entre séances + récupération");
-        else if(kind==="training") add("training_today","Séance prévue aujourd’hui",price>=850?3:2,"Repas pré/post séance + récupération");
+        else if(kind==="travel") add("travel_today","Déplacement / voyage aujourd’hui",price>=900?3:2,"Repas nomades + hydratation + timing");
+        else if(kind==="double") add("double_today","Double séance aujourd’hui",price>=900?3:2,"Carburant entre séances + récupération");
+        else if(kind==="training") add("training_today","Séance prévue aujourd’hui",price>=900?3:2,"Repas pré/post séance + récupération");
         else if(kind==="recovery") add("recovery_day","Journée récupération aujourd’hui",2,"Récupération + sommeil + apports");
       }
       if(e.date===tomorrow && kind==="match") add("match_tomorrow","Match demain — préparer J-1",3,"Stratégie J-1 + digestion + réserves");
-      if(e.date===tomorrow && kind==="travel" && price>=850) add("travel_tomorrow","Déplacement demain — anticiper",3,"Préparer repas / collation / hydratation");
+      if(e.date===tomorrow && kind==="travel" && price>=900) add("travel_tomorrow","Déplacement demain — anticiper",3,"Préparer repas / collation / hydratation");
     });
 
     const rdv=prog.rdv;
@@ -131,11 +140,11 @@
 
     if(!sig.length&&!due) return null;
     if(!sig.length&&due){
-      sev=price>=850?3:price>=400?2:1;
+      sev=price>=900?3:price>=400?2:1;
       sig.push({key:"cadence",text:price===120?"Point hebdomadaire prévu":price===240?"Contrôle de suivi prévu":price===400?"Suivi rapproché prévu":"Suivi proactif prévu",severity:sev,check:price<=240?"Régularité + difficultés + objectif de la semaine":price===400?"Planning + alimentation + récupération":"Sommeil + récupération + journée à venir"});
     }
     if(price===1500 && !sig.length) return null;
-    if(price>=850 && sig.length) sev=Math.max(sev,3);
+    if(price>=900 && sig.length) sev=Math.max(sev,3);
     else if(price===400 && sig.length) sev=Math.max(sev,2);
 
     const reasons=sig.slice().sort((a,b)=>(b.severity||0)-(a.severity||0)).slice(0,4);
@@ -148,10 +157,12 @@
   function actionCard(a){
     const c=a.client, color=a.severity>=3?"#dc2626":a.severity===2?"#d97706":"#d8a900", bg=a.severity>=3?"#fff1f1":a.severity===2?"#fff6e8":"#fffbea";
     const label=a.severity>=3?"Priorité":a.severity===2?"À suivre":"Point prévu";
+    const lastPoint=presenceLog(c.programme||{}).slice().sort((x,y)=>String(y?.at||y?.date||"").localeCompare(String(x?.at||x?.date||"")))[0];
+    const lastPointText=lastPoint?(lastPoint.date||String(lastPoint.at||"").slice(0,10)):"";
     return `<div style="border:1px solid ${color}22;background:${bg};border-radius:16px;padding:14px;margin-bottom:10px">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
-        <div style="min-width:0"><div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap"><strong style="font-size:14px;color:var(--ink)">${esc(c.prenom||c.slug)}</strong><span style="font-size:9px;font-weight:900;padding:3px 7px;border-radius:999px;background:white;color:${color}">${a.price.toLocaleString("fr-FR")} € · ${esc(a.tier.label)}</span></div><p style="font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;color:${color};margin:6px 0 0">${label}</p></div>
-        <button type="button" onclick="mtDailyDone('${esc(c.slug)}','${esc(a.id)}',this)" style="border:0;background:#fff;border-radius:999px;padding:7px 10px;font-size:10px;font-weight:900;color:var(--brand);cursor:pointer;white-space:nowrap">Fait ✓</button>
+        <div style="min-width:0"><div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap"><strong style="font-size:14px;color:var(--ink)">${esc(c.prenom||c.slug)}</strong><span style="font-size:9px;font-weight:900;padding:3px 7px;border-radius:999px;background:white;color:${color}">${a.price.toLocaleString("fr-FR")} € · ${esc(a.tier.label)}</span></div><p style="font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;color:${color};margin:6px 0 0">${label}</p>${lastPointText?`<p style="font-size:9px;color:var(--muted);margin:4px 0 0">Dernier point Tee : ${esc(lastPointText)}</p>`:""}</div>
+        <button type="button" onclick="mtDailyDone('${esc(c.slug)}','${esc(a.id)}',this)" style="border:0;background:#fff;border-radius:999px;padding:7px 10px;font-size:10px;font-weight:900;color:var(--brand);cursor:pointer;white-space:nowrap">Point Tee ✓</button>
       </div>
       <div style="margin-top:10px">${a.reasons.map(r=>`<div style="font-size:11px;line-height:1.5;color:var(--ink);padding:3px 0">• ${esc(r.text)}</div>`).join("")}</div>
       <div style="margin-top:9px;padding-top:9px;border-top:1px solid ${color}22"><p style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;font-weight:900;color:var(--muted);margin:0 0 5px">À vérifier</p><p style="font-size:11px;line-height:1.55;color:var(--ink);margin:0">${esc(a.checks.join(" · ")||"Faire un point contextualisé")}</p></div>
@@ -223,14 +234,14 @@
       if(res.error||!res.data) throw new Error(res.error?.message||"Client introuvable");
       const prog=Object.assign({},res.data.programme||{}), today=localDate(), price=formulaPrice(prog);
       const tp=Object.assign({log:[]},prog.tee_presence||{});tp.log=arr(tp.log);
-      if(!tp.log.some(x=>x?.action_id===actionId)) tp.log.push({action_id:actionId,date:today,at:new Date().toISOString(),formula:price,kind:"admin_daily"});
+      if(!tp.log.some(x=>x?.action_id===actionId)) tp.log.push({action_id:actionId,date:today,at:new Date().toISOString(),formula:price,kind:"tee_point"});
       const cutoff=plusDays(today,-120);tp.log=tp.log.filter(x=>(x?.date||String(x?.at||"").slice(0,10))>=cutoff).slice(-240);tp.last_at=new Date().toISOString();prog.tee_presence=tp;
       const up=await sb.from(SB_TABLE).update({programme:prog}).eq("slug",slug);if(up.error) throw new Error(up.error.message);
       const c=_allClients.find(x=>x.slug===slug);if(c)c.programme=prog;
       if(currentSlug===slug) programme=prog;
       render(_allClients);
       log(`✅ Intervention Tee enregistrée pour ${c?.prenom||slug}.`);
-    }catch(e){alert("Impossible d’enregistrer : "+e.message);if(btn){btn.disabled=false;btn.textContent="Fait ✓";}}
+    }catch(e){alert("Impossible d’enregistrer : "+e.message);if(btn){btn.disabled=false;btn.textContent="Point Tee ✓";}}
   };
 
   const oldRenderClients=window.renderClientsList;

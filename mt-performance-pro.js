@@ -1,5 +1,5 @@
 /* Méthode Tee — Performance Pro V2
-   Private (850€) & Private Performance+ (1500€)
+   Private (900€) & Private Performance+ (1500€)
    V2 : cockpit sportif structuré + calendrier + dossiers match + hydratation +
    analyses de repas + biomarqueurs + composition corporelle + antidopage +
    coordination staff + tendances. Private ajoute le concierge opérationnel :
@@ -13,7 +13,7 @@
     signature:"Signature — 120€/mois",
     privilege:"Privilege — 240€/mois",
     elite:"Elite — 400€/mois",
-    [PERF_PLUS]:"Private — 850€/mois",
+    [PERF_PLUS]:"Private — 900€/mois",
     [PRIVATE]:"Private Performance+ — 1 500€/mois"
   };
   const OFFER_BANNERS={
@@ -25,8 +25,8 @@
   const attr=v=>esc(v).replace(/\n/g,"&#10;");
   const txt=id=>document.getElementById(id)?.value?.trim()||"";
   const setv=(id,v)=>{const e=document.getElementById(id);if(e)e.value=v??"";};
-  const formulaPrice=p=>{const n=Number((p||{}).formule_prix_eur);if(n)return n;return ({signature:120,privilege:240,elite:400,[PERF_PLUS]:850,[PRIVATE]:1500})[(p||{}).offre]||0;};
-  const isPro=p=>(p||{}).parcours==="performance"&&(formulaPrice(p)>=850||[PERF_PLUS,PRIVATE].includes((p||{}).offre));
+  const formulaPrice=p=>{const n=Number((p||{}).formule_prix_eur);if(n)return n;return ({signature:120,privilege:240,elite:400,[PERF_PLUS]:900,[PRIVATE]:1500})[(p||{}).offre]||0;};
+  const isPro=p=>(p||{}).parcours==="performance"&&(formulaPrice(p)>=900||[PERF_PLUS,PRIVATE].includes((p||{}).offre));
   const isPrivate=p=>formulaPrice(p)>=1500||(p||{}).offre===PRIVATE;
   const uid=()=>"p"+Date.now().toString(36)+Math.random().toString(36).slice(2,7);
   const deepArr=v=>Array.isArray(v)?v:[];

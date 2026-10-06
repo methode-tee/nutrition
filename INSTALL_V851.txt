@@ -1,0 +1,21 @@
+PATCH V851 — À METTRE SUR GITHUB
+
+Remplacer / ajouter les fichiers du dossier `nutrition-main` en conservant exactement les mêmes chemins.
+
+Fichiers directement modifiés par V851 :
+- index.html
+- admin.html
+- mt-admin-daily.js
+- mt-tiered-experience.js
+- mt-performance-pro.js
+- mt-checkin-v851.js   (nouveau)
+- README.md / notes de patch (documentation seulement)
+
+Aucune commande Supabase à exécuter : le patch réutilise `mt_clients.programme`.
+
+Après mise en ligne :
+1. ouvrir un lien Nutri non sportif → Mon suivi : aucun champ séance/jambes
+2. ouvrir Fodé (parcours performance) → Mon suivi : séance + planning sportif présents
+3. remplir un check-in test → vérifier qu'il apparaît dans Admin > Suivi client
+4. ouvrir Admin > Aujourd'hui → vérifier le libellé « Aucun point de suivi récent renseigné » et le bouton « Point Tee ✓ »
+5. pour le build iOS, resynchroniser Capacitor selon le workflow habituel après récupération du repo.

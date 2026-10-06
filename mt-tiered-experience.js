@@ -2,7 +2,7 @@
    120 €  : Essentiel — cadre personnalisé
    240 €  : Suivi — ajustements hebdomadaires visibles
    400 €  : Signature — espace vivant + sélection Maison Yanna + performance légère si besoin
-   850 €  : Private — suivi proactif / anticipation
+   900 €  : Private — suivi proactif / anticipation
    1500 € : Private Performance+ — pilotage / concierge / cockpit complet
 
    Aucun nouveau stockage lourd : tout reste dans programme JSONB.
@@ -15,11 +15,11 @@
     120:{key:"essential",label:"Essentiel",eyebrow:"CADRE PERSONNALISÉ",tone:"#53644A"},
     240:{key:"followup",label:"Suivi",eyebrow:"SUIVI HEBDOMADAIRE",tone:"#53644A"},
     400:{key:"signature",label:"Signature",eyebrow:"SIGNATURE",tone:"#8B6538"},
-    850:{key:"private",label:"Private",eyebrow:"SUIVI PROACTIF",tone:"#1F3A2C"},
+    900:{key:"private",label:"Private",eyebrow:"SUIVI PROACTIF",tone:"#1F3A2C"},
     1500:{key:"private_performance",label:"Private Performance+",eyebrow:"PILOTAGE PRIVÉ",tone:"#1D241F"}
   };
-  const OFFER_TO_PRICE={signature:120,privilege:240,elite:400,performance_plus:850,private_performance:1500};
-  const PRICE_TO_OFFER={120:"signature",240:"privilege",400:"elite",850:"performance_plus",1500:"private_performance"};
+  const OFFER_TO_PRICE={signature:120,privilege:240,elite:400,performance_plus:900,private_performance:1500};
+  const PRICE_TO_OFFER={120:"signature",240:"privilege",400:"elite",900:"performance_plus",1500:"private_performance"};
 
   const esc=v=>typeof mtEsc==="function"?mtEsc(String(v??"")):String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
   const attr=v=>esc(v).replace(/\n/g,"&#10;");
@@ -74,8 +74,8 @@
       const avatar=document.getElementById("avatar");avatar?.parentElement?.insertBefore(badge,avatar);
     }
     badge.textContent=lv.label;
-    badge.style.background=formulaPrice(prog)>=850?"#1f3328":formulaPrice(prog)>=400?"#f7efe3":"#fff";
-    badge.style.color=formulaPrice(prog)>=850?"#fff":formulaPrice(prog)>=400?"#7a5833":"var(--brand)";
+    badge.style.background=formulaPrice(prog)>=900?"#1f3328":formulaPrice(prog)>=400?"#f7efe3":"#fff";
+    badge.style.color=formulaPrice(prog)>=900?"#fff":formulaPrice(prog)>=400?"#7a5833":"var(--brand)";
     document.body.dataset.formule=String(formulaPrice(prog)||"");
     document.body.dataset.serviceLevel=lv.key;
   }
@@ -115,7 +115,7 @@
       120:"Essentiel : tes recommandations Maison Yanna restent ciblées sur ton programme.",
       240:"Suivi : tes recommandations évoluent avec tes retours de semaine.",
       400:"Signature : une sélection Maison Yanna personnalisée est incluse dans ton accompagnement.",
-      850:"Private : ta sélection Maison Yanna et tes besoins sont anticipés avec ton suivi.",
+      900:"Private : ta sélection Maison Yanna et tes besoins sont anticipés avec ton suivi.",
       1500:"Private Performance+ : dotation Maison Yanna intégrée au pilotage de ta semaine."
     }[price];
     if(copy){t.textContent=copy;b.style.display="block";}
@@ -145,7 +145,7 @@
       </div>`;
     }
 
-    if(price>=850){
+    if(price>=900){
       const pp=prog.proactive_plan||{},next=nextCalendarItem(prog),actions=arr(pp.actions).filter(Boolean);
       html+=`<div style="padding:20px;margin-bottom:18px;border-radius:18px;background:linear-gradient(145deg,#173126,#294737);color:white;position:relative;overflow:hidden;box-shadow:0 10px 28px rgba(25,48,37,.14)">
         <div style="position:absolute;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.05);right:-35px;top:-50px"></div>
@@ -197,7 +197,7 @@
       [120,"Cadre personnalisé","Plan, objectifs, nutrition, routines et suivi de base"],
       [240,"Suivi hebdomadaire","Les retours client servent à des ajustements visibles"],
       [400,"Signature","Espace vivant, sélection Maison Yanna, personnalisation renforcée"],
-      [850,"Private","Anticipation, alertes admin, journées atypiques et suivi proactif"],
+      [900,"Private","Anticipation, alertes admin, journées atypiques et suivi proactif"],
       [1500,"Private Performance+","Pilotage, coordination, logistique et concierge sportif"]
     ];
     return rows.map(([p,t,d])=>`<div style="display:flex;gap:9px;padding:8px 0;border-top:1px solid #eee8e1;opacity:${price>=p?1:.35}"><span style="font-size:11px;font-weight:900;color:${price>=p?'var(--brand)':'#aaa'}">${price>=p?'✓':'○'}</span><div><strong style="font-size:11px;color:var(--ink)">${esc(t)}</strong><p style="font-size:10px;color:var(--muted);line-height:1.45;margin:2px 0 0">${esc(d)}</p></div></div>`).join("");
@@ -223,7 +223,7 @@
     const block=document.createElement("div");block.className="admin-section";block.id="mt-tier-admin";
     block.innerHTML=`
       <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:14px"><div><h3 class="serif" style="font-size:21px;color:var(--ink);margin:0 0 4px">Formule & niveau de service</h3><p style="font-size:11px;color:var(--muted);line-height:1.5;margin:0">Plus la formule monte, plus l’espace devient vivant, anticipatif et piloté.</p></div><span id="mt-tier-admin-badge" style="font-size:9px;font-weight:900;padding:5px 8px;border-radius:999px;background:#f0ece6;color:var(--brand)">—</span></div>
-      <div><label class="field-label">Formule tarifaire</label><select id="f-formule-prix" class="admin-input" style="cursor:pointer"><option value="">— À définir —</option><option value="120">120 € · Essentiel</option><option value="240">240 € · Suivi</option><option value="400">400 € · Signature</option><option value="850">850 € · Private</option><option value="1500">1 500 € · Private Performance+</option></select></div>
+      <div><label class="field-label">Formule tarifaire</label><select id="f-formule-prix" class="admin-input" style="cursor:pointer"><option value="">— À définir —</option><option value="120">120 € · Essentiel</option><option value="240">240 € · Suivi</option><option value="400">400 € · Signature</option><option value="900">900 € · Private</option><option value="1500">1 500 € · Private Performance+</option></select></div>
       <div id="mt-tier-capabilities" style="margin-top:12px"></div>
       <div style="margin-top:16px;padding-top:14px;border-top:1px solid #eee7df"><p style="font-size:10px;text-transform:uppercase;letter-spacing:.13em;font-weight:900;color:var(--brand);margin:0 0 8px">Mises à jour visibles par le client</p><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><select id="f-tier-update-type" class="admin-input"><option value="nutrition">Nutrition</option><option value="planning">Planning</option><option value="sommeil">Sommeil</option><option value="recuperation">Récupération</option><option value="performance">Performance</option><option value="produits">Produits</option></select><input id="f-tier-update-title" class="admin-input" placeholder="Titre court" /></div><textarea id="f-tier-update-text" class="admin-textarea" placeholder="Ex : J’ai déplacé ta collation après la séance et renforcé les féculents les jours chargés." style="margin-top:8px"></textarea><button type="button" class="chip" onclick="mtAddTeeUpdate()" style="margin-top:8px">+ Ajouter l’ajustement</button><div id="mt-tier-updates-admin" style="display:flex;flex-direction:column;gap:7px;margin-top:10px"></div></div>
       <div id="mt-tier-proactive-admin" style="display:none;margin-top:16px;padding:14px;border-radius:14px;background:#f5f8f5;border:1px solid rgba(83,100,74,.14)"><p style="font-size:10px;text-transform:uppercase;letter-spacing:.13em;font-weight:900;color:var(--brand);margin:0 0 8px">Private · anticipation</p><input id="f-proactive-headline" class="admin-input" placeholder="Ex : Demain : déplacement — journée préparée" /><textarea id="f-proactive-actions" class="admin-textarea" placeholder="Une action par ligne :\nPetit-déjeuner conseillé enregistré\nCollation nomade prévue\nDîner adapté" style="margin-top:8px"></textarea><textarea id="f-proactive-note" class="admin-textarea" placeholder="Note courte facultative" style="margin-top:8px"></textarea><div id="mt-tier-alerts" style="margin-top:10px"></div></div>`;
@@ -258,13 +258,13 @@
     const price=formulaPrice(prog)||Number(select.value)||0;
     if(price)select.value=String(price);
     const lv=PRICE_LEVELS[price],badge=document.getElementById("mt-tier-admin-badge");
-    if(badge){badge.textContent=lv?`${lv.label} · ${price} €`:"À définir";badge.style.background=price>=850?"#1f3328":price>=400?"#f7efe3":"#f0ece6";badge.style.color=price>=850?"white":price>=400?"#7a5833":"var(--brand)";}
+    if(badge){badge.textContent=lv?`${lv.label} · ${price} €`:"À définir";badge.style.background=price>=900?"#1f3328":price>=400?"#f7efe3":"#f0ece6";badge.style.color=price>=900?"white":price>=400?"#7a5833":"var(--brand)";}
     const caps=document.getElementById("mt-tier-capabilities");if(caps)caps.innerHTML=capabilityHtml(price);
-    const pro=document.getElementById("mt-tier-proactive-admin");if(pro)pro.style.display=price>=850?"block":"none";
+    const pro=document.getElementById("mt-tier-proactive-admin");if(pro)pro.style.display=price>=900?"block":"none";
     const pp=prog.proactive_plan||{};
     const h=document.getElementById("f-proactive-headline"),a=document.getElementById("f-proactive-actions"),n=document.getElementById("f-proactive-note");if(h)h.value=pp.headline||"";if(a)a.value=arr(pp.actions).join("\n");if(n)n.value=pp.note||"";
     const alerts=document.getElementById("mt-tier-alerts");
-    if(alerts&&price>=850){const xs=adminAlerts(prog);alerts.innerHTML=xs.length?`<p style="font-size:9px;text-transform:uppercase;letter-spacing:.11em;font-weight:900;color:#8b6538;margin:0 0 6px">À regarder</p>${xs.map(x=>`<div style="font-size:10px;line-height:1.45;color:#6a5034;padding:5px 0;border-top:1px solid #e9ddcb">⚑ ${esc(x.text)}</div>`).join("")}`:'<p style="font-size:10px;color:var(--muted);margin:0">Aucun signal particulier dans le dernier check-in.</p>';}
+    if(alerts&&price>=900){const xs=adminAlerts(prog);alerts.innerHTML=xs.length?`<p style="font-size:9px;text-transform:uppercase;letter-spacing:.11em;font-weight:900;color:#8b6538;margin:0 0 6px">À regarder</p>${xs.map(x=>`<div style="font-size:10px;line-height:1.45;color:#6a5034;padding:5px 0;border-top:1px solid #e9ddcb">⚑ ${esc(x.text)}</div>`).join("")}`:'<p style="font-size:10px;color:var(--muted);margin:0">Aucun signal particulier dans le dernier check-in.</p>';}
     renderUpdatesAdmin(prog);
   }
 
@@ -287,7 +287,7 @@
     programme=window.mtNormalizeProgramme(programme||{});
     const price=Number(document.getElementById("f-formule-prix")?.value)||formulaPrice(programme)||null;
     if(price){programme.formule_prix_eur=price;programme.offre=offerFromPrice(price)||programme.offre;}
-    if(price>=850){
+    if(price>=900){
       programme.proactive_plan={
         headline:document.getElementById("f-proactive-headline")?.value?.trim()||"",
         actions:(document.getElementById("f-proactive-actions")?.value||"").split(/\n/).map(x=>x.trim()).filter(Boolean),
