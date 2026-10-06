@@ -1,5 +1,5 @@
 /* Méthode Tee — Performance Pro V2
-   Performance+ (850€) & Private Performance (1500€)
+   Private (850€) & Private Performance+ (1500€)
    V2 : cockpit sportif structuré + calendrier + dossiers match + hydratation +
    analyses de repas + biomarqueurs + composition corporelle + antidopage +
    coordination staff + tendances. Private ajoute le concierge opérationnel :
@@ -13,20 +13,21 @@
     signature:"Signature — 120€/mois",
     privilege:"Privilege — 240€/mois",
     elite:"Elite — 400€/mois",
-    [PERF_PLUS]:"Performance+ — 850€/mois",
-    [PRIVATE]:"Private Performance — 1 500€/mois"
+    [PERF_PLUS]:"Private — 850€/mois",
+    [PRIVATE]:"Private Performance+ — 1 500€/mois"
   };
   const OFFER_BANNERS={
-    [PERF_PLUS]:"Performance+ : stratégie nutritionnelle périodisée, matchs, récupération, déplacements et suivi sportif rapproché",
-    [PRIVATE]:"Private Performance : nutrition personnelle de sportif pro + concierge alimentaire et logistique à distance"
+    [PERF_PLUS]:"Private : stratégie nutritionnelle proactive, matchs, récupération, déplacements et suivi rapproché",
+    [PRIVATE]:"Private Performance+ : nutrition personnelle de sportif pro + pilotage, concierge alimentaire et logistique à distance"
   };
 
   const esc=v=>typeof mtEsc==="function"?mtEsc(v):String(v??"").replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));
   const attr=v=>esc(v).replace(/\n/g,"&#10;");
   const txt=id=>document.getElementById(id)?.value?.trim()||"";
   const setv=(id,v)=>{const e=document.getElementById(id);if(e)e.value=v??"";};
-  const isPro=p=>[PERF_PLUS,PRIVATE].includes((p||{}).offre);
-  const isPrivate=p=>(p||{}).offre===PRIVATE;
+  const formulaPrice=p=>{const n=Number((p||{}).formule_prix_eur);if(n)return n;return ({signature:120,privilege:240,elite:400,[PERF_PLUS]:850,[PRIVATE]:1500})[(p||{}).offre]||0;};
+  const isPro=p=>(p||{}).parcours==="performance"&&(formulaPrice(p)>=850||[PERF_PLUS,PRIVATE].includes((p||{}).offre));
+  const isPrivate=p=>formulaPrice(p)>=1500||(p||{}).offre===PRIVATE;
   const uid=()=>"p"+Date.now().toString(36)+Math.random().toString(36).slice(2,7);
   const deepArr=v=>Array.isArray(v)?v:[];
   const styleBox="border:1.5px solid #ede9e3;border-radius:14px;padding:12px 14px";
@@ -237,9 +238,9 @@
     block.style.display=show?"block":"none";
     const privateZone=document.getElementById("mt-private-zone"); if(privateZone)privateZone.style.display=offer===PRIVATE?"flex":"none";
     block.querySelectorAll('[data-mtp-private="1"]').forEach(x=>x.style.display=offer===PRIVATE?"block":"none");
-    const badge=document.getElementById("mt-perf-admin-offer"); if(badge)badge.textContent=offer===PRIVATE?"PRIVATE":offer===PERF_PLUS?"PERFORMANCE+":"SPORT PRO";
+    const badge=document.getElementById("mt-perf-admin-offer"); if(badge)badge.textContent=offer===PRIVATE?"PRIVATE PERFORMANCE+":offer===PERF_PLUS?"PRIVATE":"SPORT PRO";
     const scope=document.getElementById("mt-perf-service-scope");
-    if(scope)scope.innerHTML=offer===PRIVATE?`<strong>Private Performance :</strong> tout le pilotage Performance+ + exécution/logistique à distance : dossiers de voyage, chef/traiteur, meal-prep, cuisine culturelle, file d'actions et décisions rapides.`:`<strong>Performance+ :</strong> planification sportive, analyse des repas, match, récupération, hydratation, micronutrition, composition corporelle, staff et déplacements. Le concierge logistique reste réservé à Private.`;
+    if(scope)scope.innerHTML=offer===PRIVATE?`<strong>Private Performance+ :</strong> tout le pilotage Performance+ + exécution/logistique à distance : dossiers de voyage, chef/traiteur, meal-prep, cuisine culturelle, file d'actions et décisions rapides.`:`<strong>Private :</strong> planification sportive, analyse des repas, match, récupération, hydratation, micronutrition, composition corporelle, staff et déplacements. Le concierge logistique reste réservé à Private.`;
   }
 
   function fillPerformanceAdmin(prog){
@@ -336,7 +337,7 @@
     const anti={not_checked:"À vérifier",food_only:"Food-first",batch_tested:"Lots testés",staff_validated:"Validé staff",mixed:"Mixte"}[a.supplements?.antidoping]||"À vérifier";
     const baseEyebrow=[a.identity?.base_city,"hôtel","déplacements"].filter(Boolean).join(" · ");
     box.innerHTML=`
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:18px"><div><p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 5px">${privateMode?"Private Performance":"Performance+"}</p><h2 class="serif" style="font-size:30px;color:var(--ink);margin:0 0 4px">Cockpit Performance</h2><p style="font-size:12px;color:var(--muted);line-height:1.6;margin:0">Ta nutrition suit ton calendrier réel — pas un menu figé.</p></div><span style="font-size:22px">⚽</span></div>
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:18px"><div><p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--brand);margin:0 0 5px">${privateMode?"Private Performance+":"Private"}</p><h2 class="serif" style="font-size:30px;color:var(--ink);margin:0 0 4px">Cockpit Performance</h2><p style="font-size:12px;color:var(--muted);line-height:1.6;margin:0">Ta nutrition suit ton calendrier réel — pas un menu figé.</p></div><span style="font-size:22px">⚽</span></div>
       ${perfCard("Performance Board",perfRows([{label:"Priorité",value:a.weekly.focus},{label:"Charge / contexte",value:a.weekly.training_load},{label:"Séances clés",value:a.weekly.sessions},{label:"Matchs",value:a.weekly.matches},{label:"Glucides",value:a.weekly.carbs},{label:"Protéines",value:a.weekly.protein},{label:"Hydratation",value:a.weekly.hydration},{label:"Récupération",value:a.weekly.recovery},{label:"Ajustements",value:a.weekly.notes}]),"Cette semaine","📈")}
       ${perfCard("Calendrier nutritionnel",clientCalendar(a.calendar),"Jour par jour","🗓️")}
       ${perfCard("Analyses de repas",clientAnalyses(a.meal_analyses),"Décisions concrètes","🍽️")}

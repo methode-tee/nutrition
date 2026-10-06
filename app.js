@@ -187,7 +187,7 @@ function renderClientView(prenom,prog) {
   const bannerTxt=document.getElementById("my-banner-text");
   const promoWrap=document.getElementById("my-promo-wrap");
   const promoEl=document.getElementById("my-promo-code");
-  const offresMap={"signature":"Offre Signature : -15% sur toute la boutique Maison Yanna","privilege":"Offre Privilege : 5 produits offerts — envoie ta sélection","elite":"Offre Elite : 10 produits offerts à la quantité souhaitée"};
+  const offresMap={"signature":"Essentiel : recommandations Maison Yanna ciblées","privilege":"Suivi : recommandations ajustées avec tes retours","elite":"Signature : sélection Maison Yanna personnalisée incluse"};
   if (bannerDiv&&bannerTxt&&offresMap[offreVal]) {
     bannerTxt.textContent=offresMap[offreVal];
     if (promoCode&&promoEl&&promoWrap) { promoEl.textContent=promoCode; promoWrap.style.display="block"; }
