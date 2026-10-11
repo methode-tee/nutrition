@@ -1,0 +1,20 @@
+PATCH — Pourquoi ces choix ? (V852)
+
+Dépôt : methode-tee/nutrition
+Fichier à remplacer : mt-tiered-experience.js
+
+1. Dans GitHub > methode-tee/nutrition > main, clique sur Add file > Upload files.
+2. Upload le fichier mt-tiered-experience.js fourni ici.
+3. GitHub doit indiquer que le fichier existant sera remplacé.
+4. Commit directement sur main.
+5. Recharge l'admin avec un rafraîchissement forcé.
+
+Ce patch :
+- ajoute dans Admin > Repas un bloc « Pourquoi ces choix ? »
+- permet de personnaliser titre, introduction et explications
+- format admin : une ligne = un repère, conseillé « Aliment | Pourquoi ce choix »
+- enregistre les données dans programme.menu_explanations
+- affiche automatiquement le bloc sous « Ton Menu » côté client
+- masque le bloc lorsqu'aucune explication n'est renseignée
+- ne touche pas au dépôt wellness / app Apple
+- ne nécessite aucune migration Supabase

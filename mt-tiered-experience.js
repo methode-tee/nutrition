@@ -312,4 +312,205 @@
     if(window.MT_ADMIN_PAGE){injectAdmin();if(typeof programme!=="undefined"&&programme)renderAdminTier(programme);}else if(typeof _currentProg!=="undefined"&&_currentProg)applyClient(_currentProg);
   }
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init);else init();
+
+  /* ---------- V852 : Pourquoi ces choix ? ---------- */
+  function normalizeMenuExplanations(prog){
+    if(!prog || typeof prog!=="object") return prog;
+    const raw=prog.menu_explanations;
+    if(!raw || typeof raw!=="object" || Array.isArray(raw)){
+      prog.menu_explanations={title:"Pourquoi ces choix ?",intro:"",items:[]};
+      return prog;
+    }
+    raw.title=String(raw.title||"Pourquoi ces choix ?");
+    raw.intro=String(raw.intro||"");
+    raw.items=arr(raw.items).map(item=>{
+      if(typeof item==="string"){
+        const i=item.indexOf("|");
+        return i>=0
+          ? {label:item.slice(0,i).trim(),text:item.slice(i+1).trim()}
+          : {label:"",text:item.trim()};
+      }
+      return {
+        label:String(item?.label||item?.title||"").trim(),
+        text:String(item?.text||item?.description||"").trim()
+      };
+    }).filter(item=>item.label||item.text);
+    return prog;
+  }
+
+  const tierNormalizeWithMenu=window.mtNormalizeProgramme;
+  window.mtNormalizeProgramme=function(prog){
+    prog=tierNormalizeWithMenu?tierNormalizeWithMenu(prog):(prog||{});
+    return normalizeMenuExplanations(prog||{});
+  };
+
+  function injectMenuExplanationsAdmin(){
+    if(!window.MT_ADMIN_PAGE || document.getElementById("mt-menu-why-admin")) return;
+    const dinner=document.getElementById("f-dinner");
+    const mealsSection=dinner?.closest(".admin-section");
+    if(!mealsSection) return;
+
+    const block=document.createElement("div");
+    block.id="mt-menu-why-admin";
+    block.style.cssText="margin-top:16px;padding:16px;border:1.5px solid #e8e4de;border-radius:16px;background:#fbfaf7";
+    block.innerHTML=`
+      <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:12px">
+        <div style="width:34px;height:34px;border-radius:50%;background:rgba(140,117,97,.11);display:flex;align-items:center;justify-content:center;flex:0 0 auto">✦</div>
+        <div>
+          <h4 class="serif" style="font-size:18px;color:var(--ink);margin:0 0 3px">Pourquoi ces choix ?</h4>
+          <p style="font-size:11px;color:var(--muted);line-height:1.5;margin:0">Tes explications nutritionnelles personnalisées, visibles sous le menu du client.</p>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div>
+          <label class="field-label">Titre du bloc</label>
+          <input id="f-menu-why-title" class="admin-input" placeholder="Pourquoi ces choix ?" />
+        </div>
+        <div>
+          <label class="field-label">Introduction — facultative</label>
+          <textarea id="f-menu-why-intro" class="admin-textarea" placeholder="Quelques repères pour comprendre les choix de cette semaine…"></textarea>
+        </div>
+        <div>
+          <label class="field-label">Explications — une ligne = un repère</label>
+          <textarea id="f-menu-why-items" class="admin-textarea" style="min-height:150px" placeholder="Rumsteck | Morceau de bœuf relativement maigre, riche en protéines et adapté quand on veut limiter l’excès de gras.&#10;Banane mûre | Source de glucides pratique autour de l’effort et généralement facile à digérer.&#10;Yaourt grec 0–2 % | Apporte des protéines avec moins de matières grasses avant une séance."></textarea>
+          <p style="font-size:10px;color:var(--muted);line-height:1.5;margin:6px 0 0">Format conseillé : <b>Aliment | Pourquoi ce choix</b>. Tu peux aussi écrire une phrase seule.</p>
+        </div>
+      </div>`;
+    mealsSection.appendChild(block);
+  }
+
+  function menuExplanationLines(data){
+    const raw=arr(data?.items);
+    return raw.map(item=>{
+      if(typeof item==="string") return item;
+      const label=String(item?.label||item?.title||"").trim();
+      const text=String(item?.text||item?.description||"").trim();
+      return label&&text?`${label} | ${text}`:(label||text);
+    }).filter(Boolean);
+  }
+
+  function renderMenuExplanationsAdmin(prog){
+    if(!window.MT_ADMIN_PAGE) return;
+    injectMenuExplanationsAdmin();
+    const data=normalizeMenuExplanations(prog||{})?.menu_explanations||{};
+    const title=document.getElementById("f-menu-why-title");
+    const intro=document.getElementById("f-menu-why-intro");
+    const items=document.getElementById("f-menu-why-items");
+    if(title) title.value=data.title||"Pourquoi ces choix ?";
+    if(intro) intro.value=data.intro||"";
+    if(items) items.value=menuExplanationLines(data).join("\n");
+  }
+
+  function collectMenuExplanationsAdmin(){
+    if(!window.MT_ADMIN_PAGE) return;
+    injectMenuExplanationsAdmin();
+    programme=window.mtNormalizeProgramme(programme||{});
+    const raw=(document.getElementById("f-menu-why-items")?.value||"")
+      .split(/\r?\n/)
+      .map(x=>x.trim())
+      .filter(Boolean);
+    const items=raw.map(line=>{
+      const i=line.indexOf("|");
+      return i>=0
+        ? {label:line.slice(0,i).trim(),text:line.slice(i+1).trim()}
+        : {label:"",text:line};
+    }).filter(item=>item.label||item.text);
+
+    programme.menu_explanations={
+      title:(document.getElementById("f-menu-why-title")?.value||"").trim()||"Pourquoi ces choix ?",
+      intro:(document.getElementById("f-menu-why-intro")?.value||"").trim(),
+      items
+    };
+  }
+
+  function ensureMenuWhyClientCard(){
+    let card=document.getElementById("mt-menu-why-card");
+    if(card) return card;
+    const tab=document.getElementById("tab-repas");
+    if(!tab) return null;
+
+    card=document.createElement("div");
+    card.id="mt-menu-why-card";
+    card.className="card";
+    card.style.cssText="display:none;padding:20px;margin-top:18px;background:linear-gradient(145deg,#fffdf9 0%,#f6f0e7 100%);border:1px solid rgba(140,117,97,.18)";
+    card.innerHTML=`
+      <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:12px">
+        <div style="width:38px;height:38px;border-radius:50%;background:rgba(140,117,97,.12);display:flex;align-items:center;justify-content:center;font-size:18px;flex:0 0 auto">✦</div>
+        <div>
+          <p style="font-size:10px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--accent);margin:0 0 4px">TES REPÈRES NUTRITION</p>
+          <h3 id="mt-menu-why-title" class="serif" style="font-size:21px;line-height:1.15;color:var(--ink);margin:0">Pourquoi ces choix ?</h3>
+        </div>
+      </div>
+      <p id="mt-menu-why-intro" style="display:none;font-size:13px;color:var(--muted);line-height:1.65;margin:0 0 14px"></p>
+      <div id="mt-menu-why-items" style="display:flex;flex-direction:column;gap:9px"></div>`;
+    tab.appendChild(card);
+    return card;
+  }
+
+  function renderMenuExplanationsClient(prog){
+    if(window.MT_ADMIN_PAGE) return;
+    const card=ensureMenuWhyClientCard();
+    if(!card) return;
+    const data=normalizeMenuExplanations(prog||{})?.menu_explanations||{};
+    const title=String(data.title||"").trim();
+    const intro=String(data.intro||"").trim();
+    const items=arr(data.items).map(item=>({
+      label:String(item?.label||"").trim(),
+      text:String(item?.text||"").trim()
+    })).filter(item=>item.label||item.text);
+
+    if(!intro && !items.length){
+      card.style.display="none";
+      return;
+    }
+
+    const titleEl=document.getElementById("mt-menu-why-title");
+    const introEl=document.getElementById("mt-menu-why-intro");
+    const itemsEl=document.getElementById("mt-menu-why-items");
+    if(titleEl) titleEl.textContent=title||"Pourquoi ces choix ?";
+    if(introEl){
+      introEl.textContent=intro;
+      introEl.style.display=intro?"block":"none";
+    }
+    if(itemsEl){
+      itemsEl.innerHTML=items.map(item=>`
+        <div style="padding:11px 12px;border-radius:13px;background:rgba(255,255,255,.74);border:1px solid rgba(140,117,97,.12)">
+          ${item.label?`<strong style="display:block;font-size:12px;color:var(--ink);margin-bottom:${item.text?'3px':'0'}">${esc(item.label)}</strong>`:""}
+          ${item.text?`<p style="font-size:12px;color:#655a52;line-height:1.55;margin:0">${esc(item.text)}</p>`:""}
+        </div>`).join("");
+    }
+    card.style.display="block";
+  }
+
+  const oldRenderMenuWhy=window.renderClientView;
+  if(oldRenderMenuWhy) window.renderClientView=function(prenom,prog){
+    prog=window.mtNormalizeProgramme(prog||{});
+    oldRenderMenuWhy(prenom,prog);
+    renderMenuExplanationsClient(prog);
+  };
+
+  const oldFillMenuWhy=window.fillAdmin;
+  if(oldFillMenuWhy) window.fillAdmin=function(prenom,prog){
+    prog=window.mtNormalizeProgramme(prog||{});
+    oldFillMenuWhy(prenom,prog);
+    renderMenuExplanationsAdmin(prog);
+  };
+
+  const oldSaveMenuWhy=window.saveClient;
+  if(oldSaveMenuWhy) window.saveClient=async function(){
+    collectMenuExplanationsAdmin();
+    return oldSaveMenuWhy();
+  };
+
+  function initMenuExplanations(){
+    if(window.MT_ADMIN_PAGE){
+      injectMenuExplanationsAdmin();
+      if(typeof programme!=="undefined"&&programme) renderMenuExplanationsAdmin(programme);
+    }else if(typeof _currentProg!=="undefined"&&_currentProg){
+      renderMenuExplanationsClient(_currentProg);
+    }
+  }
+  if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",initMenuExplanations);
+  else initMenuExplanations();
+
 })();
