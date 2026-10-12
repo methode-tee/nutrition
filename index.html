@@ -12,7 +12,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script>if(!window.supabase){document.write('<script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"><\/script>')}</script>
-  <link rel="stylesheet" href="./style.css?v=mobile-nav-1">
+  <link rel="stylesheet" href="./style.css?v=plan-nav-1">
 </head>
 <body class="mt-client-page">
 <div class="app-shell" id="app">
@@ -41,6 +41,7 @@
     </div>
   </header>
 
+  <nav id="mt-plan-navigation" class="section-switcher" aria-label="Rubriques de Mon plan" hidden><button class="active" onclick="switchTab('repas')">Nutrition</button><button onclick="switchTab('soins')">Plantes &amp; Produits</button><button onclick="switchTab('programme')">Programme</button><button onclick="switchTab('signature')">Signature</button></nav>
   <!-- MAIN -->
   <div class="main-scroll">
 
@@ -117,7 +118,7 @@
 
     <!-- REPAS -->
     <section id="tab-repas" class="tab-section" style="padding-top:24px">
-      <div class="section-switcher"><button class="active" onclick="switchTab('repas')">Nutrition</button><button onclick="switchTab('soins')">Plantes &amp; Produits</button><button onclick="switchTab('programme')">Programme</button><button onclick="switchTab('signature')">Signature</button></div>
+
       <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:20px">
         <div>
           <h2 class="serif" style="font-size:30px;font-weight:700;color:var(--ink);margin:0 0 4px">Ton Menu</h2>
@@ -403,12 +404,12 @@
 
 </div><!-- /app-shell -->
 
-<script src="./app.js"></script>
+<script src="./app.js?v=plan-nav-1"></script>
 <script src="./mt-professional-v6.js"></script>
-<script src="./mt-performance-pro.js"></script>
+<script src="./mt-performance-pro.js?v=plan-nav-1"></script>
 <script src="./mt-tiered-experience.js"></script>
 <script src="./mt-checkin-v851.js"></script>
 <script src="./translations.js"></script>
-<script src="./mt-activity.js?v=activity-2"></script>
+<script src="./mt-activity.js?v=activity-3"></script>
 </body>
 </html>

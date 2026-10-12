@@ -791,6 +791,9 @@ async function repondreMessage(){
    NAVIGATION
 ════════════════════════════════════════ */
 function switchTab(name,btn){
+  const planNav=document.getElementById('mt-plan-navigation');
+  if(planNav){planNav.hidden=!['repas','soins','programme','signature','performance','lexique'].includes(name);planNav.querySelectorAll('button').forEach(b=>{const target=b.id==='mt-performance-switch'?'performance':(b.getAttribute('onclick')||'').match(/switchTab\(['"]([^'"]+)/)?.[1];b.classList.toggle('active',target===name);b.setAttribute('aria-pressed',String(target===name));});}
+
   document.querySelectorAll(".tab-section").forEach(s=>s.classList.remove("active"));
   document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("active"));
   document.getElementById("tab-"+name).classList.add("active");
