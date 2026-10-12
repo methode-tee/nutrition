@@ -914,7 +914,7 @@ function renderClientsList(list){_allClients=list||[];document.getElementById("f
 
 async function selectClient(slug){
   if(!sb){log("❌ Connecte d'abord.");return;}
-  const {data,error}=await sb.from(SB_TABLE).select("*").eq("slug",slug).single();
+  const {data,error}=await sb.rpc("mt_admin_client",{p_slug:slug});
   if(error){log("❌ "+error.message);return;}
   currentSlug=slug;
   document.getElementById("f-client-email").value=data.client_email||"";
@@ -1204,7 +1204,7 @@ async function saveClient(){
   try{programme.methode=JSON.parse(document.getElementById("f-method").value||"[]");}
   catch(e){log("❌ JSON Méthode invalide.");return;}
   log("⏳ Sauvegarde…");
-  const {error}=await sb.from(SB_TABLE).upsert({slug,prenom,client_email,admin_notes,programme},{onConflict:"slug"});
+  const {error}=await sb.rpc("mt_admin_save_client",{p_slug:slug,p_prenom:prenom,p_email:client_email,p_notes:admin_notes,p_programme:programme});
   if(error){log("❌ "+error.message);return;}
   currentSlug=slug;document.getElementById("f-slug").value=slug;
   log("✅ "+prenom+" ("+slug+") sauvegardé !\n\nLien : "+buildLink(slug));
