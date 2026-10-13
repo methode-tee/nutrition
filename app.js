@@ -87,8 +87,12 @@ function connectSupabase() {
 }
 async function testSupabase() {
   if (!sb){log("❌ Connecte d'abord.");return;}
+  const {data:{session},error:sessionError}=await sb.auth.getSession();
+  if(sessionError){log("❌ Vérification de session impossible : "+sessionError.message);return;}
+  if(!session?.user){log("ℹ️ L’API répond. Connecte-toi avec le lien sécurisé administrateur pour tester l’accès aux fiches.");return;}
+  if(!await checkAdminAuth(session.user.id)){log("❌ Ce compte n’a pas les droits administrateur.");return;}
   const {data,error}=await sb.from(SB_TABLE).select("slug").limit(5);
-  if (error) { log("❌ "+error.message+"\n\nVérifie que la migration supabase-security.sql a bien été exécutée."); }
+  if (error) { log("❌ "+error.message+"\n\nVérifie les droits de lecture administrateur de la table mt_clients."); }
   else { log("✅ Table OK — "+(data.length)+" client(s).\n"+(data.length?data.map(r=>"• "+r.slug).join("\n"):"Vide.")); renderClientsList(data); }
 }
 

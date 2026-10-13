@@ -33,6 +33,10 @@ for all to authenticated
 using (exists(select 1 from public.mt_admin_users a where a.user_id=auth.uid()))
 with check (exists(select 1 from public.mt_admin_users a where a.user_id=auth.uid()));
 
+-- The Data API needs table privileges in addition to RLS policies.
+-- Row access remains restricted by the policies above.
+grant select on table public.mt_clients to authenticated;
+
 create policy "admin reads own role" on public.mt_admin_users
 for select to authenticated using (user_id=auth.uid());
 

@@ -12,7 +12,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script>if(!window.supabase){document.write('<script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"><\/script>')}</script>
-  <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="./style.css?v=client-preview-2">
 </head>
 <body class="admin-page">
 <div class="app-shell" id="app">
@@ -33,13 +33,12 @@
       <p style="font-size:9px;text-transform:uppercase;letter-spacing:.18em;color:#b5aca3;font-weight:800;margin-bottom:3px">Espace Professionnel</p>
       <h1 class="serif" style="font-size:20px;font-style:italic;font-weight:700;color:var(--brand);margin:0">Méthode Tee</h1>
     </div>
-    <div id="avatar" style="width:42px;height:42px;border-radius:50%;background:var(--brand);color:white;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-style:italic;font-weight:700;font-size:19px;box-shadow:0 4px 14px rgba(83,100,74,.28)">T</div>
+    <div style="display:flex;align-items:center;gap:8px;flex-shrink:0"><div id="avatar" style="width:42px;height:42px;border-radius:50%;background:var(--brand);color:white;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-style:italic;font-weight:700;font-size:19px;box-shadow:0 4px 14px rgba(83,100,74,.28)">T</div><button id="mt-preview-return" type="button" onclick="mtCloseClientPreview()" hidden>Retour admin</button></div>
   </header>
 
-  <div id="mt-admin-preview-controls" aria-label="Aperçu de l’espace client" hidden>
-    <div class="mt-preview-head"><div><strong id="mt-preview-client-name">Aperçu client</strong><span>Lecture seule · aucun changement enregistré</span></div><button type="button" onclick="mtCloseClientPreview()">Retour admin</button></div>
-    <div id="mt-preview-formulas" class="mt-preview-formulas" aria-label="Choisir une formule"></div>
-  </div>
+  <nav id="mt-plan-navigation" class="section-switcher" aria-label="Rubriques de Mon plan" hidden>
+    <button onclick="switchTab('repas')">Nutrition</button><button onclick="switchTab('soins')">Plantes &amp; Produits</button><button onclick="switchTab('programme')">Programme</button><button onclick="switchTab('signature')">Signature</button><button id="mt-performance-switch" onclick="switchTab('performance')" hidden>Performance</button>
+  </nav>
 
   <!-- MAIN -->
   <div class="main-scroll">
@@ -406,6 +405,14 @@
     <button class="nav-btn" onclick="switchTab('methode',this)"><i data-lucide="book-open" style="width:20px;height:20px"></i><span>Méthode</span></button>
   </nav>
 
+  <nav id="mt-preview-nav" class="bottom-nav simplified-nav" aria-label="Navigation client" hidden>
+    <button data-hub="accueil" class="nav-btn active" onclick="switchTab('accueil',this)"><i data-lucide="sun" style="width:20px;height:20px"></i><span>Aujourd’hui</span></button>
+    <button data-hub="plan" class="nav-btn" onclick="switchTab('repas',this)"><i data-lucide="clipboard-list" style="width:20px;height:20px"></i><span>Mon plan</span></button>
+    <button data-hub="suivi" class="nav-btn" onclick="switchTab('suivi',this)"><i data-lucide="heart-pulse" style="width:20px;height:20px"></i><span>Mon suivi</span></button>
+    <button data-hub="progression" class="nav-btn" onclick="switchTab('transformation',this)"><i data-lucide="trending-up" style="width:20px;height:20px"></i><span>Progression</span></button>
+    <button data-hub="messages" class="nav-btn" onclick="switchTab('messages',this)" id="nav-messages-preview"><i data-lucide="message-circle" style="width:20px;height:20px"></i><span>Tee</span></button>
+  </nav>
+
   <button class="fab" id="fab-admin" onclick="openAdmin()" type="button" aria-label="Admin">
     <i data-lucide="sliders-horizontal" style="width:20px;height:20px"></i>
   </button>
@@ -715,14 +722,14 @@
 </div><!-- /app-shell -->
 
 <script>window.MT_ADMIN_PAGE=true;</script>
-<script src="./app.js"></script>
+<script src="./app.js?v=client-preview-2"></script>
 <script src="./mt-professional-v6.js"></script>
 <script src="./mt-performance-pro.js"></script>
 <script src="./mt-tiered-experience.js"></script>
 <script src="./mt-checkin-v851.js"></script>
 <script src="./mt-admin-daily.js"></script>
 <script src="./translations.js"></script>
-<script src="./mt-activity.js?v=activity-3"></script>
-<script src="./mt-admin-preview.js?v=preview-1"></script>
+<script src="./mt-activity.js?v=activity-4"></script>
+<script src="./mt-admin-preview.js?v=client-preview-2"></script>
 </body>
 </html>
