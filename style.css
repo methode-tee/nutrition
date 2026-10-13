@@ -335,6 +335,22 @@ body:not(.admin-page) #my-banner { display:none!important; }
 .mt-preview-formula[aria-pressed="true"] span{color:rgba(255,255,255,.78)}
 .mt-preview-sections{margin-top:7px}
 .mt-preview-sections button{flex:0 0 auto;border:1px solid rgba(140,117,97,.18);border-radius:999px;background:#fff;color:var(--muted);padding:6px 10px;font-size:9px;font-weight:700}
+.mt-preview-sections button[aria-pressed="true"]{background:var(--brand);border-color:var(--brand);color:#fff}
 .mt-admin-preview-launch{border:1px solid rgba(255,255,255,.25);border-radius:999px;background:rgba(255,255,255,.12);color:#fff;padding:9px 12px;font:inherit;font-size:10px;font-weight:800;cursor:pointer}
+.mt-admin-preview-active #app>header{display:flex!important;flex-wrap:wrap;align-items:center;gap:8px 10px;padding:12px 16px 10px!important;}
+.mt-admin-preview-active #app>header>div:first-child{flex:1 1 auto;min-width:130px;}
+.mt-admin-preview-active #app>header>div:first-child h1{white-space:nowrap;font-size:19px!important;}
+.mt-admin-preview-active #app>header #mt-formula-badge{max-width:calc(100% - 55px);overflow:hidden;text-overflow:ellipsis;}
+.mt-admin-preview-active #app>header #avatar{flex:0 0 42px;}
+.mt-admin-preview-active #app>header #mt-lang-switch{position:static!important;top:auto!important;right:auto!important;transform:none!important;flex:1 0 100%;width:max-content;max-width:100%;margin:0 0 0 auto;justify-content:flex-end;z-index:auto!important;}
+.mt-admin-preview-active #mt-admin-preview-controls{padding:9px 10px 10px;}
+.mt-admin-preview-active .mt-preview-formulas{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px;overflow:visible;}
+.mt-admin-preview-active .mt-preview-formula{min-width:0;white-space:normal;align-items:flex-start;padding:7px 6px;}
+.mt-admin-preview-active .mt-preview-formula strong{font-size:8px;line-height:1.2;}
+.mt-admin-preview-active .mt-preview-formula span{font-size:7px;line-height:1.2;white-space:nowrap;}
+.mt-admin-preview-active .mt-preview-sections{display:flex;flex-wrap:wrap;gap:5px;overflow:visible;margin-top:8px;}
+.mt-admin-preview-active .mt-preview-sections button{white-space:nowrap;padding:6px 9px;}
+.mt-admin-preview-active .mt-preview-head{gap:6px;}
+.mt-admin-preview-active .mt-preview-head button{flex:0 0 auto;padding:8px 10px;}
 .mt-admin-preview-active .bottom-nav{display:none!important}
 .mt-admin-preview-active #fab-admin{display:none!important}

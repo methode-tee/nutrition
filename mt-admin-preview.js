@@ -42,7 +42,11 @@
       .filter(([name])=>name!=="cycle"||base?.profile?.cycleMode==="actif")
       .forEach(([name,label])=>{
       const button=document.createElement("button");button.type="button";button.textContent=label;
-      button.addEventListener("click",()=>window.switchTab(name,button));root.appendChild(button);
+      button.setAttribute("aria-pressed",String(document.getElementById(`tab-${name}`)?.classList.contains("active")));
+      button.addEventListener("click",()=>{
+        window.switchTab(name,button);
+        root.querySelectorAll("button").forEach(item=>item.setAttribute("aria-pressed",String(item===button)));
+      });root.appendChild(button);
     });
   }
   function renderFormula(price){
@@ -57,6 +61,7 @@
     const badge=document.getElementById("mt-formula-badge");if(badge)badge.textContent=formula.name;
     const main=document.querySelector(".main-scroll");if(main)main.scrollTop=0;
     window.switchTab("accueil");
+    document.querySelectorAll("#mt-preview-sections button").forEach(button=>button.setAttribute("aria-pressed",String(button.textContent==="Accueil")));
   }
   window.mtOpenClientPreview=function(){
     if(!currentSlug){
@@ -65,11 +70,14 @@
     if(typeof programme==="undefined"||!programme){
       window.alert("La fiche client n’est pas encore chargée.");return;
     }
-    saved={programme,_currentProg,currentSlug,currentDay,title:document.title,headerLabel:document.querySelector("#app>header p")?.textContent,formule:document.body.dataset.formule,level:document.body.dataset.serviceLevel,parcours:document.body.dataset.parcours};
+    const langSwitch=document.getElementById("mt-lang-switch");
+    saved={programme,_currentProg,currentSlug,currentDay,title:document.title,headerLabel:document.querySelector("#app>header p")?.textContent,formule:document.body.dataset.formule,level:document.body.dataset.serviceLevel,parcours:document.body.dataset.parcours,langSwitchParent:langSwitch?.parentElement,langSwitchNext:langSwitch?.nextSibling};
     base=clone(programme);clientName=(document.getElementById("f-prenom")?.value||"Client").trim();
     selectedPrice=currentPrice(base);
     window.MT_ADMIN_PREVIEW=true;document.body.classList.add("mt-admin-preview-active");
     window.mtInitClientPerformancePreview?.();
+    const header=document.querySelector("#app>header");
+    if(header&&langSwitch)header.appendChild(langSwitch);
     document.getElementById("admin-overlay")?.classList.remove("open");
     const controls=document.getElementById("mt-admin-preview-controls");if(controls)controls.hidden=false;
     renderSectionButtons();renderFormula(selectedPrice);
@@ -83,6 +91,11 @@
     window.renderClientView("toi",window.emptyProgramme());
     window.MT_ADMIN_PREVIEW=false;document.body.classList.remove("mt-admin-preview-active");
     const controls=document.getElementById("mt-admin-preview-controls");if(controls)controls.hidden=true;
+    const langSwitch=document.getElementById("mt-lang-switch");
+    if(langSwitch&&saved.langSwitchParent){
+      const next=saved.langSwitchNext?.parentElement===saved.langSwitchParent?saved.langSwitchNext:null;
+      saved.langSwitchParent.insertBefore(langSwitch,next);
+    }
     programme=saved.programme;_currentProg=saved._currentProg;currentSlug=saved.currentSlug;currentDay=saved.currentDay;
     document.title=saved.title;
     const headerLabel=document.querySelector("#app>header p");if(headerLabel&&saved.headerLabel)headerLabel.textContent=saved.headerLabel;
