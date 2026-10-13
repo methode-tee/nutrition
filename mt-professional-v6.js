@@ -404,16 +404,18 @@ function mtApplyProfileVisibility(prog){
 /* ---------- rendu client sécurisé + semaine auto ---------- */
 renderClientView=function(prenom,prog){
   prog=mtNormalizeProgramme(prog);
-  const pendingMealToken=mtRestorePendingMealSelections(prog);
+  // The admin preview must only display a clone. Never hydrate or sync a pending
+  // client selection while switching between formula previews.
+  const pendingMealToken=window.MT_ADMIN_PREVIEW?null:mtRestorePendingMealSelections(prog);
   _currentProg=prog;
-  if(pendingMealToken)mtSyncClientProgrammeKey("meal_selections",prog.meal_selections,{immediate:true,pendingMealToken});
+  if(pendingMealToken&&!window.MT_ADMIN_PREVIEW)mtSyncClientProgrammeKey("meal_selections",prog.meal_selections,{immediate:true,pendingMealToken});
   const p=(prenom||"toi").trim();const setText=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};setText("display-prenom",p);setText("avatar",p.charAt(0).toUpperCase());document.title="Méthode Tee — "+p;const d=document.getElementById("today-date");if(d)d.textContent=new Date().toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"});setText("goal-title",prog.objectif||"");document.body.dataset.parcours=prog.parcours==="performance"?"performance":"equilibre";setText("parcours-badge",prog.parcours==="performance"?"Performance":"Équilibre");renderProfileCheckin(prog.parcours||"equilibre");
   const goals=document.getElementById("goal-list");if(goals)goals.innerHTML=(prog.goals||[]).map(g=>`<li style="display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:6px"><span style="color:var(--brand)">✓</span>${mtEsc(g)}</li>`).join("");setText("coach-msg",prog.coach?`“${prog.coach}”`:"");const cw=mtCurrentWeek(prog);mtClientViewWeek=cw;setText("week-badge","Semaine "+cw);
   const tasks=document.getElementById("tasks-list");if(tasks)tasks.innerHTML=(prog.tasks||[]).map((t,i)=>`<div class="task-item" id="task-${i}" onclick="toggleTask(${i})"><div class="task-check" id="check-${i}"><span id="checkicon-${i}" style="display:none;color:white">✓</span></div><span class="task-text" style="font-size:13px;font-weight:500;color:var(--ink)">${mtEsc(t)}</span></div>`).join("");
   const offre=prog.offre||"",promo=prog.promo_code||"",banner=document.getElementById("my-banner"),bt=document.getElementById("my-banner-text"),pw=document.getElementById("my-promo-wrap"),pe=document.getElementById("my-promo-code"),map={signature:"Offre Signature : -15% sur toute la boutique Maison Yanna",privilege:"Offre Privilege : 5 produits offerts — envoie ta sélection",elite:"Offre Elite : 10 produits offerts à la quantité souhaitée"};if(banner&&bt&&map[offre]){bt.textContent=map[offre];if(promo&&pe&&pw){pe.textContent=promo;pw.style.display="block";}else if(pw)pw.style.display="none";banner.style.display="block";}else if(banner)banner.style.display="none";
   const badge=document.getElementById("messages-badge"),unread=(prog.messages||[]).filter(m=>m.auteur==="tee"&&!m.lu).length;if(badge){badge.style.display=unread?"flex":"none";if(unread)badge.textContent=unread;}
   const days=mtWeekDays(prog,cw);currentDay=mtBestDayKey(days);mtRenderClientWeekNav(prog);renderDaysNav(days);renderMeals(days);renderRituel(prog.rituel||{});renderTerrain(prog.terrain||{});renderProtocole(prog.protocole||{});renderProducts(prog.products||[]);renderSignature(prog.signature||{});renderMethodRules(prog.methode||[]);renderProgramme(prog);renderTransformation(prog);renderPhotos(prog.photos||[]);renderMessages(prog);try{mtRenderTerrainQuestions();}catch(e){}mtApplyProfileVisibility(prog);
-  const slugR=currentSlug;requestAnimationFrame(()=>{restoreTasks(slugR);renderHistorique(slugR);initSuivi();setTimeout(()=>initNotifications(slugR),300);});try{lucide.createIcons();}catch(e){}
+  const slugR=currentSlug;if(!window.MT_ADMIN_PREVIEW)requestAnimationFrame(()=>{restoreTasks(slugR);renderHistorique(slugR);initSuivi();setTimeout(()=>initNotifications(slugR),300);});try{lucide.createIcons();}catch(e){}
 };
 
 /* sécurise les rendus texte les plus exposés */

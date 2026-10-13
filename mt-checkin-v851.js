@@ -195,7 +195,7 @@
   }
 
   const oldRenderClient=window.renderClientView;
-  if(oldRenderClient)window.renderClientView=function(prenom,prog){oldRenderClient(prenom,prog);if(!window.MT_ADMIN_PAGE){setTimeout(()=>buildClientCheckin(prog),0);}else setTimeout(()=>renderAdminCheckin(prog),0);};
+  if(oldRenderClient)window.renderClientView=function(prenom,prog){oldRenderClient(prenom,prog);if(window.MT_ADMIN_PREVIEW)return;if(!window.MT_ADMIN_PAGE){setTimeout(()=>buildClientCheckin(prog),0);}else setTimeout(()=>renderAdminCheckin(prog),0);};
   const oldFill=window.fillAdmin;
   if(oldFill)window.fillAdmin=function(prenom,prog){oldFill(prenom,prog);setTimeout(()=>renderAdminCheckin(prog),0);};
   const oldGlobal=window.renderSuiviGlobal;

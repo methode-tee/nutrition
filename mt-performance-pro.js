@@ -394,5 +394,12 @@
     if(window.MT_ADMIN_PAGE)injectAdminPerformance();else injectClientPerformance();
     if(typeof _currentProg!=="undefined"&&_currentProg&&!window.MT_ADMIN_PAGE){try{renderPerformanceClient(_currentProg);enhancePerformanceCheckin(_currentProg);}catch(e){console.warn(e);}}
   }
+  // The admin's formula preview reuses the client cockpit renderer without
+  // changing the authenticated admin mode or enabling client-side persistence.
+  window.mtInitClientPerformancePreview=function(){
+    const wasAdmin=window.MT_ADMIN_PAGE;
+    window.MT_ADMIN_PAGE=false;
+    try{injectClientPerformance();}finally{window.MT_ADMIN_PAGE=wasAdmin;}
+  };
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init);else init();
 })();

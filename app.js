@@ -215,7 +215,7 @@ function renderClientView(prenom,prog) {
   safeRender(()=>renderMessages(prog),"renderMessages");
 
   const slugR=currentSlug;
-  requestAnimationFrame(()=>{
+  if(!window.MT_ADMIN_PREVIEW) requestAnimationFrame(()=>{
     safeRender(()=>restoreTasks(slugR),"restoreTasks");
     safeRender(()=>renderHistorique(slugR),"renderHistorique");
     safeRender(()=>initSuivi(),"initSuivi");
