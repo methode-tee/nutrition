@@ -10,12 +10,6 @@
     {price:900,offer:"performance_plus",name:"Private",detail:"Anticipation & suivi proactif"},
     {price:1500,offer:"private_performance",name:"Private Performance+",detail:"Pilotage & concierge sportif"}
   ];
-  const SECTIONS=[
-    ["accueil","Accueil"],["repas","Repas"],["soins","Plantes & produits"],
-    ["programme","Programme"],["signature","Signature"],["performance","Performance"],
-    ["suivi","Suivi"],["transformation","Bilan"],["terrainai","Terrain"],
-    ["cycle","Cycle"],["lexique","Lexique"],["pdf","PDF"],["messages","Messages"],["methode","Méthode"]
-  ];
   let saved=null,base=null,clientName="",selectedPrice=120;
   const clone=value=>{try{return structuredClone(value||{});}catch(_){return JSON.parse(JSON.stringify(value||{}));}};
 
@@ -34,26 +28,10 @@
       button.addEventListener("click",()=>renderFormula(f.price));root.appendChild(button);
     });
   }
-  function renderSectionButtons(){
-    const root=document.getElementById("mt-preview-sections");if(!root)return;
-    root.replaceChildren();
-    SECTIONS.filter(([name])=>document.getElementById("tab-"+name))
-      .filter(([name])=>name!=="performance"||(base?.parcours==="performance"&&selectedPrice>=400))
-      .filter(([name])=>name!=="cycle"||base?.profile?.cycleMode==="actif")
-      .forEach(([name,label])=>{
-      const button=document.createElement("button");button.type="button";button.textContent=label;
-      button.setAttribute("aria-pressed",String(document.getElementById(`tab-${name}`)?.classList.contains("active")));
-      button.addEventListener("click",()=>{
-        window.switchTab(name,button);
-        root.querySelectorAll("button").forEach(item=>item.setAttribute("aria-pressed",String(item===button)));
-      });root.appendChild(button);
-    });
-  }
   function renderFormula(price){
     const formula=FORMULAS.find(f=>f.price===price)||FORMULAS[0];selectedPrice=formula.price;
     const preview=clone(base);preview.formule_prix_eur=formula.price;preview.offre=formula.offer;
     window.MT_ADMIN_PREVIEW=true;
-    renderSectionButtons();
     renderFormulaButtons();
     window.renderClientView(clientName,preview);
     const headerLabel=document.querySelector("#app>header p");if(headerLabel)headerLabel.textContent="Espace Client";
@@ -61,7 +39,6 @@
     const badge=document.getElementById("mt-formula-badge");if(badge)badge.textContent=formula.name;
     const main=document.querySelector(".main-scroll");if(main)main.scrollTop=0;
     window.switchTab("accueil");
-    document.querySelectorAll("#mt-preview-sections button").forEach(button=>button.setAttribute("aria-pressed",String(button.textContent==="Accueil")));
   }
   window.mtOpenClientPreview=function(){
     if(!currentSlug){
@@ -80,7 +57,7 @@
     if(header&&langSwitch)header.appendChild(langSwitch);
     document.getElementById("admin-overlay")?.classList.remove("open");
     const controls=document.getElementById("mt-admin-preview-controls");if(controls)controls.hidden=false;
-    renderSectionButtons();renderFormula(selectedPrice);
+    renderFormula(selectedPrice);
   };
   window.mtCloseClientPreview=function(){
     if(!saved)return;
@@ -107,9 +84,10 @@
     try{window.renderSuiviGlobal?.();window.renderRenewals?.();}catch(_){}
   };
 
-  // The existing client page is rendered for fidelity, but every action within it is inert.
+  // Keep navigation usable in preview while preventing edits, submissions, and client actions.
   ["click","input","change","submit"].forEach(type=>document.addEventListener(type,event=>{
     if(!window.MT_ADMIN_PREVIEW)return;
+    if(type==="click"&&event.target.closest(".bottom-nav, #mt-plan-navigation, .section-switcher"))return;
     if(event.target.closest(".main-scroll, .bottom-nav")){
       event.preventDefault();event.stopImmediatePropagation();
     }
