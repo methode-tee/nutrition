@@ -173,7 +173,7 @@
     const price=formulaPrice(prog)||0;
     if(price!==400||prog?.parcours!=="performance")return;
     const a=prog.athlete||{};
-    const sw=document.getElementById("mt-performance-switch");if(sw){sw.style.display="";sw.textContent="Performance";}
+    const sw=document.getElementById("mt-performance-switch");if(sw){sw.hidden=false;sw.style.display="";sw.textContent="Performance";}
     const home=document.getElementById("mt-performance-home");if(home){home.style.display="block";const ht=document.getElementById("mt-performance-home-text");if(ht)ht.textContent=a.weekly?.focus||"Séances, récupération, hydratation et préparation des jours importants.";}
     const box=document.getElementById("mt-performance-client");if(!box)return;
     const row=(label,value)=>value?`<div style="padding:10px 0;border-top:1px solid #eee7df"><div style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;font-weight:800;color:var(--muted)">${esc(label)}</div><div style="font-size:12px;line-height:1.6;color:var(--ink);margin-top:4px;white-space:pre-wrap">${esc(value)}</div></div>`:"";

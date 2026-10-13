@@ -55,10 +55,16 @@
     if(returnToActivity)window.mtShowActivity?.();
   };
 
-  // Client navigation remains available; all client-side edits and submissions stay inert.
+  // Allow navigation and disclosure controls, while keeping client mutations inert.
   ["click","input","change","submit"].forEach(type=>document.addEventListener(type,event=>{
     if(!window.MT_ADMIN_PREVIEW)return;
-    if(type==="click"&&event.target.closest(".bottom-nav, #mt-plan-navigation"))return;
+    if(type==="click"){
+      const target=event.target instanceof Element?event.target:null;
+      if(!target)return;
+      if(target.closest(".bottom-nav, #mt-plan-navigation, summary, [data-preview-navigation]"))return;
+      const action=target.closest("[onclick]")?.getAttribute("onclick")||"";
+      if(/^\s*switchTab\(\s*['"][a-z0-9_-]+['"]/.test(action))return;
+    }
     if(event.target.closest(".main-scroll, .bottom-nav, #mt-plan-navigation")){
       event.preventDefault();event.stopImmediatePropagation();
     }

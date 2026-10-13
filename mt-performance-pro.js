@@ -329,7 +329,7 @@
 
   function renderPerformanceClient(prog){
     prog=window.mtNormalizeProgramme(prog); const pro=isPro(prog),privateMode=isPrivate(prog);
-    const switchBtn=document.getElementById("mt-performance-switch"); if(switchBtn)switchBtn.style.display=pro?"":"none";
+    const switchBtn=document.getElementById("mt-performance-switch"); if(switchBtn){switchBtn.hidden=!pro;switchBtn.style.display=pro?"":"none";}
     const home=document.getElementById("mt-performance-home"); if(home)home.style.display=pro?"block":"none";
     if(!pro)return;
     const a=prog.athlete||{}; const homeTxt=document.getElementById("mt-performance-home-text"); if(homeTxt)homeTxt.textContent=a.weekly?.focus||"Entraînements, matchs, récupération, hydratation et déplacements pilotés semaine après semaine.";
