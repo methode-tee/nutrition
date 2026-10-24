@@ -1,8 +1,8 @@
 /* Méthode Tee — V851 · Check-in Nutri & suivi Tee
    Objectifs :
    - check-in quotidien court (30–60 s)
-   - champs sportifs uniquement pour les profils performance
-   - planning sportif hebdomadaire renseigné par le Nutri
+   - suivi des activités quotidiennes pour toutes les formules
+   - planning adapté : activités pour Équilibre, séances/matchs pour Performance
    - poids limité à 1 saisie / 7 jours
    - compatibilité avec l'ancien suivi (énergie/sommeil/digestion /5)
    - aucune nouvelle table Supabase : programme.suivi + programme.client_sport_plans
@@ -16,7 +16,24 @@
   const todayKey=()=>typeof mtLocalDateKey==="function"?mtLocalDateKey():new Date().toISOString().slice(0,10);
   const dateKey=d=>typeof mtLocalDateKey==="function"?mtLocalDateKey(d):[d.getFullYear(),String(d.getMonth()+1).padStart(2,"0"),String(d.getDate()).padStart(2,"0")].join("-");
   const weekStartKey=(base=new Date())=>{const d=new Date(base);d.setHours(12,0,0,0);const delta=(d.getDay()+6)%7;d.setDate(d.getDate()-delta);return dateKey(d);};
-  const isSportProfile=prog=>prog?.parcours==="performance" || !!prog?.athlete;
+  // A legacy `athlete` scaffold exists on EVERY client, including Essentiel.
+  // The client track, not the mere presence of that object, drives Performance UI.
+  const isSportProfile=prog=>String(prog?.parcours||"").toLowerCase()==="performance";
+  const DAILY_ACTIVITIES=[
+    ["walking","Marche"],["strength","Renforcement musculaire"],
+    ["pilates","Pilates"],["gym","Salle de sport / gym"],
+    ["running","Running / course"],["swimming","Piscine / natation"],
+    ["cycling","Vélo"],["yoga","Yoga"],
+    ["mobility","Mobilité / étirements"],["dance","Danse"],
+    ["other","Autre activité"]
+  ];
+  const PERFORMANCE_ACTIVITIES=[
+    ["training","Entraînement"],["football","Football / terrain"],
+    ["gym","Musculation"],["cardio","Cardio"],
+    ["recovery","Récupération / mobilité"],["match","Match / compétition"],
+    ["other","Autre"]
+  ];
+  const activityLabel=(type,sport=false)=>Object.fromEntries(sport?PERFORMANCE_ACTIVITIES:DAILY_ACTIVITIES)[type]||type||"Activité";
   const gv=id=>document.getElementById(id);
   const val=id=>gv(id)?.value??"";
   const checked=id=>!!gv(id)?.checked;
@@ -43,7 +60,7 @@
     return `<div style="margin-bottom:7px"><label style="font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.10em;color:var(--muted)">${esc(label)}</label>${help?`<p style="font-size:10px;color:#a29a91;margin:3px 0 0;line-height:1.4">${esc(help)}</p>`:""}</div>`;
   }
   function selectField(id,label,options,help=""){
-    return `<div class="mt851-field">${fieldLabel(label,help)}<select id="${id}" class="mt851-input" onchange="mt851QueueSave()"><option value="">— Choisir —</option>${options.map(([v,l])=>`<option value="${esc(v)}">${esc(l)}</option>`).join("")}</select></div>`;
+    return `<div class="mt851-field">${fieldLabel(label,help)}<select id="${id}" class="mt851-input" onchange="${id.startsWith("mt851-week-")?"":"mt851QueueSave()"}"><option value="">— Choisir —</option>${options.map(([v,l])=>`<option value="${esc(v)}">${esc(l)}</option>`).join("")}</select></div>`;
   }
   function numberField(id,label,attrs="",placeholder="",help=""){
     return `<div class="mt851-field">${fieldLabel(label,help)}<input id="${id}" class="mt851-input" type="number" ${attrs} placeholder="${esc(placeholder)}" oninput="mt851QueueSave()"></div>`;
@@ -80,6 +97,11 @@
         </div>
         <div style="margin-top:10px">${fieldLabel("Quelque chose à signaler ?","Facultatif")}<textarea id="mt851-note" class="mt851-input" style="min-height:72px;resize:vertical" placeholder="Ex : petite faim avant l’entraînement, ventre lourd…" oninput="mt851QueueSave()"></textarea></div>
       </div>
+      ${!sport?`<div class="mt851-card"><p class="mt851-kicker">MON ACTIVITÉ DU JOUR</p><h3 class="serif mt851-title">As-tu pratiqué une activité aujourd’hui ?</h3><p class="mt851-note">Marche, Pilates, renforcement, piscine… Aucun objectif imposé : indique ce que tu as réellement fait.</p><div style="display:flex;gap:8px;margin-top:12px"><button type="button" id="mt851-session-no" class="chip" onclick="mt851SetSession(false)">Non</button><button type="button" id="mt851-session-yes" class="chip" onclick="mt851SetSession(true)">Oui</button></div><div id="mt851-session-fields" class="mt851-session"><div class="mt851-grid">
+        ${selectField("mt851-session-type","Activité pratiquée",DAILY_ACTIVITIES)}
+        ${numberField("mt851-session-duration","Durée",'min="1" max="360" step="5"',"minutes")}
+        ${selectField("mt851-session-intensity","Intensité ressentie",[["light","Douce"],["moderate","Modérée"],["hard","Soutenue"]])}
+      </div></div></div>`:""}
       ${sport?`<div class="mt851-card"><p class="mt851-kicker">SÉANCE DU JOUR</p><h3 class="serif mt851-title">Tu t’es entraîné aujourd’hui ?</h3><div style="display:flex;gap:8px;margin-top:12px"><button type="button" id="mt851-session-no" class="chip" onclick="mt851SetSession(false)">Non</button><button type="button" id="mt851-session-yes" class="chip" onclick="mt851SetSession(true)">Oui</button></div><div id="mt851-session-fields" class="mt851-session"><div class="mt851-grid">
         ${selectField("mt851-session-type","Type",[["football","Football / terrain"],["gym","Musculation"],["cardio","Cardio"],["recovery","Récupération / mobilité"],["match","Match / compétition"],["other","Autre"]])}
         ${numberField("mt851-session-duration","Durée",'min="1" max="360" step="5"',"minutes")}
@@ -89,33 +111,40 @@
         ${selectField("mt851-pain","Douleur ou gêne ?",[["no","Non"],["yes","Oui"]])}
         <div class="mt851-field" id="mt851-pain-zone-wrap" style="display:none">${fieldLabel("Zone")}<input id="mt851-pain-zone" class="mt851-input" placeholder="ex : ischio droit" oninput="mt851QueueSave()"></div>
       </div></div></div>`:""}
-      ${sport?`<div class="mt851-card" id="mt851-week-card"><div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start"><div><p class="mt851-kicker">UNE FOIS PAR SEMAINE</p><h3 class="serif mt851-title">Mon planning sportif</h3><p class="mt851-note">Ajoute les séances prévues. Tee peut ainsi contextualiser tes journées et anticiper.</p></div><button type="button" class="chip" onclick="mt851AddPlanRow()">+ Séance</button></div><div id="mt851-plan-list" style="margin-top:12px"></div><div class="mt851-grid" style="margin-top:10px">${selectField("mt851-week-match","Match / compétition cette semaine ?",[["no","Non"],["yes","Oui"]])}${selectField("mt851-week-travel","Déplacement cette semaine ?",[["no","Non"],["yes","Oui"]])}</div><textarea id="mt851-week-note" class="mt851-input" style="min-height:60px;margin-top:10px" placeholder="Note facultative : horaires variables, double séance possible…"></textarea><button type="button" class="btn btn-brand" style="width:100%;margin-top:10px" onclick="mt851SaveWeeklyPlan()">Enregistrer mon planning</button><p id="mt851-plan-state" class="mt851-note" style="text-align:center"></p></div>`:""}
+      <div class="mt851-card" id="mt851-week-card"><div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start"><div><p class="mt851-kicker">UNE FOIS PAR SEMAINE</p><h3 class="serif mt851-title">${sport?"Mon planning sportif":"Mes activités de la semaine"}</h3><p class="mt851-note">${sport?"Ajoute les séances prévues pour permettre à Tee d’anticiper tes entraînements.":"Prévois seulement les activités que tu souhaites faire : marche, Pilates, renforcement, piscine… Tu peux laisser cette rubrique vide si tu n’as rien de prévu."}</p></div><button type="button" class="chip" onclick="mt851AddPlanRow()">${sport?"+ Séance":"+ Activité"}</button></div><div id="mt851-plan-list" style="margin-top:12px"></div>${sport?`<div class="mt851-grid" style="margin-top:10px">${selectField("mt851-week-match","Match / compétition cette semaine ?",[["no","Non"],["yes","Oui"]])}${selectField("mt851-week-travel","Déplacement cette semaine ?",[["no","Non"],["yes","Oui"]])}</div>`:""}<textarea id="mt851-week-note" class="mt851-input" style="min-height:60px;margin-top:10px" placeholder="${sport?"Note facultative : horaires variables, double séance possible…":"Note facultative : disponibilité, activité douce, séance reportée…"}"></textarea><button type="button" class="btn btn-brand" style="width:100%;margin-top:10px" onclick="mt851SaveWeeklyPlan()">Enregistrer mon planning</button><p id="mt851-plan-state" class="mt851-note" style="text-align:center" role="status" aria-live="polite"></p></div>
       <div class="mt851-card"><p class="mt851-kicker">MES 7 DERNIERS JOURS</p><div id="mt851-history"></div></div>`;
     setText("mt851-date",new Date().toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"}));
     if(sport){gv("mt851-pain")?.addEventListener("change",()=>{gv("mt851-pain-zone-wrap").style.display=val("mt851-pain")==="yes"?"block":"none";window.mt851QueueSave();});}
-    restoreDaily(prog);
+    hydratingForm=true;
+    try { restoreDaily(prog); restoreWeeklyPlan(prog); } finally { hydratingForm=false; }
     renderHistory(prog);
-    if(sport)restoreWeeklyPlan(prog);
   }
 
   function buildDailyData(){
     const sport=typeof _currentProg!=="undefined"&&isSportProfile(_currentProg);
     const sleepQ=Number(val("mt851-sleep-quality"))||0, energy10=Number(val("mt851-energy"))||0;
     const dig=val("mt851-digestion"), rec=val("mt851-recovery"), adherence=val("mt851-adherence"), legs=val("mt851-legs");
-    const sessionDone=sport?gv("mt851-session-fields")?.dataset?.active==="1":false;
+    const sessionDone=gv("mt851-session-fields")?.dataset?.active==="1";
     const data={
       filled:true,date:todayKey(),submitted_at:new Date().toISOString(),schema:"v851",
       sommeil_heures:val("mt851-sleep-hours"),sommeil_qualite_10:sleepQ||"",energie_10:energy10||"",
       faim:val("mt851-hunger"),digestion_status:dig,hydratation_litres:val("mt851-water"),
       recuperation_status:rec,adherence, note:val("mt851-note"),
       sommeil:n10to5(sleepQ),energie:n10to5(energy10),digestion:digestionTo5(dig),recuperation:recoveryTo5(rec),
-      eau:String(val("mt851-water")).trim()!=="",repas:adherence==="yes",infusion:false,sport:sessionDone
+      eau:String(val("mt851-water")).trim()!=="",repas:adherence==="yes",infusion:false,sport:!!sessionDone,
+      session_done:!!sessionDone
     };
     if(gv("mt851-weight"))data.poids=val("mt851-weight");
-    if(sport){
-      data.jambes=legs;data.courbatures=legsToSoreness(legs);
-      data.session_done=sessionDone;
-      if(sessionDone)data.session={type:val("mt851-session-type"),duration_min:val("mt851-session-duration"),intensity_10:val("mt851-session-intensity"),energy_10:val("mt851-session-energy"),recovery:val("mt851-session-recovery"),pain:val("mt851-pain")==="yes",pain_zone:val("mt851-pain-zone")};
+    if(sport){data.jambes=legs;data.courbatures=legsToSoreness(legs);}
+    if(sessionDone){
+      data.session={
+        type:val("mt851-session-type"),duration_min:val("mt851-session-duration"),
+        intensity_10:val("mt851-session-intensity")
+      };
+      if(sport)Object.assign(data.session,{
+        energy_10:val("mt851-session-energy"),recovery:val("mt851-session-recovery"),
+        pain:val("mt851-pain")==="yes",pain_zone:val("mt851-pain-zone")
+      });
     }
     return data;
   }
@@ -126,13 +155,13 @@
     const sq=s.sommeil_qualite_10||((Number(s.sommeil)||0)*2)||5;setValue("mt851-sleep-quality",sq);setText("mt851-sleep-quality-v",sq+"/10");
     const en=s.energie_10||((Number(s.energie)||0)*2)||5;setValue("mt851-energy",en);setText("mt851-energy-v",en+"/10");
     setValue("mt851-hunger",s.faim||"");setValue("mt851-digestion",s.digestion_status||"");setValue("mt851-water",s.hydratation_litres||s.hydratation_litres_estimee||"");setValue("mt851-recovery",s.recuperation_status||"");setValue("mt851-adherence",s.adherence||"");setValue("mt851-legs",s.jambes||"");setValue("mt851-weight",s.poids||"");setValue("mt851-note",s.note||"");
+    window.mt851SetSession(!!(s.session_done||s.session?.type||s.sport));
+    const se=s.session||{};setValue("mt851-session-type",se.type||"");setValue("mt851-session-duration",se.duration_min||"");
     if(isSportProfile(prog)){
-      window.mt851SetSession(!!(s.session_done||s.session));
-      const se=s.session||{};setValue("mt851-session-type",se.type||"");setValue("mt851-session-duration",se.duration_min||"");
       const si=se.intensity_10||5;setValue("mt851-session-intensity",si);setText("mt851-session-intensity-v",si+"/10");
       const ee=se.energy_10||5;setValue("mt851-session-energy",ee);setText("mt851-session-energy-v",ee+"/10");
       setValue("mt851-session-recovery",se.recovery||"");setValue("mt851-pain",se.pain?"yes":"no");setValue("mt851-pain-zone",se.pain_zone||"");if(gv("mt851-pain-zone-wrap"))gv("mt851-pain-zone-wrap").style.display=se.pain?"block":"none";
-    }
+    } else setValue("mt851-session-intensity",se.intensity_10||"");
   }
 
   window.mt851SetSession=function(active){
@@ -140,16 +169,30 @@
     const y=gv("mt851-session-yes"),n=gv("mt851-session-no");if(y)y.style.background=active?"var(--brand)":"";if(y)y.style.color=active?"white":"";if(n)n.style.background=!active?"var(--brand)":"";if(n)n.style.color=!active?"white":"";window.mt851QueueSave();
   };
 
-  async function syncProgrammeKey(key,value){
-    if(!sb||!currentSlug||window.MT_ADMIN_PAGE)return false;
-    try{
-      const r=await sb.from(SB_TABLE).select("programme").eq("slug",currentSlug).single();if(r.error||!r.data)throw(r.error||new Error("Programme introuvable"));
-      const p=Object.assign({},r.data.programme||{});p[key]=value;const up=await sb.from(SB_TABLE).update({programme:p}).eq("slug",currentSlug);if(up.error)throw up.error;if(typeof _currentProg!=="undefined"&&_currentProg)_currentProg[key]=value;return true;
-    }catch(e){console.warn("[V851] sync",key,e);return false;}
+  // Serialize writes to the shared programme JSON: simultaneous check-in and
+  // weekly-plan saves must not silently revert each other.
+  let syncChain=Promise.resolve();
+  function syncProgrammeKey(key,value){
+    if(!sb||!currentSlug||window.MT_ADMIN_PAGE)return Promise.resolve(false);
+    const slug=currentSlug;
+    const run=async()=>{
+      try{
+        const r=await sb.from(SB_TABLE).select("programme").eq("slug",slug).single();
+        if(r.error||!r.data)throw(r.error||new Error("Programme introuvable"));
+        const p=Object.assign({},r.data.programme||{});p[key]=value;
+        const up=await sb.from(SB_TABLE).update({programme:p}).eq("slug",slug).select("slug").maybeSingle();
+        if(up.error||!up.data)throw(up.error||new Error("Aucune ligne enregistrée"));
+        if(typeof _currentProg!=="undefined"&&_currentProg&&currentSlug===slug)_currentProg[key]=value;
+        return true;
+      }catch(e){console.warn("[V851] sync",key,e);return false;}
+    };
+    const saving=syncChain.then(run,run);
+    syncChain=saving.then(()=>undefined,()=>undefined);
+    return saving;
   }
-  let saveTimer=null;
+  let saveTimer=null,hydratingForm=false;
   window.mt851QueueSave=function(){
-    if(window.MT_ADMIN_PAGE)return;
+    if(window.MT_ADMIN_PAGE||hydratingForm)return;
     setText("mt851-save-state","…");clearTimeout(saveTimer);saveTimer=setTimeout(window.mt851SaveDaily,650);
   };
   window.mt851SaveDaily=async function(){
@@ -163,21 +206,38 @@
   function renderHistory(prog){
     const box=gv("mt851-history");if(!box)return;const xs=followupEntries(prog).filter(([,v])=>v?.filled).slice(0,7);
     if(!xs.length){box.innerHTML='<p class="mt851-note">Aucun check-in enregistré pour le moment.</p>';return;}
-    box.innerHTML=xs.map(([d,v])=>{const pills=[];if(v.sommeil_heures)pills.push(`🌙 ${esc(v.sommeil_heures)} h`);if(v.energie_10)pills.push(`⚡ ${esc(v.energie_10)}/10`);if(v.hydratation_litres)pills.push(`💧 ${esc(v.hydratation_litres)} L`);if(v.jambes)pills.push(`🦵 ${esc(({light:"légères",normal:"normales",heavy:"lourdes",very_heavy:"très lourdes"}[v.jambes]||v.jambes))}`);if(v.session_done)pills.push(`🏃 séance${v.session?.duration_min?` · ${esc(v.session.duration_min)} min`:""}`);return `<div class="mt851-hist"><div style="display:flex;justify-content:space-between;gap:8px"><strong style="font-size:11px;color:var(--ink)">${new Date(d+"T12:00:00").toLocaleDateString("fr-FR",{weekday:"short",day:"numeric",month:"short"})}</strong>${v.adherence?`<span style="font-size:9px;color:var(--muted)">${esc(({yes:"journée suivie",partial:"partielle",no:"non suivie"}[v.adherence]||v.adherence))}</span>`:""}</div><div style="margin-top:5px">${pills.map(x=>`<span class="mt851-pill">${x}</span>`).join("")}</div>${v.note?`<p class="mt851-note" style="margin-top:5px">${esc(v.note)}</p>`:""}</div>`;}).join("");
+    box.innerHTML=xs.map(([d,v])=>{const pills=[];if(v.sommeil_heures)pills.push(`🌙 ${esc(v.sommeil_heures)} h`);if(v.energie_10)pills.push(`⚡ ${esc(v.energie_10)}/10`);if(v.hydratation_litres)pills.push(`💧 ${esc(v.hydratation_litres)} L`);if(v.jambes)pills.push(`🦵 ${esc(({light:"légères",normal:"normales",heavy:"lourdes",very_heavy:"très lourdes"}[v.jambes]||v.jambes))}`);if(v.session_done)pills.push(`🏃 ${esc(activityLabel(v.session?.type,isSportProfile(prog)))}${v.session?.duration_min?` · ${esc(v.session.duration_min)} min`:""}`);return `<div class="mt851-hist"><div style="display:flex;justify-content:space-between;gap:8px"><strong style="font-size:11px;color:var(--ink)">${new Date(d+"T12:00:00").toLocaleDateString("fr-FR",{weekday:"short",day:"numeric",month:"short"})}</strong>${v.adherence?`<span style="font-size:9px;color:var(--muted)">${esc(({yes:"journée suivie",partial:"partielle",no:"non suivie"}[v.adherence]||v.adherence))}</span>`:""}</div><div style="margin-top:5px">${pills.map(x=>`<span class="mt851-pill">${x}</span>`).join("")}</div>${v.note?`<p class="mt851-note" style="margin-top:5px">${esc(v.note)}</p>`:""}</div>`;}).join("");
   }
 
   let planRows=[];
   window.mt851AddPlanRow=function(seed={}){
-    planRows.push({id:seed.id||("p"+Date.now()+Math.random().toString(36).slice(2,5)),date:seed.date||todayKey(),time:seed.time||"",type:seed.type||"training",duration_min:seed.duration_min||"",intensity:seed.intensity||"moderate"});renderPlanRows();
+    const sport=isSportProfile(typeof _currentProg!=="undefined"?_currentProg:null);
+    planRows.push({id:seed.id||("p"+Date.now()+Math.random().toString(36).slice(2,5)),date:seed.date||todayKey(),time:seed.time||"",type:seed.type||(sport?"training":"walking"),duration_min:seed.duration_min||"",intensity:seed.intensity||"moderate"});renderPlanRows();
   };
   window.mt851RemovePlanRow=function(id){planRows=planRows.filter(x=>x.id!==id);renderPlanRows();};
-  function renderPlanRows(){const box=gv("mt851-plan-list");if(!box)return;box.innerHTML=planRows.length?planRows.map((r,i)=>`<div class="mt851-week-row" data-plan-id="${esc(r.id)}"><input class="mt851-input" type="date" data-k="date" value="${esc(r.date)}"><input class="mt851-input" type="time" data-k="time" value="${esc(r.time)}"><select class="mt851-input wide" data-k="type"><option value="training" ${r.type==="training"?"selected":""}>Entraînement</option><option value="gym" ${r.type==="gym"?"selected":""}>Musculation</option><option value="recovery" ${r.type==="recovery"?"selected":""}>Récupération</option><option value="match" ${r.type==="match"?"selected":""}>Match / compétition</option><option value="other" ${r.type==="other"?"selected":""}>Autre</option></select><div style="display:flex;gap:5px"><input class="mt851-input" type="number" min="1" max="360" step="5" data-k="duration_min" placeholder="min" value="${esc(r.duration_min)}"><button type="button" onclick="mt851RemovePlanRow('${esc(r.id)}')" style="border:0;background:transparent;color:#b91c1c;font-size:16px">×</button></div><select class="mt851-input wide" data-k="intensity" style="grid-column:1/-1"><option value="light" ${r.intensity==="light"?"selected":""}>Intensité légère</option><option value="moderate" ${r.intensity==="moderate"?"selected":""}>Intensité modérée</option><option value="hard" ${r.intensity==="hard"?"selected":""}>Intensité intense</option></select></div>`).join(""):'<p class="mt851-note">Aucune séance ajoutée. Ajoute uniquement ce qui est déjà prévu.</p>';}
+  function renderPlanRows(){
+    const box=gv("mt851-plan-list");if(!box)return;
+    const sport=isSportProfile(typeof _currentProg!=="undefined"?_currentProg:null);
+    const types=sport?PERFORMANCE_ACTIVITIES:DAILY_ACTIVITIES;
+    box.innerHTML=planRows.length?planRows.map(r=>`<div class="mt851-week-row" data-plan-id="${esc(r.id)}"><input class="mt851-input" type="date" aria-label="Date" data-k="date" value="${esc(r.date)}"><input class="mt851-input" type="time" aria-label="Heure facultative" data-k="time" value="${esc(r.time)}"><select class="mt851-input wide" aria-label="Type d'activité" data-k="type">${types.map(([v,l])=>`<option value="${esc(v)}" ${r.type===v?"selected":""}>${esc(l)}</option>`).join("")}</select><div style="display:flex;gap:5px"><input class="mt851-input" type="number" aria-label="Durée en minutes" min="1" max="360" step="5" data-k="duration_min" placeholder="min" value="${esc(r.duration_min)}"><button type="button" aria-label="Supprimer l'activité" onclick="mt851RemovePlanRow('${esc(r.id)}')" style="border:0;background:transparent;color:#b91c1c;font-size:16px">×</button></div><select class="mt851-input wide" aria-label="Intensité" data-k="intensity" style="grid-column:1/-1"><option value="light" ${r.intensity==="light"?"selected":""}>Intensité douce</option><option value="moderate" ${r.intensity==="moderate"?"selected":""}>Intensité modérée</option><option value="hard" ${r.intensity==="hard"?"selected":""}>Intensité soutenue</option></select></div>`).join(""):'<p class="mt851-note">Aucune activité prévue. Tu peux en ajouter si tu le souhaites.</p>';
+  }
   function collectPlanRows(){return Array.from(document.querySelectorAll("[data-plan-id]")).map(row=>{const get=k=>row.querySelector(`[data-k="${k}"]`)?.value||"";return {id:row.dataset.planId,date:get("date"),time:get("time"),type:get("type"),duration_min:get("duration_min"),intensity:get("intensity")};}).filter(x=>x.date);}
   function restoreWeeklyPlan(prog){
-    const wk=weekStartKey(),plan=prog?.client_sport_plans?.[wk]||{};planRows=arr(plan.sessions).map(x=>Object.assign({},x));if(!planRows.length)window.mt851AddPlanRow({date:todayKey()});else renderPlanRows();setValue("mt851-week-match",plan.match?"yes":"no");setValue("mt851-week-travel",plan.travel?"yes":"no");setValue("mt851-week-note",plan.note||"");
+    const wk=weekStartKey(),plan=prog?.client_sport_plans?.[wk]||{};
+    planRows=arr(plan.sessions).map(x=>Object.assign({},x));
+    if(!planRows.length&&isSportProfile(prog))window.mt851AddPlanRow({date:todayKey()});else renderPlanRows();
+    setValue("mt851-week-match",plan.match?"yes":"no");setValue("mt851-week-travel",plan.travel?"yes":"no");setValue("mt851-week-note",plan.note||"");
   }
   window.mt851SaveWeeklyPlan=async function(){
-    if(!currentSlug)return;const wk=weekStartKey(),plans=Object.assign({},_currentProg?.client_sport_plans||{}),sessions=collectPlanRows();plans[wk]={week_start:wk,updated_at:new Date().toISOString(),sessions,session_count:sessions.length,match:val("mt851-week-match")==="yes",travel:val("mt851-week-travel")==="yes",note:val("mt851-week-note")};setText("mt851-plan-state","Enregistrement…");if(_currentProg)_currentProg.client_sport_plans=plans;const ok=await syncProgrammeKey("client_sport_plans",plans);setText("mt851-plan-state",ok?"Planning enregistré ✓":"Impossible de synchroniser pour le moment");
+    if(!currentSlug)return;
+    const wk=weekStartKey(),sport=isSportProfile(typeof _currentProg!=="undefined"?_currentProg:null);
+    const plans=Object.assign({},_currentProg?.client_sport_plans||{}),sessions=collectPlanRows();
+    const entry={week_start:wk,updated_at:new Date().toISOString(),sessions,session_count:sessions.length,category:sport?"performance":"activity",note:val("mt851-week-note")};
+    if(sport){entry.match=val("mt851-week-match")==="yes";entry.travel=val("mt851-week-travel")==="yes";}
+    plans[wk]=entry;
+    setText("mt851-plan-state","Enregistrement…");
+    const ok=await syncProgrammeKey("client_sport_plans",plans);
+    setText("mt851-plan-state",ok?"Planning enregistré ✓":"Impossible de synchroniser pour le moment");
   };
 
   function adminStat(label,value){return `<div style="background:white;border-radius:12px;padding:10px 12px"><p style="font-size:9px;text-transform:uppercase;letter-spacing:.08em;font-weight:900;color:var(--muted);margin:0 0 4px">${esc(label)}</p><p style="font-size:13px;font-weight:800;color:var(--ink);margin:0">${esc(value||"—")}</p></div>`;}
@@ -185,8 +245,13 @@
     const suivi=prog?.suivi||{},dates=Object.keys(suivi).sort().reverse(),de=gv("suivi-admin-derniere"),re=gv("suivi-admin-resume"),da=gv("suivi-admin-derniere-data"),hi=gv("suivi-admin-historique");
     if(!dates.length){if(de)de.textContent="Aucune donnée";if(re)re.style.display="none";if(hi)hi.innerHTML='<p style="font-size:12px;color:var(--muted);font-style:italic">Aucun check-in enregistré.</p>';return;}
     const d=suivi[dates[0]]||{};if(de)de.textContent="Dernier check-in : "+new Date(dates[0]+"T12:00:00").toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"});if(re)re.style.display="block";
-    if(da)da.innerHTML=adminStat("Sommeil",d.sommeil_heures?`${d.sommeil_heures} h · ${d.sommeil_qualite_10||"—"}/10`:(d.sommeil?`${d.sommeil}/5`:"—"))+adminStat("Énergie",d.energie_10?`${d.energie_10}/10`:(d.energie?`${d.energie}/5`:"—"))+adminStat("Hydratation",d.hydratation_litres?`${d.hydratation_litres} L`:"—")+adminStat("Digestion",({comfortable:"Confortable",bloating:"Ballonnements",heavy:"Lourdeur",transit:"Transit perturbé"}[d.digestion_status]||(d.digestion?`${d.digestion}/5`:"—")))+adminStat("Faim",({low:"Faible",normal:"Normale",high:"Élevée"}[d.faim]||"—"))+adminStat("Adhérence",({yes:"Oui",partial:"Partielle",no:"Non"}[d.adherence]||"—"))+(d.jambes?adminStat("Jambes",({light:"Légères",normal:"Normales",heavy:"Lourdes",very_heavy:"Très lourdes"}[d.jambes]||d.jambes)):"")+(d.session_done?adminStat("Séance",`${d.session?.type||"Oui"}${d.session?.duration_min?` · ${d.session.duration_min} min`:""}${d.session?.intensity_10?` · ${d.session.intensity_10}/10`:""}`):"");
-    if(hi)hi.innerHTML=dates.slice(0,7).map(date=>{const x=suivi[date]||{};return `<div style="border:1px solid #eee7df;border-radius:13px;padding:10px 12px"><div style="display:flex;justify-content:space-between;gap:8px"><strong style="font-size:11px;color:var(--ink)">${new Date(date+"T12:00:00").toLocaleDateString("fr-FR",{weekday:"short",day:"numeric",month:"short"})}</strong><span style="font-size:9px;color:var(--muted)">${x.energie_10?`Énergie ${esc(x.energie_10)}/10`:x.energie?`Énergie ${esc(x.energie)}/5`:""}</span></div>${x.note?`<p style="font-size:10px;color:var(--muted);margin:5px 0 0">${esc(x.note)}</p>`:""}</div>`;}).join("");
+    if(da)da.innerHTML=adminStat("Sommeil",d.sommeil_heures?`${d.sommeil_heures} h · ${d.sommeil_qualite_10||"—"}/10`:(d.sommeil?`${d.sommeil}/5`:"—"))+adminStat("Énergie",d.energie_10?`${d.energie_10}/10`:(d.energie?`${d.energie}/5`:"—"))+adminStat("Hydratation",d.hydratation_litres?`${d.hydratation_litres} L`:"—")+adminStat("Digestion",({comfortable:"Confortable",bloating:"Ballonnements",heavy:"Lourdeur",transit:"Transit perturbé"}[d.digestion_status]||(d.digestion?`${d.digestion}/5`:"—")))+adminStat("Faim",({low:"Faible",normal:"Normale",high:"Élevée"}[d.faim]||"—"))+adminStat("Adhérence",({yes:"Oui",partial:"Partielle",no:"Non"}[d.adherence]||"—"))+(d.jambes?adminStat("Jambes",({light:"Légères",normal:"Normales",heavy:"Lourdes",very_heavy:"Très lourdes"}[d.jambes]||d.jambes)):"")+(d.session_done?adminStat(isSportProfile(prog)?"Séance":"Activité",`${activityLabel(d.session?.type,isSportProfile(prog))}${d.session?.duration_min?` · ${d.session.duration_min} min`:""}${d.session?.intensity_10?` · ${d.session.intensity_10}${isSportProfile(prog)?"/10":""}`:""}`):"");
+    if(hi){
+      const previous=dates.slice(0,7).map(date=>{const x=suivi[date]||{};return `<div style="border:1px solid #eee7df;border-radius:13px;padding:10px 12px"><div style="display:flex;justify-content:space-between;gap:8px"><strong style="font-size:11px;color:var(--ink)">${new Date(date+"T12:00:00").toLocaleDateString("fr-FR",{weekday:"short",day:"numeric",month:"short"})}</strong><span style="font-size:9px;color:var(--muted)">${x.energie_10?`Énergie ${esc(x.energie_10)}/10`:x.energie?`Énergie ${esc(x.energie)}/5`:""}</span></div>${x.session_done?`<p style="font-size:10px;color:var(--brand);margin:5px 0 0">Activité : ${esc(activityLabel(x.session?.type,isSportProfile(prog)))}${x.session?.duration_min?` · ${esc(x.session.duration_min)} min`:""}</p>`:""}${x.note?`<p style="font-size:10px;color:var(--muted);margin:5px 0 0">${esc(x.note)}</p>`:""}</div>`;}).join("");
+      const planned=prog?.client_sport_plans?.[weekStartKey()];
+      const weekly=planned?`<div style="border-top:1px solid #eee7df;padding-top:12px;margin-top:12px"><strong style="font-size:12px;color:var(--brand)">${isSportProfile(prog)?"Planning sportif":"Activités prévues"} — semaine en cours</strong>${arr(planned.sessions).map(a=>`<p style="font-size:11px;color:var(--ink);margin:6px 0">${esc(a.date)} · ${esc(activityLabel(a.type,isSportProfile(prog)))}${a.duration_min?` · ${esc(a.duration_min)} min`:""}</p>`).join("")||'<p style="font-size:11px;color:var(--muted)">Aucune activité programmée</p>'}${planned.note?`<p style="font-size:11px;color:var(--muted)">${esc(planned.note)}</p>`:""}</div>`:"";
+      hi.innerHTML=previous+weekly;
+    }
   }
 
   function renderAdminGlobalV851(){
@@ -195,7 +260,7 @@
   }
 
   const oldRenderClient=window.renderClientView;
-  if(oldRenderClient)window.renderClientView=function(prenom,prog){oldRenderClient(prenom,prog);if(window.MT_ADMIN_PREVIEW)return;if(!window.MT_ADMIN_PAGE){setTimeout(()=>buildClientCheckin(prog),0);}else setTimeout(()=>renderAdminCheckin(prog),0);};
+  if(oldRenderClient)window.renderClientView=function(prenom,prog){oldRenderClient(prenom,prog);if(!window.MT_ADMIN_PAGE){setTimeout(()=>buildClientCheckin(prog),0);}else setTimeout(()=>renderAdminCheckin(prog),0);};
   const oldFill=window.fillAdmin;
   if(oldFill)window.fillAdmin=function(prenom,prog){oldFill(prenom,prog);setTimeout(()=>renderAdminCheckin(prog),0);};
   const oldGlobal=window.renderSuiviGlobal;
