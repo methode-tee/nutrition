@@ -118,6 +118,7 @@
     hydratingForm=true;
     try { restoreDaily(prog); restoreWeeklyPlan(prog); } finally { hydratingForm=false; }
     renderHistory(prog);
+    window.mtRenderRegularity?.();
   }
 
   function buildDailyData(){
@@ -201,6 +202,7 @@
     try{localStorage.setItem("mt_suivi_"+slug+"_"+today,JSON.stringify(data));}catch(e){}
     if(typeof _currentProg!=="undefined"&&_currentProg){_currentProg.suivi=_currentProg.suivi||{};_currentProg.suivi[today]=data;}
     const all=Object.assign({},(_currentProg?.suivi||{}),{[today]:data});const ok=await syncProgrammeKey("suivi",all);setText("mt851-save-state",ok?"Enregistré ✓":"À resynchroniser");if(_currentProg)renderHistory(_currentProg);
+    if (slug === currentSlug) window.mtRenderRegularity?.();
   };
 
   function renderHistory(prog){

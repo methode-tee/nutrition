@@ -168,6 +168,7 @@ function safeRender(fn,label) { try{fn();}catch(e){console.warn("[MT] "+label+" 
 
 function renderClientView(prenom,prog) {
   _currentProg=prog||{};
+  mtRenderRegularity();
   const p=(prenom||"toi").trim();
   document.getElementById("display-prenom").textContent=p;
   document.getElementById("avatar").textContent=p.charAt(0).toUpperCase();
@@ -558,6 +559,7 @@ function saveSuivi(){
   const data={eau:document.getElementById("check-eau").checked,repas:document.getElementById("check-repas").checked,infusion:document.getElementById("check-infusion").checked,sport:document.getElementById("check-sport").checked,poids:document.getElementById("suivi-poids").value,energie:document.getElementById("suivi-energie").value,sommeil:document.getElementById("suivi-sommeil").value,digestion:document.getElementById("suivi-digestion").value,note:document.getElementById("suivi-note").value,filled:true,date:today};
   ["recuperation","courbatures","disponibilite","stress","faim","confort"].forEach(id=>{const input=document.getElementById("suivi-"+id);if(input)data[id]=input.value;});
   try{localStorage.setItem(key,JSON.stringify(data));}catch(e){}
+  if (_currentProg) (_currentProg.suivi ||= {})[today] = data;
   updateScore(slug);
   if(sb&&slug&&slug!=="admin"){
     clearTimeout(saveSuivi._timer);
@@ -573,7 +575,99 @@ function saveSuivi(){
     },2000);
   }
 }
+
+/* Jauge de régularité : cinq journées de suivi, du lundi au vendredi. */
+function mtRegularityComplete(entry) {
+  if (entry?.filled !== true) return false;
+  const numberIn = (value, max) => value !== "" && value != null &&
+    String(value).trim() !== "" && Number.isFinite(Number(value)) &&
+    Number(value) >= 0 && Number(value) <= max;
+  const note = typeof entry.note === "string" && entry.note.trim().length > 0;
+  if (entry.schema !== "v851") {
+    return note || ["eau", "repas", "sport", "infusion"].some(key => entry[key] === true);
+  }
+  // Les deux curseurs sur 10 sont préremplis : ils ne valident pas un suivi.
+  const markers = [
+    numberIn(entry.sommeil_heures, 16), numberIn(entry.hydratation_litres, 10),
+    Boolean(entry.faim), Boolean(entry.digestion_status), Boolean(entry.recuperation_status),
+    Boolean(entry.adherence), Boolean(entry.session_done && entry.session?.type), note
+  ];
+  return markers.filter(Boolean).length >= 2;
+}
+function mtRegularityCount(entries, now = new Date()) {
+  const monday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12);
+  monday.setDate(monday.getDate() - (monday.getDay() + 6) % 7);
+  const today = mtLocalDateKey(now);
+  return Array.from({length: 5}, (_, i) => {
+    const day = new Date(monday);
+    day.setDate(day.getDate() + i);
+    const key = mtLocalDateKey(day);
+    return key <= today && mtRegularityComplete(entries?.[key]);
+  }).filter(Boolean).length;
+}
+function mtRegularityRing(count, size) {
+  const segments = Array.from({length: 5}, (_, i) =>
+    `<circle cx="32" cy="32" r="27" pathLength="100" fill="none" stroke="${i < count ? "var(--brand,#53644a)" : "#e5e6dc"}" stroke-width="5" stroke-dasharray="16 84" transform="rotate(${-83 + 72 * i} 32 32)"/>`).join("");
+  return `<svg aria-hidden="true" focusable="false" width="${size}" height="${size}" viewBox="0 0 64 64" style="display:block;flex-shrink:0">${segments}<text x="32" y="33" text-anchor="middle" dominant-baseline="middle" fill="var(--brand,#53644a)" font-size="17" font-weight="800">${count}/5</text></svg>`;
+}
+function mtRenderRegularity() {
+  const greet = document.getElementById("display-prenom")?.closest("h2")?.parentElement;
+  const section = document.getElementById("tab-suivi");
+  if (!greet || !section) return;
+  let mini = document.getElementById("mt-regularity-mini");
+  let card = document.getElementById("mt-regularity-card");
+  if (!_currentProg) { if (mini) mini.hidden = true; card?.remove(); return; }
+  const entries = {..._currentProg.suivi};
+  const today = mtLocalDateKey();
+  if (currentSlug && !entries[today]) {
+    try {
+      const cached = localStorage.getItem("mt_suivi_" + currentSlug + "_" + today);
+      if (cached) entries[today] = JSON.parse(cached);
+    } catch (_) {}
+  }
+  const count = mtRegularityCount(entries);
+  const en = document.documentElement.lang === "en";
+  const label = en ? `${count} of 5 check-ins this week` : `${count} suivi${count > 1 ? "s" : ""} sur 5 cette semaine`;
+  if (!mini) {
+    const side = greet.parentElement.lastElementChild;
+    if (side !== greet) {
+      const stack = document.createElement("div");
+      stack.style.cssText = "display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex:none";
+      side.before(stack);
+      stack.append(side);
+      mini = document.createElement("button");
+      mini.id = "mt-regularity-mini";
+      mini.type = "button";
+      mini.style.cssText = "border:0;background:transparent;padding:0;cursor:pointer;border-radius:50%";
+      mini.onclick = () => { switchTab("suivi"); document.getElementById("mt-regularity-card")?.focus(); };
+      stack.append(mini);
+    }
+  }
+  if (mini) {
+    mini.hidden = false;
+    mini.setAttribute("aria-label", label + (en ? " — open check-in" : " — ouvrir Suivi"));
+    mini.innerHTML = mtRegularityRing(count, 54);
+  }
+  if (!card) {
+    card = document.createElement("div");
+    card.id = "mt-regularity-card";
+    card.tabIndex = -1;
+    card.className = "card";
+    card.style.cssText = "display:flex;align-items:center;gap:14px;padding:14px;margin-bottom:16px";
+    const oldCard = document.getElementById("score-bar-wrap")?.parentElement;
+    oldCard?.setAttribute("hidden", "");
+    const anchor = section.querySelector(".mt851-card") || section.querySelector(".card");
+    if (anchor) anchor.before(card); else section.prepend(card);
+  }
+  card.innerHTML = mtRegularityRing(count, 76) + `<div style="min-width:0"><strong style="color:var(--ink)">${en ? "My weekly check-ins" : "Mon suivi de la semaine"}</strong><p role="status" style="margin:3px 0;font-size:12px;color:var(--brand);font-weight:700">${label}</p><p style="margin:3px 0 6px;font-size:12px;color:var(--muted)">${en ? "Monday to Friday. Two entries are enough. A difficult day counts too." : "Du lundi au vendredi. Deux repères renseignés suffisent. Une journée difficile compte aussi."}</p><button type="button" style="font-size:12px;font-weight:700;color:var(--brand);text-decoration:underline">${en ? "Log my day" : "Renseigner ma journée"}</button></div>`;
+  card.querySelector("button").onclick = () => {
+    const input = document.getElementById("mt851-sleep-hours") || document.getElementById("check-eau");
+    input?.focus();
+  };
+}
+
 function updateScore(slug){
+  mtRenderRegularity();
   let total=0,filled=0;
   for(let i=6;i>=0;i--){
     const d=new Date();d.setDate(d.getDate()-i);
@@ -804,6 +898,7 @@ function switchTab(name,btn){
   const hubMap={soins:"plan",programme:"plan",signature:"plan",terrainai:"suivi",cycle:"suivi",lexique:"plan",pdf:"progression"};
   const activeBtn=btn||document.querySelector(`.simplified-nav [data-hub="${hubMap[name]||name}"]`);
   if(activeBtn) activeBtn.classList.add("active");
+  mtRenderRegularity();
   lucide.createIcons();
 }
 
