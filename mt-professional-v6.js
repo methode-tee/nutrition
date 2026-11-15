@@ -449,7 +449,7 @@ appliquerProtocole=function(type){
 
 /* ---------- admin : chargement/sauvegarde V6 ---------- */
 const mtOriginalFillAdmin=fillAdmin;
-fillAdmin=function(prenom,prog){prog=mtNormalizeProgramme(prog);programme=prog;const current=mtCurrentWeek(prog);mtAdminWeek=Math.min(current,prog.timeline.nbSemaines||4);mtOriginalFillAdmin(prenom,prog);const sexe=document.getElementById("f-sexe"),cycle=document.getElementById("f-cycle-mode"),safe=document.getElementById("f-phyto-validated");if(sexe)sexe.value=prog.profile?.sexe||"";if(cycle)cycle.value=prog.profile?.cycleMode||"inconnu";if(safe)safe.checked=!!prog.safety?.phytoValidated;mtRenderIntakeFields(prog.intake||{});mtRenderAdminWeekNav();adminDay=Object.keys(mtWeekDays(prog,mtAdminWeek))[0]||null;renderAdminDaysNav(mtWeekDays(prog,mtAdminWeek));const lbl=document.getElementById("mt-week-review-label");if(lbl)lbl.textContent=`Semaine ${current} en cours — les améliorations restent à valider par Tee.`;const reviewBtn=document.querySelector("#mt-week-review .btn");if(reviewBtn){const nb=prog.timeline.nbSemaines||4;reviewBtn.textContent=current>=nb?`Dernière semaine — clôturer le suivi`:`Valider S${current} → ouvrir S${current+1}`;}};
+fillAdmin=function(prenom,prog){prog=mtNormalizeProgramme(prog);programme=prog;const current=mtCurrentWeek(prog);mtAdminWeek=Math.min(current,prog.timeline.nbSemaines||4);mtOriginalFillAdmin(prenom,prog);const sexe=document.getElementById("f-sexe"),cycle=document.getElementById("f-cycle-mode"),safe=document.getElementById("f-phyto-validated");if(sexe)sexe.value=prog.profile?.sexe||"";if(cycle)cycle.value=prog.profile?.cycleMode||"inconnu";if(safe)safe.checked=!!prog.safety?.phytoValidated;mtRenderIntakeFields(prog.intake||{});mtRenderAdminWeekNav();adminDay=Object.keys(mtWeekDays(prog,mtAdminWeek))[0]||null;renderAdminDaysNav(mtWeekDays(prog,mtAdminWeek));const reviewWeek=mtValidatedWeekFloor(prog);const lbl=document.getElementById("mt-week-review-label");if(lbl)lbl.textContent=`Semaine ${reviewWeek} ouverte — les améliorations restent à valider par Tee.`;const reviewBtn=document.querySelector("#mt-week-review .btn");if(reviewBtn){const nb=prog.timeline.nbSemaines||4;reviewBtn.textContent=reviewWeek>=nb?`Dernière semaine — clôturer le suivi`:`Valider S${reviewWeek} → ouvrir S${reviewWeek+1}`;}};
 
 const mtOriginalSelectClient=selectClient;
 selectClient=async function(slug){await mtOriginalSelectClient(slug);programme=mtNormalizeProgramme(programme);fillAdmin(document.getElementById("f-prenom")?.value||"",programme);};
@@ -484,7 +484,7 @@ async function mtPrepareNextWeek(){
 
   programme=mtNormalizeProgramme(programme);
   mtPersistAdminDayDraft();
-  const current=mtCurrentWeek(programme),nb=programme.timeline.nbSemaines||4;
+  const current=mtValidatedWeekFloor(programme),nb=programme.timeline.nbSemaines||4;
   if(current>=nb){log("✅ Dernière semaine : pas de semaine suivante à préparer.");return;}
 
   const next=current+1;
@@ -524,7 +524,7 @@ async function mtPrepareNextWeek(){
 
     programme=mtNormalizeProgramme(res.data.programme);
     _currentProg=programme;
-    const opened=mtCurrentWeek(programme);
+    const opened=mtValidatedWeekFloor(programme);
     if(opened<next)throw new Error(`La validation a été enregistrée mais S${next} ne s'est pas activée.`);
 
     mtAdminWeek=next;

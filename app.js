@@ -582,7 +582,7 @@ function mtRegularityScore(prog, entries, now = new Date()) {
   const start = prog.timeline?.dateDebut;
   const scheduled = /^\d{4}-\d{2}-\d{2}$/.test(start || "");
   const first = new Date((scheduled ? start : today) + "T12:00:00");
-  const week = scheduled && typeof mtCurrentWeek === "function" ? mtCurrentWeek(prog) : 1;
+  const week = scheduled && typeof mtValidatedWeekFloor === "function" ? mtValidatedWeekFloor(prog) : 1;
   first.setDate(first.getDate() + (scheduled ? 7 * (week - 1) : -((first.getDay() + 6) % 7)));
   const names = ["dimanche","lundi","mardi","mercredi","jeudi","vendredi","samedi"];
   const menu = prog.weeks?.[week]?.days || {};
