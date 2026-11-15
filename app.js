@@ -638,6 +638,7 @@ function mtRenderRegularity() {
       mini = document.createElement("button");
       mini.id = "mt-regularity-mini";
       mini.type = "button";
+      mini.setAttribute("data-preview-navigation", "");
       mini.style.cssText = "border:0;background:transparent;padding:0;cursor:pointer;border-radius:50%";
       mini.onclick = () => { switchTab("suivi"); document.getElementById("mt-regularity-card")?.focus(); };
       stack.append(mini);
