@@ -66,7 +66,7 @@
     return `<div class="mt851-field">${fieldLabel(label,help)}<input id="${id}" class="mt851-input" type="number" ${attrs} placeholder="${esc(placeholder)}" oninput="mt851QueueSave()"></div>`;
   }
   function range10(id,label){
-    return `<div class="mt851-field">${fieldLabel(label)}<div style="display:flex;align-items:center;gap:12px"><input id="${id}" type="range" min="1" max="10" value="5" oninput="document.getElementById('${id}-v').textContent=this.value+'/10';mt851QueueSave()" style="width:100%;accent-color:var(--brand)"><strong id="${id}-v" style="font-size:12px;color:var(--brand);min-width:34px">5/10</strong></div></div>`;
+    return `<div class="mt851-field">${fieldLabel(label)}<div style="display:flex;align-items:center;gap:12px"><input id="${id}" type="range" min="1" max="10" value="5" oninput="document.getElementById('${id}-v').textContent=this.value+'/10';this.dataset.entered='1';mt851QueueSave()" style="width:100%;accent-color:var(--brand)"><strong id="${id}-v" style="font-size:12px;color:var(--brand);min-width:34px">5/10</strong></div></div>`;
   }
 
   function installStyle(){
@@ -87,6 +87,8 @@
           ${numberField("mt851-sleep-hours","Sommeil · durée",'min="0" max="16" step="0.25"',"ex : 7.5","Heures réellement dormies")}
           ${range10("mt851-sleep-quality","Sommeil · qualité")}
           ${range10("mt851-energy","Énergie générale")}
+          ${selectField("mt851-stress","Stress",Array.from({length:10},(_,i)=>[String(i+1),String(i+1)+" / 10"]),"1 = faible, 10 = très élevé")}
+          ${[["morning","Petit-déjeuner"],["lunch","Déjeuner"],["dinner","Dîner"]].map(([id,label])=>selectField("mt851-meal-"+id,label,[["taken","Pris"],["skipped","Non pris"]])).join("")}
           ${selectField("mt851-hunger","Faim",[["low","Faible"],["normal","Normale"],["high","Élevée"]])}
           ${selectField("mt851-digestion","Digestion",[["comfortable","Confortable"],["bloating","Ballonnements"],["heavy","Lourdeur"],["transit","Transit perturbé"]])}
           ${numberField("mt851-water","Hydratation",'min="0" max="10" step="0.1"',"ex : 1.8 L")}
@@ -129,6 +131,10 @@
     const data={
       filled:true,date:todayKey(),submitted_at:new Date().toISOString(),schema:"v851",
       sommeil_heures:val("mt851-sleep-hours"),sommeil_qualite_10:sleepQ||"",energie_10:energy10||"",
+      stress_10:val("mt851-stress"), sleepQualityEntered:gv("mt851-sleep-quality")?.dataset.entered==="1",
+      energyEntered:gv("mt851-energy")?.dataset.entered==="1",
+      meals_reported:Object.fromEntries(["morning","lunch","dinner"].map(m=>[m,val("mt851-meal-"+m)])),
+      ...(gv("mt851-session-fields")?.dataset.reported==="1" ? {activity_reported:sessionDone} : {}),
       faim:val("mt851-hunger"),digestion_status:dig,hydratation_litres:val("mt851-water"),
       recuperation_status:rec,adherence, note:val("mt851-note"),
       sommeil:n10to5(sleepQ),energie:n10to5(energy10),digestion:digestionTo5(dig),recuperation:recoveryTo5(rec),
@@ -156,6 +162,12 @@
     const sq=s.sommeil_qualite_10||((Number(s.sommeil)||0)*2)||5;setValue("mt851-sleep-quality",sq);setText("mt851-sleep-quality-v",sq+"/10");
     const en=s.energie_10||((Number(s.energie)||0)*2)||5;setValue("mt851-energy",en);setText("mt851-energy-v",en+"/10");
     setValue("mt851-hunger",s.faim||"");setValue("mt851-digestion",s.digestion_status||"");setValue("mt851-water",s.hydratation_litres||s.hydratation_litres_estimee||"");setValue("mt851-recovery",s.recuperation_status||"");setValue("mt851-adherence",s.adherence||"");setValue("mt851-legs",s.jambes||"");setValue("mt851-weight",s.poids||"");setValue("mt851-note",s.note||"");
+    setValue("mt851-stress",s.stress_10||"");
+    for (const m of ["morning","lunch","dinner"]) setValue("mt851-meal-"+m,s.meals_reported?.[m]||"");
+    for (const [id,flag,value] of [["mt851-sleep-quality","sleepQualityEntered",s.sommeil_qualite_10],["mt851-energy","energyEntered",s.energie_10]]) {
+      if (gv(id)) gv(id).dataset.entered = (s[flag] === true || (s[flag] == null && value && Number(value) !== 5)) ? "1" : "0";
+    }
+    if (gv("mt851-session-fields")) gv("mt851-session-fields").dataset.reported = (typeof s.activity_reported==="boolean" || s.session_done===true || s.sport===true) ? "1" : "0";
     window.mt851SetSession(!!(s.session_done||s.session?.type||s.sport));
     const se=s.session||{};setValue("mt851-session-type",se.type||"");setValue("mt851-session-duration",se.duration_min||"");
     if(isSportProfile(prog)){
@@ -166,7 +178,7 @@
   }
 
   window.mt851SetSession=function(active){
-    const box=gv("mt851-session-fields");if(!box)return;box.dataset.active=active?"1":"0";box.style.display=active?"block":"none";
+    const box=gv("mt851-session-fields");if(!box)return;if(!hydratingForm)box.dataset.reported="1";box.dataset.active=active?"1":"0";box.style.display=active?"block":"none";
     const y=gv("mt851-session-yes"),n=gv("mt851-session-no");if(y)y.style.background=active?"var(--brand)":"";if(y)y.style.color=active?"white":"";if(n)n.style.background=!active?"var(--brand)":"";if(n)n.style.color=!active?"white":"";window.mt851QueueSave();
   };
 

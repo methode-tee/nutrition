@@ -576,39 +576,59 @@ function saveSuivi(){
   }
 }
 
-/* Jauge de régularité : cinq journées de suivi, du lundi au vendredi. */
-function mtRegularityComplete(entry) {
-  if (entry?.filled !== true) return false;
-  const numberIn = (value, max) => value !== "" && value != null &&
-    String(value).trim() !== "" && Number.isFinite(Number(value)) &&
-    Number(value) >= 0 && Number(value) <= max;
-  const note = typeof entry.note === "string" && entry.note.trim().length > 0;
-  if (entry.schema !== "v851") {
-    return note || ["eau", "repas", "sport", "infusion"].some(key => entry[key] === true);
-  }
-  // Les deux curseurs sur 10 sont préremplis : ils ne valident pas un suivi.
-  const markers = [
-    numberIn(entry.sommeil_heures, 16), numberIn(entry.hydratation_litres, 10),
-    Boolean(entry.faim), Boolean(entry.digestion_status), Boolean(entry.recuperation_status),
-    Boolean(entry.adherence), Boolean(entry.session_done && entry.session?.type), note
-  ];
-  return markers.filter(Boolean).length >= 2;
-}
-function mtRegularityCount(entries, now = new Date()) {
-  const monday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12);
-  monday.setDate(monday.getDate() - (monday.getDay() + 6) % 7);
+
+function mtRegularityScore(prog, entries, now = new Date()) {
   const today = mtLocalDateKey(now);
-  return Array.from({length: 5}, (_, i) => {
-    const day = new Date(monday);
-    day.setDate(day.getDate() + i);
-    const key = mtLocalDateKey(day);
-    return key <= today && mtRegularityComplete(entries?.[key]);
-  }).filter(Boolean).length;
+  const start = prog.timeline?.dateDebut;
+  const scheduled = /^\d{4}-\d{2}-\d{2}$/.test(start || "");
+  const first = new Date((scheduled ? start : today) + "T12:00:00");
+  const week = scheduled && typeof mtCurrentWeek === "function" ? mtCurrentWeek(prog) : 1;
+  first.setDate(first.getDate() + (scheduled ? 7 * (week - 1) : -((first.getDay() + 6) % 7)));
+  const names = ["dimanche","lundi","mardi","mercredi","jeudi","vendredi","samedi"];
+  const menu = prog.weeks?.[week]?.days || {};
+  const selections = prog.meal_selections?.[week] || {};
+  const byDay = new Map();
+  for (const key of Object.keys(menu)) {
+    const normalized = key.normalize("NFD").replace(/[\u0300-\u036f]/g,"").trim().toLowerCase();
+    const index = names.findIndex(name => normalized.startsWith(name));
+    if (index >= 0 && !byDay.has(index)) byDay.set(index,key);
+  }
+  const days = Array.from({length:7}, (_, i) => {
+    const day = new Date(first); day.setDate(day.getDate() + i); return day;
+  }).filter(day => byDay.size ? byDay.has(day.getDay()) : day.getDay() >= 1 && day.getDay() <= 5);
+  const present = v => typeof v === "string" && v.trim() !== "";
+  const number = (v,min,max) => (typeof v === "number" || present(v)) && Number(v) >= min && Number(v) <= max;
+  let points = 0, total = 0;
+  for (const date of days) {
+    const key = mtLocalDateKey(date), menuKey = byDay.get(date.getDay());
+    const moments = ["morning","lunch","dinner"].filter(m => present(menu[menuKey]?.[m]));
+    total += 10 + moments.length;
+    if (key > today) continue;
+    for (const m of moments) {
+      const choices = selections[menuKey]?.[m];
+      if (["taken","skipped"].includes(entries[key]?.meals_reported?.[m]) || (Array.isArray(choices) && choices.some(i => Number.isInteger(i) && i >= 0))) points++;
+    }
+    const e = entries[key];
+    if (!e?.filled) continue;
+    const modern = e.schema === "v851";
+    points += [
+      present(e.adherence) || (!modern && e.repas === true),
+      number(e.hydratation_litres ?? e.hydratation_litres_estimee,0,10) || (!modern && e.eau === true),
+      number(e.sommeil_heures,0,16),
+      number(e.sommeil_qualite_10,1,10) && (e.sleepQualityEntered === true || (e.sleepQualityEntered == null && Number(e.sommeil_qualite_10) !== 5)),
+      number(e.energie_10,1,10) && (e.energyEntered === true || (e.energyEntered == null && Number(e.energie_10) !== 5)),
+      number(e.stress_10,1,10),
+      modern && present(e.faim),
+      present(e.digestion_status),
+      present(e.recuperation_status),
+      typeof e.activity_reported === "boolean" || e.session_done === true || e.sport === true
+    ].filter(Boolean).length;
+  }
+  return {percent:total ? Math.floor(points * 100 / total) : 0, week:scheduled ? week : null,
+    starts:days[0] || first, ends:days.at(-1) || first, pending:today < mtLocalDateKey(days[0] || first)};
 }
-function mtRegularityRing(count, size) {
-  const segments = Array.from({length: 5}, (_, i) =>
-    `<circle cx="32" cy="32" r="27" pathLength="100" fill="none" stroke="${i < count ? "var(--brand,#53644a)" : "#e5e6dc"}" stroke-width="5" stroke-dasharray="16 84" transform="rotate(${-83 + 72 * i} 32 32)"/>`).join("");
-  return `<svg aria-hidden="true" focusable="false" width="${size}" height="${size}" viewBox="0 0 64 64" style="display:block;flex-shrink:0">${segments}<text x="32" y="33" text-anchor="middle" dominant-baseline="middle" fill="var(--brand,#53644a)" font-size="17" font-weight="800">${count}/5</text></svg>`;
+function mtRegularityRing(percent, size) {
+  return `<svg aria-hidden="true" focusable="false" width="${size}" height="${size}" viewBox="0 0 64 64" style="display:block;flex-shrink:0"><circle cx="32" cy="32" r="27" fill="none" stroke="#e5e6dc" stroke-width="5"/>${percent ? `<circle cx="32" cy="32" r="27" pathLength="100" fill="none" stroke="var(--brand,#53644a)" stroke-width="5" stroke-dasharray="${percent} 100" transform="rotate(-90 32 32)"/>` : ""}<text x="32" y="33" text-anchor="middle" dominant-baseline="middle" fill="var(--brand,#53644a)" font-size="15" font-weight="800">${percent}%</text></svg>`;
 }
 function mtRenderRegularity() {
   const greet = document.getElementById("display-prenom")?.closest("h2")?.parentElement;
@@ -625,9 +645,12 @@ function mtRenderRegularity() {
       if (cached) entries[today] = JSON.parse(cached);
     } catch (_) {}
   }
-  const count = mtRegularityCount(entries);
+  const progress = mtRegularityScore(_currentProg, entries);
+  const count = progress.percent;
   const en = document.documentElement.lang === "en";
-  const label = en ? `${count} of 5 check-ins this week` : `${count} suivi${count > 1 ? "s" : ""} sur 5 cette semaine`;
+  const fmt = date => date.toLocaleDateString(en ? "en-GB" : "fr-FR", {day:"numeric",month:"short"});
+  const period = (progress.week ? "S" + progress.week + " · " : "") + fmt(progress.starts) + " – " + fmt(progress.ends);
+  const label = en ? count + "% complete · " + period : count + " % renseignés · " + period;
   if (!mini) {
     const side = greet.parentElement.lastElementChild;
     if (side !== greet) {
@@ -660,7 +683,7 @@ function mtRenderRegularity() {
     const anchor = section.querySelector(".mt851-card") || section.querySelector(".card");
     if (anchor) anchor.before(card); else section.prepend(card);
   }
-  card.innerHTML = mtRegularityRing(count, 76) + `<div style="min-width:0"><strong style="color:var(--ink)">${en ? "My weekly check-ins" : "Mon suivi de la semaine"}</strong><p role="status" style="margin:3px 0;font-size:12px;color:var(--brand);font-weight:700">${label}</p><p style="margin:3px 0 6px;font-size:12px;color:var(--muted)">${en ? "Monday to Friday. Two entries are enough. A difficult day counts too." : "Du lundi au vendredi. Deux repères renseignés suffisent. Une journée difficile compte aussi."}</p><button type="button" style="font-size:12px;font-weight:700;color:var(--brand);text-decoration:underline">${en ? "Log my day" : "Renseigner ma journée"}</button></div>`;
+  card.innerHTML = mtRegularityRing(count, 76) + `<div style="min-width:0"><strong style="color:var(--ink)">${en ? "My weekly check-ins" : "Mon suivi de la semaine"}</strong><p role="status" style="margin:3px 0;font-size:12px;color:var(--brand);font-weight:700">${label}</p><p style="margin:3px 0 6px;font-size:12px;color:var(--muted)">${progress.pending ? (en ? "This programme week has not started yet." : "Cette semaine du programme n’a pas encore commencé.") : (en ? "Meals, water, sleep, stress, feelings and activity. Each answer counts, whatever your day was like." : "Repas, alimentation, eau, sommeil, stress, ressentis et activité : chaque réponse compte, quelle qu’elle soit.")}</p><button type="button" style="font-size:12px;font-weight:700;color:var(--brand);text-decoration:underline">${en ? "Log my day" : "Renseigner ma journée"}</button></div>`;
   card.querySelector("button").onclick = () => {
     const input = document.getElementById("mt851-sleep-hours") || document.getElementById("check-eau");
     input?.focus();
