@@ -79,6 +79,8 @@
   function buildClientCheckin(prog){
     const section=gv("tab-suivi");if(!section||window.MT_ADMIN_PAGE)return;
     installStyle();
+    // Keep the shared charts when the daily form replaces the legacy fields.
+    const historyCard=gv("streak-days")?.closest(".card");
     const sport=isSportProfile(prog), showWeight=showWeightField(prog);
     section.innerHTML=`
       <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:12px;margin-bottom:18px"><div><p class="mt851-kicker">MON CHECK-IN</p><h2 class="serif" style="font-size:30px;color:var(--ink);margin:0">Aujourd’hui</h2><p id="mt851-date" class="mt851-note"></p></div><span id="mt851-save-state" style="font-size:10px;font-weight:800;color:var(--brand)">Prêt</span></div>
@@ -115,11 +117,13 @@
       </div></div></div>`:""}
       <div class="mt851-card" id="mt851-week-card"><div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start"><div><p class="mt851-kicker">UNE FOIS PAR SEMAINE</p><h3 class="serif mt851-title">${sport?"Mon planning sportif":"Mes activités de la semaine"}</h3><p class="mt851-note">${sport?"Ajoute les séances prévues pour permettre à Tee d’anticiper tes entraînements.":"Prévois seulement les activités que tu souhaites faire : marche, Pilates, renforcement, piscine… Tu peux laisser cette rubrique vide si tu n’as rien de prévu."}</p></div><button type="button" class="chip" onclick="mt851AddPlanRow()">${sport?"+ Séance":"+ Activité"}</button></div><div id="mt851-plan-list" style="margin-top:12px"></div>${sport?`<div class="mt851-grid" style="margin-top:10px">${selectField("mt851-week-match","Match / compétition cette semaine ?",[["no","Non"],["yes","Oui"]])}${selectField("mt851-week-travel","Déplacement cette semaine ?",[["no","Non"],["yes","Oui"]])}</div>`:""}<textarea id="mt851-week-note" class="mt851-input" style="min-height:60px;margin-top:10px" placeholder="${sport?"Note facultative : horaires variables, double séance possible…":"Note facultative : disponibilité, activité douce, séance reportée…"}"></textarea><button type="button" class="btn btn-brand" style="width:100%;margin-top:10px" onclick="mt851SaveWeeklyPlan()">Enregistrer mon planning</button><p id="mt851-plan-state" class="mt851-note" style="text-align:center" role="status" aria-live="polite"></p></div>
       <div class="mt851-card"><p class="mt851-kicker">MES 7 DERNIERS JOURS</p><div id="mt851-history"></div></div>`;
+    if(historyCard)section.firstElementChild.after(historyCard);
     setText("mt851-date",new Date().toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"}));
     if(sport){gv("mt851-pain")?.addEventListener("change",()=>{gv("mt851-pain-zone-wrap").style.display=val("mt851-pain")==="yes"?"block":"none";window.mt851QueueSave();});}
     hydratingForm=true;
     try { restoreDaily(prog); restoreWeeklyPlan(prog); } finally { hydratingForm=false; }
     renderHistory(prog);
+    window.renderHistorique?.(currentSlug);
     window.mtRenderRegularity?.();
   }
 
@@ -214,7 +218,10 @@
     try{localStorage.setItem("mt_suivi_"+slug+"_"+today,JSON.stringify(data));}catch(e){}
     if(typeof _currentProg!=="undefined"&&_currentProg){_currentProg.suivi=_currentProg.suivi||{};_currentProg.suivi[today]=data;}
     const all=Object.assign({},(_currentProg?.suivi||{}),{[today]:data});const ok=await syncProgrammeKey("suivi",all);setText("mt851-save-state",ok?"Enregistré ✓":"À resynchroniser");if(_currentProg)renderHistory(_currentProg);
-    if (slug === currentSlug) window.mtRenderRegularity?.();
+    if (slug === currentSlug) {
+      window.renderHistorique?.(slug);
+      window.mtRenderRegularity?.();
+    }
   };
 
   function renderHistory(prog){
@@ -284,3 +291,4 @@
   function init(){installStyle();if(!window.MT_ADMIN_PAGE&&typeof _currentProg!=="undefined"&&_currentProg)buildClientCheckin(_currentProg);}
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init);else init();
 })();
+

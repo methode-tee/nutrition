@@ -680,7 +680,7 @@ function mtRenderRegularity() {
     card.style.cssText = "display:flex;align-items:center;gap:14px;padding:14px;margin-bottom:16px";
     const oldCard = document.getElementById("score-bar-wrap")?.parentElement;
     oldCard?.setAttribute("hidden", "");
-    const anchor = section.querySelector(".mt851-card") || section.querySelector(".card");
+    const anchor = section.querySelector(".mt851-card, .card");
     if (anchor) anchor.before(card); else section.prepend(card);
   }
   card.innerHTML = mtRegularityRing(count, 76) + `<div style="min-width:0"><strong style="color:var(--ink)">${en ? "My weekly check-ins" : "Mon suivi de la semaine"}</strong><p role="status" style="margin:3px 0;font-size:12px;color:var(--brand);font-weight:700">${label}</p><p style="margin:3px 0 6px;font-size:12px;color:var(--muted)">${progress.pending ? (en ? "This programme week has not started yet." : "Cette semaine du programme n’a pas encore commencé.") : (en ? "Meals, water, sleep, stress, feelings and activity. Each answer counts, whatever your day was like." : "Repas, alimentation, eau, sommeil, stress, ressentis et activité : chaque réponse compte, quelle qu’elle soit.")}</p><button type="button" style="font-size:12px;font-weight:700;color:var(--brand);text-decoration:underline">${en ? "Log my day" : "Renseigner ma journée"}</button></div>`;
@@ -1680,3 +1680,4 @@ if(typeof saveSuivi==="function" && !window.__mtPatchedSave){
   }
   lucide.createIcons();
 })();
+
