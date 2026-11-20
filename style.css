@@ -230,7 +230,7 @@ body {
 
 body:not(.admin-page) #admin-overlay,
 body:not(.admin-page) #fab-admin { display:none!important; }
-body:not(.admin-page) #my-banner { display:none!important; }
+
 .simplified-nav { display:grid!important; grid-template-columns:repeat(5,minmax(0,1fr))!important; overflow:visible!important; }
 .simplified-nav::after{display:none!important}
 .simplified-nav .nav-btn { width:100%; min-width:0!important; padding-left:2px!important; padding-right:2px!important; }
@@ -323,10 +323,16 @@ body:not(.admin-page) #my-banner { display:none!important; }
 .mt-admin-preview-active .bottom-nav:not(#mt-preview-nav){display:none!important}
 .mt-admin-preview-active #mt-preview-return{border:1px solid rgba(83,100,74,.16);background:white;color:var(--brand);border-radius:999px;padding:8px 10px;font:700 10px "DM Sans",sans-serif;white-space:nowrap;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.04)}
 .mt-admin-preview-launch{border:1px solid rgba(255,255,255,.25);border-radius:999px;background:rgba(255,255,255,.12);color:#fff;padding:9px 12px;font:inherit;font-size:10px;font-weight:800;cursor:pointer}
-.mt-admin-preview-active #app>header{display:flex!important;flex-wrap:wrap;align-items:center;gap:8px 10px;padding:18px 20px 14px!important;}
-.mt-admin-preview-active #app>header>div:first-child{flex:1 1 auto;min-width:130px;}
-.mt-admin-preview-active #app>header>div:first-child h1{white-space:nowrap;font-size:19px!important;}
-.mt-admin-preview-active #app>header #mt-formula-badge{max-width:calc(100% - 55px);overflow:hidden;text-overflow:ellipsis;}
-.mt-admin-preview-active #app>header #avatar{flex:0 0 42px;}
-.mt-admin-preview-active #app>header #mt-lang-switch{position:static!important;top:auto!important;right:auto!important;transform:none!important;flex:0 0 auto!important;width:max-content!important;max-width:100%;margin:0 0 0 auto;justify-content:flex-end;z-index:auto!important;}
+.mt-client-page #app>header{display:flex!important;flex-wrap:wrap;align-items:center;gap:8px 10px;padding:18px 20px 14px!important;}
+.mt-client-page #app>header>div:first-child{flex:1 1 auto;min-width:130px;}
+.mt-client-page #app>header>div:first-child h1{white-space:nowrap;font-size:19px!important;}
+.mt-client-page #app>header #mt-formula-badge{max-width:calc(100% - 55px);overflow:hidden;text-overflow:ellipsis;}
+.mt-client-page #app>header #avatar{flex:0 0 42px;}
+.mt-client-page #app>header #mt-lang-switch{position:static!important;top:auto!important;right:auto!important;transform:none!important;flex:0 0 auto!important;width:max-content!important;max-width:100%;margin:0 0 0 auto;justify-content:flex-end;z-index:auto!important;}
 .mt-admin-preview-active #fab-admin{display:none!important}
+
+
+/* Same header geometry in the authenticated client and read-only preview. */
+.mt-client-page #client-logout-btn,
+.mt-admin-preview-active #mt-preview-return{width:106px;min-height:34px;justify-content:center;flex-shrink:0;}
+.mt-admin-preview-active #app>header>button{display:none!important;}

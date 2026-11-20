@@ -448,7 +448,7 @@
   }
 
   function renderMenuExplanationsClient(prog){
-    if(window.MT_ADMIN_PAGE) return;
+    if(window.MT_ADMIN_PAGE&&!window.MT_ADMIN_PREVIEW) return;
     const card=ensureMenuWhyClientCard();
     if(!card) return;
     const data=normalizeMenuExplanations(prog||{})?.menu_explanations||{};
@@ -514,3 +514,4 @@
   else initMenuExplanations();
 
 })();
+

@@ -12,7 +12,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script>if(!window.supabase){document.write('<script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"><\/script>')}</script>
-  <link rel="stylesheet" href="./style.css?v=client-preview-3">
+  <link rel="stylesheet" href="./style.css?v=client-identique-20261120">
 </head>
 <body class="mt-client-page">
 <div class="app-shell" id="app">
@@ -51,10 +51,10 @@
         <div>
           <p id="today-date" style="font-size:11px;color:var(--muted);font-weight:600;margin:0 0 4px;text-transform:capitalize"></p>
           <h2 class="serif" style="font-size:34px;font-weight:700;color:var(--ink);margin:0 0 6px;line-height:1.15">Bonjour <span id="display-prenom">toi</span>,</h2>
-          <p style="font-size:12px;color:var(--muted)">Voici ce que nous travaillons aujourd’hui.</p>
+          <p style="font-size:12px;color:var(--muted)">Ton espace nutrition &amp; routines premium.</p>
         </div>
         <span class="badge" style="background:var(--brand);color:white;margin-top:4px;flex-shrink:0">
-          <i data-lucide="sparkles" style="width:11px;height:11px"></i> <span id="parcours-badge">Équilibre</span>
+          <i data-lucide="sparkles" style="width:11px;height:11px"></i> Privé
         </span>
       </div>
       <div id="notif-banner" style="display:none;margin:0 0 16px;border-radius:16px;padding:14px 16px;background:#f0f9f0;border:1.5px solid rgba(83,100,74,.2);align-items:center;justify-content:space-between;gap:12px">
@@ -254,7 +254,6 @@
 
     <!-- SUIVI -->
     <section id="tab-suivi" class="tab-section" style="padding-top:24px">
-      <div class="section-switcher"><button class="active" onclick="switchTab('suivi')">Quotidien</button><button onclick="switchTab('terrainai')">Bilan</button><button onclick="switchTab('cycle')">Cycle</button></div>
       <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:20px">
         <div>
           <h2 class="serif" style="font-size:30px;font-weight:700;color:var(--ink);margin:0 0 4px">Mon Suivi</h2>
@@ -300,7 +299,6 @@
           <div><label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:8px">Energie <span id="val-energie" style="color:var(--brand)">3/5</span></label><input type="range" id="suivi-energie" min="1" max="5" value="3" oninput="document.getElementById('val-energie').textContent=this.value+'/5';saveSuivi()" style="width:100%;accent-color:var(--brand)"></div>
           <div><label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:8px">Sommeil <span id="val-sommeil" style="color:var(--brand)">3/5</span></label><input type="range" id="suivi-sommeil" min="1" max="5" value="3" oninput="document.getElementById('val-sommeil').textContent=this.value+'/5';saveSuivi()" style="width:100%;accent-color:var(--brand)"></div>
           <div><label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:8px">Digestion <span id="val-digestion" style="color:var(--brand)">3/5</span></label><input type="range" id="suivi-digestion" min="1" max="5" value="3" oninput="document.getElementById('val-digestion').textContent=this.value+'/5';saveSuivi()" style="width:100%;accent-color:var(--brand)"></div>
-          <div id="profile-checkin"></div>
         </div>
       </div>
       <div class="card" style="padding:20px;margin-bottom:18px">
@@ -404,13 +402,14 @@
 
 </div><!-- /app-shell -->
 
-<script src="./app.js?v=client-suivi-20261120"></script>
-<script src="./mt-professional-v6.js?v=client-suivi-20261120"></script>
+<script src="./app.js?v=client-identique-20261120"></script>
+<script src="./mt-professional-v6.js?v=client-identique-20261120"></script>
 <script src="./mt-performance-pro.js?v=client-preview-3"></script>
-<script src="./mt-tiered-experience.js"></script>
-<script src="./mt-checkin-v851.js?v=client-suivi-20261120"></script>
+<script src="./mt-tiered-experience.js?v=client-identique-20261120"></script>
+<script src="./mt-checkin-v851.js?v=client-identique-20261120"></script>
 <script src="./translations.js"></script>
 <script src="./mt-activity.js?v=activity-4"></script>
 </body>
 </html>
+
 

@@ -77,13 +77,13 @@
   }
 
   function buildClientCheckin(prog){
-    const section=gv("tab-suivi");if(!section||window.MT_ADMIN_PAGE)return;
+    const section=gv("tab-suivi");if(!section||(window.MT_ADMIN_PAGE&&!window.MT_ADMIN_PREVIEW))return;
     installStyle();
     // Keep the shared charts when the daily form replaces the legacy fields.
     const historyCard=gv("streak-days")?.closest(".card");
     const sport=isSportProfile(prog), showWeight=showWeightField(prog);
     section.innerHTML=`
-      <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:12px;margin-bottom:18px"><div><p class="mt851-kicker">MON CHECK-IN</p><h2 class="serif" style="font-size:30px;color:var(--ink);margin:0">Aujourd’hui</h2><p id="mt851-date" class="mt851-note"></p></div><span id="mt851-save-state" style="font-size:10px;font-weight:800;color:var(--brand)">Prêt</span></div>
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:12px;margin-bottom:18px"><div><h2 class="serif" style="font-size:30px;color:var(--ink);margin:0">Mon Suivi</h2><p id="mt851-date" class="mt851-note"></p></div><span id="mt851-save-state" style="font-size:10px;font-weight:800;color:var(--brand)">Prêt</span></div>
       <div class="mt851-card"><p class="mt851-kicker">30–60 secondes</p><h3 class="serif mt851-title">Comment va ta journée ?</h3><p class="mt851-note">Tu renseignes les faits et ton ressenti. Tee interprète et ajuste ensuite si nécessaire.</p>
         <div class="mt851-grid" style="margin-top:14px">
           ${numberField("mt851-sleep-hours","Sommeil · durée",'min="0" max="16" step="0.25"',"ex : 7.5","Heures réellement dormies")}
@@ -281,7 +281,7 @@
   }
 
   const oldRenderClient=window.renderClientView;
-  if(oldRenderClient)window.renderClientView=function(prenom,prog){oldRenderClient(prenom,prog);if(!window.MT_ADMIN_PAGE){setTimeout(()=>buildClientCheckin(prog),0);}else setTimeout(()=>renderAdminCheckin(prog),0);};
+  if(oldRenderClient)window.renderClientView=function(prenom,prog){oldRenderClient(prenom,prog);if(!window.MT_ADMIN_PAGE||window.MT_ADMIN_PREVIEW){setTimeout(()=>buildClientCheckin(prog),0);}else setTimeout(()=>renderAdminCheckin(prog),0);};
   const oldFill=window.fillAdmin;
   if(oldFill)window.fillAdmin=function(prenom,prog){oldFill(prenom,prog);setTimeout(()=>renderAdminCheckin(prog),0);};
   const oldGlobal=window.renderSuiviGlobal;
@@ -291,4 +291,5 @@
   function init(){installStyle();if(!window.MT_ADMIN_PAGE&&typeof _currentProg!=="undefined"&&_currentProg)buildClientCheckin(_currentProg);}
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init);else init();
 })();
+
 
